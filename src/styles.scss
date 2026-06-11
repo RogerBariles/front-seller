@@ -54,3 +54,53 @@ $theme: mat.m2-define-light-theme((
     display: none !important;
   }
 }
+
+.sale-print-dialog-panel .mat-mdc-dialog-surface {
+  padding: 8px !important;
+}
+
+/* Impresión comprobante térmico 58 mm */
+@media print {
+  @page {
+    size: 58mm auto;
+    margin: 0;
+  }
+
+  body {
+    margin: 0;
+    background: #fff;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .receipt-print-area,
+  .receipt-print-area * {
+    visibility: visible;
+  }
+
+  .receipt-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 58mm;
+  }
+
+  .cdk-overlay-container,
+  .cdk-global-overlay-wrapper,
+  .cdk-overlay-pane {
+    position: static !important;
+    transform: none !important;
+  }
+
+  .mat-mdc-dialog-container,
+  .mdc-dialog__surface {
+    box-shadow: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    max-width: none !important;
+    width: auto !important;
+    overflow: visible !important;
+  }
+}

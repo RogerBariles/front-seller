@@ -1,25 +1,91 @@
+/* Vista previa en pantalla */
 .print-dialog {
   padding: 8px;
-  min-width: 320px;
-  font-size: 13px;
 }
 
-.print-header h2 {
-  margin: 0 0 12px;
+.receipt {
+  width: 48mm;
+  max-width: 48mm;
+  margin: 0 auto;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #000;
+  background: #fff;
+  box-sizing: border-box;
 }
 
-.items-table {
-  width: 80%;
-  margin: 16px 0;
+.store-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.02em;
 }
 
-.totals {
-  border-top: 1px solid #ddd;
-  padding-top: 12px;
+.receipt-title {
+  margin: 4px 0 0;
+  font-size: 10px;
+  text-align: center;
+}
+
+.receipt-divider {
+  border-top: 1px dashed #000;
+  margin: 6px 0;
+}
+
+.receipt-meta p,
+.receipt-totals p,
+.item-detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  margin: 2px 0;
+  word-break: break-word;
+}
+
+.receipt-meta span:first-child,
+.receipt-totals span:first-child {
+  flex-shrink: 0;
+}
+
+.receipt-meta span:last-child,
+.receipt-totals span:last-child,
+.item-detail span:last-child {
+  text-align: right;
+}
+
+.item-block {
+  margin-bottom: 6px;
+}
+
+.item-name {
+  margin: 0 0 2px;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.item-detail {
+  margin: 0;
+  font-size: 10px;
+}
+
+.item-discount {
+  margin: 0;
+  font-size: 9px;
+  text-align: right;
 }
 
 .grand-total {
-  font-size: 18px;
+  margin-top: 4px !important;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.receipt-footer {
+  margin: 0;
+  text-align: center;
+  font-size: 10px;
 }
 
 .actions {
@@ -29,12 +95,37 @@
   margin-top: 16px;
 }
 
+/* Impresión térmica 58 mm (área útil 48 mm) */
 @media print {
+  @page {
+    size: 58mm auto;
+    margin: 0;
+  }
+
   .no-print {
     display: none !important;
   }
 
   .print-dialog {
     padding: 0;
+    margin: 0;
+  }
+
+  .receipt {
+    width: 48mm;
+    max-width: 48mm;
+    margin: 0 auto;
+    padding: 2mm 0;
+    font-size: 10px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .store-name {
+    font-size: 13px;
+  }
+
+  .grand-total {
+    font-size: 12px;
   }
 }

@@ -46,7 +46,10 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.snack.open(err.error?.message || 'Credenciales inválidas', 'Cerrar', { duration: 4000 });
+        const message = err.status === 0
+          ? 'No se pudo conectar al servidor. Verificá API_URL y CORS en Render.'
+          : (err.error?.message || 'Credenciales inválidas');
+        this.snack.open(message, 'Cerrar', { duration: 5000 });
       }
     });
   }
