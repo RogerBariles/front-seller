@@ -1,0 +1,20 @@
+.filters {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: center;
+}
+
+.summary {
+  margin-top: 16px;
+}
+
+.big {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.table-card {
+  margin-top: 16px;
+}

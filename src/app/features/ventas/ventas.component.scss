@@ -1,0 +1,29 @@
+h1 {
+  margin-bottom: 16px;
+}
+
+.alert-card {
+  margin-bottom: 16px;
+  background: #fff8e1;
+}
+
+.pos-layout {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .pos-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .tabs-mobile {
+    display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .pos-desktop {
+    display: none;
+  }
+}

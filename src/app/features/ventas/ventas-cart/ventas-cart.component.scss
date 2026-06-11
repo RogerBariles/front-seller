@@ -1,0 +1,43 @@
+.cart-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.cart-item-header,
+.cart-item-row,
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cart-item-header {
+  justify-content: space-between;
+}
+
+.subtotal,
+.discount,
+.total {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.discount {
+  color: #c62828;
+}
+
+.checkout-form {
+  margin-top: 12px;
+}
+
+.actions {
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.full-width {
+  width: 100%;
+}

@@ -1,0 +1,54 @@
+<div class="container">
+  <h1>Ventas</h1>
+
+  @if (!canSell()) {
+    <mat-card class="alert-card">
+      <mat-card-content>
+        {{ salesBlockMessage() }}
+        <button mat-button color="primary" (click)="goToCaja()">Ir a Caja y Turnos</button>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <mat-tab-group class="tabs-mobile">
+    <mat-tab label="Buscar">
+      <app-ventas-search
+        [searchForm]="searchForm"
+        [products]="products()"
+        [disabled]="!canSell()"
+        (addProduct)="addToCart($event)" />
+    </mat-tab>
+    <mat-tab label="Carrito">
+      <app-ventas-cart
+        [cart]="cart()"
+        [checkoutForm]="checkoutForm"
+        [subtotal]="subtotal()"
+        [loading]="loading"
+        [disabled]="!canSell()"
+        (removeItem)="removeFromCart($event)"
+        (quantityChange)="updateQuantity($event.productId, $event.quantity)"
+        (discountChange)="updateItemDiscount($event.productId, $event.discountType, $event.discountValue)"
+        (clear)="clearCart()"
+        (submit)="submitSale()" />
+    </mat-tab>
+  </mat-tab-group>
+
+  <div class="pos-layout pos-desktop">
+    <app-ventas-search
+      [searchForm]="searchForm"
+      [products]="products()"
+      [disabled]="!canSell()"
+      (addProduct)="addToCart($event)" />
+    <app-ventas-cart
+      [cart]="cart()"
+      [checkoutForm]="checkoutForm"
+      [subtotal]="subtotal()"
+      [loading]="loading"
+      [disabled]="!canSell()"
+      (removeItem)="removeFromCart($event)"
+      (quantityChange)="updateQuantity($event.productId, $event.quantity)"
+      (discountChange)="updateItemDiscount($event.productId, $event.discountType, $event.discountValue)"
+      (clear)="clearCart()"
+      (submit)="submitSale()" />
+  </div>
+</div>

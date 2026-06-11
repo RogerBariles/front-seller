@@ -1,0 +1,34 @@
+.shell {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 260px;
+}
+
+.topbar .title {
+  font-weight: 500;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.company-info {
+  margin-right: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.user-info {
+  margin-right: 12px;
+  font-size: 14px;
+}
+
+.content {
+  min-height: calc(100vh - 64px);
+}
+
+a.active {
+  background: rgba(0, 0, 0, 0.08);
+}

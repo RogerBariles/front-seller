@@ -1,0 +1,85 @@
+<div class="container">
+  <h1>Caja y Turnos</h1>
+
+  @if (loadError) {
+    <mat-card class="alert-card">
+      <mat-card-content>
+        No se pudo cargar el estado de la caja.
+        <button mat-button color="primary" (click)="refresh()">Reintentar</button>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <div class="card-grid">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Caja del día</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (!cashRegister) {
+          <p>No hay caja abierta en este momento.</p>
+          @if (closedTodayCount > 0) {
+            <p class="info">Hoy ya se cerraron {{ closedTodayCount }} caja(s). Puede abrir una nueva.</p>
+          } @else {
+            <p>Ingrese el efectivo inicial para abrir la caja del día.</p>
+          }
+          <form [formGroup]="openForm" (ngSubmit)="openCashRegister()">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Efectivo inicial</mat-label>
+              <input matInput type="number" formControlName="initialCash" />
+            </mat-form-field>
+            <button mat-flat-button color="primary" [disabled]="loading || openForm.invalid">Abrir caja</button>
+          </form>
+        } @else {
+          <p><strong>Fecha:</strong> {{ cashRegister.businessDate | date:'dd/MM/yyyy' }}</p>
+          <p><strong>Estado:</strong> {{ cashRegister.status === 'OPEN' ? 'Abierta' : 'Cerrada' }}</p>
+          <p><strong>Efectivo inicial:</strong> {{ cashRegister.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Abierta por:</strong> {{ cashRegister.openedByName }}</p>
+          @if (cashRegister.status === 'OPEN') {
+            <button mat-stroked-button color="warn" (click)="closeCashRegister()" [disabled]="loading || !!activeShift">
+              Cerrar caja
+            </button>
+            @if (activeShift) {
+              <p class="hint">Cierre su turno antes de cerrar la caja.</p>
+            } @else {
+              <p class="info">Al cerrar esta caja podrá abrir otra nueva el mismo día.</p>
+            }
+          }
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Turno actual</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (!cashRegister || cashRegister.status !== 'OPEN') {
+          <p>Primero debe abrir la caja del día.</p>
+        } @else if (!activeShift) {
+          <p>La caja está abierta. Inicie su turno para poder vender.</p>
+          <button mat-flat-button color="primary" (click)="startShift()" [disabled]="loading">Iniciar turno</button>
+        } @else {
+          <p><strong>Vendedora:</strong> {{ activeShift.sellerName }}</p>
+          <p><strong>Efectivo inicial (caja):</strong> {{ activeShift.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Inicio:</strong> {{ activeShift.startedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+          <button mat-stroked-button color="accent" (click)="closeShift()" [disabled]="loading">Cerrar turno</button>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  @if (lastReport) {
+    <mat-card class="report-card">
+      <mat-card-header>
+        <mat-card-title>Reporte de cierre</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>Efectivo inicial:</strong> {{ lastReport.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        <p><strong>Efectivo final (ventas en efectivo):</strong> {{ lastReport.finalCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        <p><strong>Cantidad de ventas:</strong> {{ lastReport.salesCount }}</p>
+        <p><strong>Total vendido:</strong> {{ lastReport.totalSalesAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

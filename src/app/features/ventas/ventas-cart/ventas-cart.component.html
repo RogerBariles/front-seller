@@ -1,0 +1,88 @@
+<mat-card>
+  <mat-card-header><mat-card-title>Carrito <mat-icon>shopping_cart</mat-icon></mat-card-title></mat-card-header>
+  <mat-card-content>
+    @if (cart.length === 0) {
+      <p>No hay productos en el carrito.</p>
+    } @else {
+      @for (item of cart; track item.product.id) {
+        <div class="cart-item">
+          <div class="cart-item-header">
+            <strong>{{ item.product.name }} - {{ item.product.price | currency:'ARS':'symbol-narrow':'1.2-2' }}</strong>
+            <button mat-icon-button color="warn" [disabled]="disabled" (click)="removeItem.emit(item.product.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          <div class="cart-item-row">
+            <mat-form-field appearance="outline" [style.width]="'80px'">
+              <mat-label>Cant.</mat-label>
+              <input matInput type="number" [value]="item.quantity"
+                [disabled]="disabled"
+                (change)="quantityChange.emit({ productId: item.product.id, quantity: +$any($event.target).value })" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width]="'170px'">
+              <mat-label>Descuento</mat-label>
+              <mat-select [value]="item.discountType || ''" [disabled]="disabled"
+                (selectionChange)="discountChange.emit({ productId: item.product.id, discountType: $event.value })">
+                <mat-option value="">Sin descuento</mat-option>
+                <mat-option value="PERCENTAGE">Porcentaje</mat-option>
+                <mat-option value="FIXED">Monto fijo</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Valor</mat-label>
+              <input matInput type="number" [value]="item.discountValue ?? ''" [disabled]="disabled || !item.discountType"
+                (change)="discountChange.emit({ productId: item.product.id, discountValue: +$any($event.target).value })" />
+            </mat-form-field>
+          </div>
+        </div>
+      }
+
+      <p class="subtotal">Subtotal: {{ subtotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+      @if (hasDiscounts) {
+        <p class="discount">Descuentos: -{{ (lineDiscountTotal + totalDiscountAmount) | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+      }
+      <p class="total"><strong>Total: {{ estimatedTotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</strong></p>
+
+      <form [formGroup]="checkoutForm" class="checkout-form">
+        <mat-form-field appearance="outline" class="full-width" [style.width]="'170px'">
+          <mat-label>Método de pago</mat-label>
+          <mat-select formControlName="paymentMethod">
+            @for (pm of paymentMethods; track pm) {
+              <mat-option [value]="pm">{{ paymentLabels[pm] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        
+        @if (checkoutForm.value.paymentMethod === 'TARJETA') {
+          <mat-form-field appearance="outline" class="full-width" [style.width]="'80px'">
+            <mat-label>Cuotas</mat-label>
+            <input matInput type="number" formControlName="installments" />
+          </mat-form-field>
+        }
+
+        <div class="cart-item-row">
+          <mat-form-field appearance="outline" [style.width]="'170px'">
+            <mat-label>Descuento total</mat-label>
+            <mat-select formControlName="totalDiscountType">
+              <mat-option value="">Sin descuento</mat-option>
+              <mat-option value="PERCENTAGE">Porcentaje</mat-option>
+              <mat-option value="FIXED">Monto fijo</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Valor</mat-label>
+            <input matInput type="number" formControlName="totalDiscountValue"
+              [disabled]="!checkoutForm.value.totalDiscountType" />
+          </mat-form-field>
+        </div>
+
+        <div class="actions">
+          <button mat-stroked-button type="button" [disabled]="disabled" (click)="clear.emit()">Vaciar</button>
+          <button mat-flat-button color="primary" [disabled]="loading || disabled" (click)="submit.emit()">
+            {{ loading ? 'Procesando...' : 'Confirmar venta' }}
+          </button>
+        </div>
+      </form>
+    }
+  </mat-card-content>
+</mat-card>

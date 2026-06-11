@@ -1,0 +1,33 @@
+.layout {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.form-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.actions, .bulk-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.table-card {
+  margin-top: 16px;
+}
+
+.margin-pct {
+  color: #2e7d32;
+  font-size: 0.9em;
+  margin-left: 4px;
+}

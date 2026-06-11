@@ -1,0 +1,40 @@
+.print-dialog {
+  padding: 8px;
+  min-width: 320px;
+  font-size: 13px;
+}
+
+.print-header h2 {
+  margin: 0 0 12px;
+}
+
+.items-table {
+  width: 80%;
+  margin: 16px 0;
+}
+
+.totals {
+  border-top: 1px solid #ddd;
+  padding-top: 12px;
+}
+
+.grand-total {
+  font-size: 18px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-dialog {
+    padding: 0;
+  }
+}
