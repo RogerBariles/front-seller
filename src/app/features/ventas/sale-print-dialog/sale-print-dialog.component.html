@@ -2,16 +2,16 @@
   <article class="receipt" #receiptContent>
     <header class="receipt-header">
       <h1 class="store-name">Lo'Postigli</h1>
-      <p class="receipt-title">Comprobante de venta</p>
+      <p class="receipt-title">COMPROBANTE DE VENTA</p>
     </header>
 
     <div class="receipt-divider"></div>
 
     <section class="receipt-meta">
-      <p><span>Vendedor/a</span><span>{{ sale.sellerName }}</span></p>
-      <p><span>Fecha</span><span>{{ sale.createdAt | date:'dd/MM/yy HH:mm' }}</span></p>
+      <p><span>VENDEDORA</span><span>{{ sale.sellerName }}</span></p>
+      <p><span>FECHA</span><span>{{ sale.createdAt | date:'dd/MM/yy HH:mm' }}</span></p>
       <p>
-        <span>Pago</span>
+        <span>PAGO</span>
         <span>
           {{ paymentLabels[sale.paymentMethod] }}
           @if (sale.paymentMethod === 'TARJETA' && sale.installments) {
@@ -41,9 +41,9 @@
     <div class="receipt-divider"></div>
 
     <footer class="receipt-totals">
-      <p><span>Subtotal</span><span>{{ sale.subtotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+      <p><span>SUBTOTAL</span><span>{{ sale.subtotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
       @if (sale.discountTotal > 0) {
-        <p><span>Descuentos</span><span>-{{ sale.discountTotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+        <p><span>DESCUENTOS</span><span>-{{ sale.discountTotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
       }
       <p class="grand-total">
         <span>TOTAL</span>
@@ -52,7 +52,7 @@
     </footer>
 
     <div class="receipt-divider"></div>
-    <p class="receipt-footer">¡Gracias por su compra!</p>
+    <p class="receipt-footer">¡GRACIAS POR SU COMPRA!</p>
   </article>
 
   <div class="actions no-print">
