@@ -170,7 +170,7 @@ export class VentasComponent implements OnInit {
   openPrintDialog(sale: Sale): void {
     this.dialog.open(SalePrintDialogComponent, {
       data: sale,
-      width: '180px',
+      width: '200px',
       maxWidth: '95vw',
       panelClass: 'sale-print-dialog-panel'
     });

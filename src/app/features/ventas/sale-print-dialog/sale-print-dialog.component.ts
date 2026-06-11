@@ -9,35 +9,32 @@ const RECEIPT_PRINT_STYLES = `
   * { box-sizing: border-box; }
   body { margin: 0; padding: 0; background: #fff; color: #000; }
   .receipt {
-    width: 40mm;
-    max-width: 40mm;
+    width: 44mm;
+    max-width: 44mm;
     margin: 0 auto;
-    padding: 2mm 1mm;
+    padding: 2mm 1.5mm;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 9px;
-    font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
-    -webkit-text-stroke: 0.2px #000;
-    text-shadow: 0.2px 0 0 #000, -0.2px 0 0 #000;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.3;
   }
-  .store-name { margin: 0; font-size: 11px; font-weight: 900; text-align: center; }
-  .receipt-title { margin: 3px 0 0; font-size: 9px; text-align: center; }
-  .receipt-divider { border-top: 1px dashed #000; margin: 4px 0; }
+  .store-name { margin: 0; font-size: 12px; font-weight: 500; text-align: center; }
+  .receipt-title { margin: 4px 0 0; font-size: 9.5px; font-weight: 500; text-align: center; }
+  .receipt-divider { border-top: 1px dashed #000; margin: 5px 0; }
   .receipt-meta p, .receipt-totals p, .item-detail {
-    display: flex; justify-content: space-between; gap: 2px; margin: 1px 0; word-break: break-word;
+    display: flex; justify-content: space-between; gap: 3px; margin: 2px 0; word-break: break-word;
   }
   .receipt-meta span, .receipt-totals span, .item-detail span { min-width: 0; }
   .receipt-meta span:first-child, .receipt-totals span:first-child { flex-shrink: 0; }
   .receipt-meta span:last-child, .receipt-totals span:last-child, .item-detail span:last-child {
     text-align: right; flex-shrink: 1;
   }
-  .item-block { margin-bottom: 4px; }
-  .item-name { margin: 0 0 1px; font-weight: 900; word-break: break-word; }
-  .item-detail { margin: 0; font-size: 8.5px; }
-  .item-discount { margin: 0; font-size: 8px; text-align: right; }
-  .grand-total { margin-top: 3px !important; font-size: 10px; font-weight: 900; }
-  .receipt-footer { margin: 0; text-align: center; font-size: 8.5px; }
+  .item-block { margin-bottom: 5px; }
+  .item-name { margin: 0 0 2px; font-weight: 500; word-break: break-word; }
+  .item-detail { margin: 0; font-size: 9.5px; font-weight: 500; }
+  .item-discount { margin: 0; font-size: 8.5px; font-weight: 500; text-align: right; }
+  .grand-total { margin-top: 4px !important; font-size: 11px; font-weight: 500; }
+  .receipt-footer { margin: 0; text-align: center; font-size: 9.5px; font-weight: 500; }
 `;
 
 @Component({
