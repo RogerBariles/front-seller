@@ -59,48 +59,66 @@ $theme: mat.m2-define-light-theme((
   padding: 8px !important;
 }
 
-/* Impresión comprobante térmico 58 mm */
+/* Respaldo si se usa Ctrl+P con el diálogo abierto */
 @media print {
   @page {
     size: 58mm auto;
     margin: 0;
   }
 
+  html,
   body {
-    margin: 0;
-    background: #fff;
-  }
-
-  body * {
-    visibility: hidden;
-  }
-
-  .receipt-print-area,
-  .receipt-print-area * {
-    visibility: visible;
-  }
-
-  .receipt-print-area {
-    position: absolute;
-    left: 0;
-    top: 0;
     width: 58mm;
+    height: auto !important;
+    overflow: visible !important;
+    margin: 0;
+    padding: 0;
+    background: #fff !important;
   }
 
-  .cdk-overlay-container,
+  body > *:not(.cdk-overlay-container) {
+    display: none !important;
+  }
+
+  .cdk-overlay-backdrop,
+  .cdk-overlay-dark-backdrop {
+    display: none !important;
+  }
+
+  .cdk-overlay-container {
+    display: block !important;
+    position: static !important;
+    width: 58mm !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
   .cdk-global-overlay-wrapper,
   .cdk-overlay-pane {
     position: static !important;
     transform: none !important;
+    width: 58mm !important;
+    max-width: none !important;
   }
 
   .mat-mdc-dialog-container,
-  .mdc-dialog__surface {
+  .mdc-dialog__surface,
+  .sale-print-dialog-panel .mat-mdc-dialog-surface {
     box-shadow: none !important;
     padding: 0 !important;
     background: transparent !important;
     max-width: none !important;
-    width: auto !important;
+    width: 58mm !important;
     overflow: visible !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .receipt-print-area {
+    width: 58mm;
+    padding: 0;
+    margin: 0;
   }
 }

@@ -1,8 +1,37 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { PAYMENT_LABELS, Sale } from '../../../models';
+
+const RECEIPT_PRINT_STYLES = `
+  @page { size: 58mm auto; margin: 0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 0; background: #fff; color: #000; }
+  .receipt {
+    width: 48mm;
+    max-width: 48mm;
+    margin: 0 auto;
+    padding: 2mm 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+  .store-name { margin: 0; font-size: 13px; font-weight: 700; text-align: center; }
+  .receipt-title { margin: 4px 0 0; font-size: 10px; text-align: center; }
+  .receipt-divider { border-top: 1px dashed #000; margin: 6px 0; }
+  .receipt-meta p, .receipt-totals p, .item-detail {
+    display: flex; justify-content: space-between; gap: 4px; margin: 2px 0; word-break: break-word;
+  }
+  .receipt-meta span:first-child, .receipt-totals span:first-child { flex-shrink: 0; }
+  .receipt-meta span:last-child, .receipt-totals span:last-child, .item-detail span:last-child { text-align: right; }
+  .item-block { margin-bottom: 6px; }
+  .item-name { margin: 0 0 2px; font-weight: 700; word-break: break-word; }
+  .item-detail { margin: 0; font-size: 10px; }
+  .item-discount { margin: 0; font-size: 9px; text-align: right; }
+  .grand-total { margin-top: 4px !important; font-size: 12px; font-weight: 700; }
+  .receipt-footer { margin: 0; text-align: center; font-size: 10px; }
+`;
 
 @Component({
   selector: 'app-sale-print-dialog',
@@ -14,13 +43,55 @@ import { PAYMENT_LABELS, Sale } from '../../../models';
 export class SalePrintDialogComponent {
   readonly paymentLabels = PAYMENT_LABELS;
 
+  @ViewChild('receiptContent') receiptRef?: ElementRef<HTMLElement>;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) readonly sale: Sale,
     private dialogRef: MatDialogRef<SalePrintDialogComponent>
   ) {}
 
   print(): void {
-    window.print();
+    const receipt = this.receiptRef?.nativeElement;
+    if (!receipt) {
+      return;
+    }
+
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('aria-hidden', 'true');
+    Object.assign(iframe.style, {
+      position: 'fixed',
+      right: '0',
+      bottom: '0',
+      width: '0',
+      height: '0',
+      border: '0'
+    });
+    document.body.appendChild(iframe);
+
+    const printWindow = iframe.contentWindow;
+    const doc = printWindow?.document;
+    if (!printWindow || !doc) {
+      iframe.remove();
+      return;
+    }
+
+    doc.open();
+    doc.write(
+      `<!DOCTYPE html><html><head><title>Comprobante</title>` +
+        `<style>${RECEIPT_PRINT_STYLES}</style></head><body>` +
+        `${receipt.outerHTML}</body></html>`
+    );
+    doc.close();
+
+    const cleanup = (): void => {
+      iframe.remove();
+    };
+
+    printWindow.addEventListener('afterprint', cleanup, { once: true });
+    setTimeout(cleanup, 60_000);
+
+    printWindow.focus();
+    printWindow.print();
   }
 
   close(): void {
