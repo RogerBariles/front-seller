@@ -177,6 +177,9 @@ export class VentasComponent implements OnInit {
   }
 
   submitSale(): void {
+    if (this.loading) {
+      return;
+    }
     if (!this.canSell()) {
       this.snack.open('Debe tener caja y turno abiertos para vender', 'Ir a caja', { duration: 5000 })
         .onAction().subscribe(() => this.goToCaja());

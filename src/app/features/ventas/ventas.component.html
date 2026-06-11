@@ -9,7 +9,7 @@
       </mat-card-content>
     </mat-card>
   }
-
+  <!--
   <mat-tab-group class="tabs-mobile">
     <mat-tab label="Buscar">
       <app-ventas-search
@@ -29,9 +29,9 @@
         (quantityChange)="updateQuantity($event.productId, $event.quantity)"
         (discountChange)="updateItemDiscount($event.productId, $event.discountType, $event.discountValue)"
         (clear)="clearCart()"
-        (submit)="submitSale()" />
+        (confirmSale)="submitSale()" />
     </mat-tab>
-  </mat-tab-group>
+  </mat-tab-group>-->
 
   <div class="pos-layout pos-desktop">
     <app-ventas-search
@@ -49,6 +49,6 @@
       (quantityChange)="updateQuantity($event.productId, $event.quantity)"
       (discountChange)="updateItemDiscount($event.productId, $event.discountType, $event.discountValue)"
       (clear)="clearCart()"
-      (submit)="submitSale()" />
+      (confirmSale)="submitSale()" />
   </div>
 </div>

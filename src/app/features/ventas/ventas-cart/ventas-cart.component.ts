@@ -36,7 +36,7 @@ export class VentasCartComponent {
   @Output() quantityChange = new EventEmitter<{ productId: string; quantity: number }>();
   @Output() discountChange = new EventEmitter<{ productId: string; discountType?: DiscountType | ''; discountValue?: number }>();
   @Output() clear = new EventEmitter<void>();
-  @Output() submit = new EventEmitter<void>();
+  @Output() confirmSale = new EventEmitter<void>();
 
   readonly paymentMethods = Object.keys(PAYMENT_LABELS) as PaymentMethod[];
   readonly paymentLabels = PAYMENT_LABELS;
