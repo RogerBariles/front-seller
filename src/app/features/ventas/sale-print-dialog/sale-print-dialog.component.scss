@@ -18,7 +18,7 @@
 
 .store-name {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   text-align: center;
 }
@@ -26,7 +26,6 @@
 .receipt-title {
   margin: 4px 0 0;
   font-size: 9.5px;
-  font-weight: 500;
   text-align: center;
 }
 
@@ -69,20 +68,17 @@
 
 .item-name {
   margin: 0 0 2px;
-  font-weight: 500;
   word-break: break-word;
 }
 
 .item-detail {
   margin: 0;
   font-size: 9.5px;
-  font-weight: 500;
 }
 
 .item-discount {
   margin: 0;
   font-size: 8.5px;
-  font-weight: 500;
   text-align: right;
 }
 
@@ -94,7 +90,7 @@
 .receipt-footer {
   margin: 0;
   text-align: center;
-  font-size: 9.5px;
+  font-size: 12px;
   font-weight: 600;
   padding-top: 20px;
 }

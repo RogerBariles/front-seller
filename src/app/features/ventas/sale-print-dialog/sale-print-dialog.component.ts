@@ -16,9 +16,10 @@ const RECEIPT_PRINT_STYLES = `
     font-size: 10px;
     font-weight: 600;
     line-height: 1.3;
+    /* margin-left: -7px; */
   }
-  .store-name { margin: 0; font-size: 18px; font-weight: 600; text-align: center; }
-  .receipt-title { margin: 4px 0 0; font-size: 9.5px; font-weight: 500; text-align: center; }
+  .store-name { margin: 0; font-size: 20px; font-weight: 600; text-align: center; }
+  .receipt-title { margin: 4px 0 0; font-size: 9.5px; text-align: center; }
   .receipt-divider { border-top: 1px dashed #000; margin: 5px 0; }
   .receipt-meta p, .receipt-totals p, .item-detail {
     display: flex; justify-content: space-between; gap: 3px; margin: 2px 0; word-break: break-word;
@@ -29,11 +30,11 @@ const RECEIPT_PRINT_STYLES = `
     text-align: right; flex-shrink: 1;
   }
   .item-block { margin-bottom: 5px; }
-  .item-name { margin: 0 0 2px; font-weight: 500; word-break: break-word; }
-  .item-detail { margin: 0; font-size: 9.5px; font-weight: 500; }
-  .item-discount { margin: 0; font-size: 8.5px; font-weight: 500; text-align: right; }
+  .item-name { margin: 0 0 2px; word-break: break-word; }
+  .item-detail { margin: 0; font-size: 9.5px; }
+  .item-discount { margin: 0; font-size: 8.5px; text-align: right; }
   .grand-total { margin-top: 4px !important; font-size: 12px; font-weight: 600; }
-  .receipt-footer { margin: 0; text-align: center; font-size: 9.5px; font-weight: 600; padding-top: 20px; }
+  .receipt-footer { margin: 0; text-align: center; font-size: 12px; font-weight: 600; padding-top: 20px; }
 `;
 
 @Component({
