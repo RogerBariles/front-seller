@@ -1,7 +1,7 @@
 export type UserRole = 'SELLER' | 'ADMIN' | 'SUPER_ADMIN';
 export type ProductCategory = 'TORTAS' | 'TARTAS' | 'TARTINES' | 'POSTRES' | 'COTILLON' | 'ALFAJORES';
 export type PaymentMethod = 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA';
-export type DiscountType = 'PERCENTAGE' | 'FIXED';
+export type DiscountType = 'PERCENTAGE' | 'FIXED' | 'PERCENTAGE_EXTRA';
 export type PriceField = 'SALE' | 'PURCHASE' | 'BOTH';
 export type CashRegisterStatus = 'OPEN' | 'CLOSED';
 export type ShiftStatus = 'OPEN' | 'CLOSED';

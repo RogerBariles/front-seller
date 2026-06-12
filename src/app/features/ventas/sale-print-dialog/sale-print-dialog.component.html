@@ -45,6 +45,9 @@
       @if (sale.discountTotal > 0) {
         <p><span>DESCUENTOS</span><span>-{{ sale.discountTotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
       }
+      @if (sale.discountTotal < 0) {
+        <p><span>RECARGO</span><span>{{ Math.abs(sale.discountTotal) | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+      }
       <p class="grand-total">
         <span>TOTAL</span>
         <span>{{ sale.total | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>

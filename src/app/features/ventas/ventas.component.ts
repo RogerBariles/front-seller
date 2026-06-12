@@ -127,6 +127,10 @@ export class VentasComponent implements OnInit {
 
   removeFromCart(productId: string): void {
     this.cart.set(this.cart().filter(i => i.product.id !== productId));
+    if (this.cart().length === 0) {
+      this.clearCart();
+      return;
+    }
   }
 
   updateQuantity(productId: string, quantity: number): void {

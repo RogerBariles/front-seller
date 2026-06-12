@@ -40,6 +40,7 @@ export class VentasCartComponent {
 
   readonly paymentMethods = Object.keys(PAYMENT_LABELS) as PaymentMethod[];
   readonly paymentLabels = PAYMENT_LABELS;
+  Math = Math;
 
   get lineDiscountTotal(): number {
     return this.cart.reduce((sum, item) => {
@@ -64,13 +65,16 @@ export class VentasCartComponent {
   }
 
   get hasDiscounts(): boolean {
-    return this.lineDiscountTotal > 0 || this.totalDiscountAmount > 0;
+    return this.lineDiscountTotal !== 0 || this.totalDiscountAmount !== 0;
   }
 
   private applyDiscount(amount: number, type?: DiscountType, value?: number): number {
     if (!type || !value || value <= 0) return 0;
     if (type === 'PERCENTAGE') {
       return Math.round(amount * value) / 100;
+    }
+    if (type === 'PERCENTAGE_EXTRA') {
+      return -Math.round(amount * value) / 100;
     }
     return Math.min(value, amount);
   }

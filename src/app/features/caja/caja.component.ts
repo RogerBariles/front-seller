@@ -111,7 +111,7 @@ export class CajaComponent implements OnInit {
         this.activeShift = null;
         this.loading = false;
         this.openClosePrintDialog(report);
-        this.snack.open('Turno cerrado', 'Cerrar', { duration: 3000 });
+        //this.snack.open('Turno cerrado', 'Cerrar', { duration: 3000 });
       },
       error: (err) => {
         this.loading = false;
@@ -141,7 +141,7 @@ export class CajaComponent implements OnInit {
   private openClosePrintDialog(report: CloseReport): void {
     this.dialog.open(ClosePrintDialogComponent, {
       data: report,
-      width: '220px',
+      width: '250px',
       maxWidth: '95vw',
       panelClass: 'sale-print-dialog-panel'
     });

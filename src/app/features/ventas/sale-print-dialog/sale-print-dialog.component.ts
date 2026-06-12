@@ -16,7 +16,7 @@ const RECEIPT_PRINT_STYLES = `
     font-size: 10px;
     font-weight: 600;
     line-height: 1.3;
-    /* margin-left: -7px; */
+     margin-left: -5px;
   }
   .store-name { margin: 0; font-size: 20px; font-weight: 600; text-align: center; }
   .receipt-title { margin: 4px 0 0; font-size: 9.5px; text-align: center; }
@@ -48,6 +48,7 @@ export class SalePrintDialogComponent {
   readonly paymentLabels = PAYMENT_LABELS;
 
   @ViewChild('receiptContent') receiptRef?: ElementRef<HTMLElement>;
+  Math = Math;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) readonly sale: Sale,

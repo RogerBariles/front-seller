@@ -22,7 +22,9 @@ export class ClosePrintDialogComponent {
   }
 
   print(): void {
-    window.print();
+    setTimeout(() => {
+      window.print();
+    }, 100);
   }
 
   close(): void {

@@ -38,8 +38,11 @@
       }
 
       <p class="subtotal">Subtotal: {{ subtotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-      @if (hasDiscounts) {
+      @if (hasDiscounts && (totalDiscountAmount > 0 || lineDiscountTotal > 0)) {
         <p class="discount">Descuentos: -{{ (lineDiscountTotal + totalDiscountAmount) | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+      }
+      @if (hasDiscounts && totalDiscountAmount < 0) {
+        <p class="discount-extra">Recargo: {{ Math.abs(lineDiscountTotal + totalDiscountAmount) | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
       }
       <p class="total"><strong>Total: {{ estimatedTotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</strong></p>
 
@@ -64,9 +67,14 @@
           <mat-form-field appearance="outline" [style.width]="'170px'">
             <mat-label>Descuento total</mat-label>
             <mat-select formControlName="totalDiscountType">
-              <mat-option value="">Sin descuento</mat-option>
-              <mat-option value="PERCENTAGE">Porcentaje</mat-option>
-              <mat-option value="FIXED">Monto fijo</mat-option>
+              @if (checkoutForm.value.paymentMethod === 'TARJETA') {
+                <mat-option default value="PERCENTAGE_EXTRA">Recargo</mat-option>
+              }
+              @else {
+                <mat-option default value="">Sin descuento</mat-option>
+                <mat-option value="PERCENTAGE">Porcentaje</mat-option>
+                <mat-option value="FIXED">Monto fijo</mat-option>
+              }
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline">
