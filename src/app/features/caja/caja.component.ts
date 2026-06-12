@@ -129,7 +129,7 @@ export class CajaComponent implements OnInit {
         this.cashRegister = { ...this.cashRegister!, status: 'CLOSED' };
         this.loading = false;
         this.openClosePrintDialog(report);
-        this.snack.open('Caja cerrada', 'Cerrar', { duration: 3000 });
+        //this.snack.open('Caja cerrada', 'Cerrar', { duration: 3000 });
       },
       error: (err) => {
         this.loading = false;
@@ -141,7 +141,7 @@ export class CajaComponent implements OnInit {
   private openClosePrintDialog(report: CloseReport): void {
     this.dialog.open(ClosePrintDialogComponent, {
       data: report,
-      width: '250px',
+      width: '270px',
       maxWidth: '95vw',
       panelClass: 'sale-print-dialog-panel'
     });
