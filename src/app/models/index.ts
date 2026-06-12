@@ -61,11 +61,31 @@ export interface Shift {
   endedAt?: string;
 }
 
+export type CloseReportType = 'SHIFT' | 'CASH_REGISTER';
+
+export interface PaymentTotals {
+  cash: number;
+  card: number;
+  transfer: number;
+}
+
 export interface CloseReport {
+  type: CloseReportType;
+  cashRegisterOpenedAt: string;
+  cashRegisterOpenedByName: string;
+  cashRegisterInitialCash: number;
+  cashRegisterClosedAt?: string;
+  cashRegisterClosedByName?: string;
+  shiftStartedAt?: string;
+  shiftOpenedByName?: string;
+  shiftInitialCash?: number;
+  shiftClosedAt?: string;
+  shiftClosedByName?: string;
   initialCash: number;
   finalCash: number;
   salesCount: number;
   totalSalesAmount: number;
+  paymentTotals: PaymentTotals;
 }
 
 export interface CartItem {

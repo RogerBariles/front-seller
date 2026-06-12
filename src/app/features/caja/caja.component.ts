@@ -3,11 +3,13 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../core/services/api.service';
 import { CashRegister, CloseReport, Shift } from '../../models';
+import { ClosePrintDialogComponent } from './close-print-dialog/close-print-dialog.component';
 
 @Component({
   selector: 'app-caja',
@@ -20,7 +22,8 @@ import { CashRegister, CloseReport, Shift } from '../../models';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatDialogModule
   ],
   templateUrl: './caja.component.html',
   styleUrl: './caja.component.scss'
@@ -29,6 +32,7 @@ export class CajaComponent implements OnInit {
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
   private snack = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
 
   cashRegister: CashRegister | null = null;
   closedTodayCount = 0;
@@ -106,6 +110,7 @@ export class CajaComponent implements OnInit {
         this.lastReport = report;
         this.activeShift = null;
         this.loading = false;
+        this.openClosePrintDialog(report);
         this.snack.open('Turno cerrado', 'Cerrar', { duration: 3000 });
       },
       error: (err) => {
@@ -123,12 +128,22 @@ export class CajaComponent implements OnInit {
         this.lastReport = report;
         this.cashRegister = { ...this.cashRegister!, status: 'CLOSED' };
         this.loading = false;
+        this.openClosePrintDialog(report);
         this.snack.open('Caja cerrada', 'Cerrar', { duration: 3000 });
       },
       error: (err) => {
         this.loading = false;
         this.snack.open(err.error?.message || 'No se pudo cerrar la caja', 'Cerrar', { duration: 4000 });
       }
+    });
+  }
+
+  private openClosePrintDialog(report: CloseReport): void {
+    this.dialog.open(ClosePrintDialogComponent, {
+      data: report,
+      width: '220px',
+      maxWidth: '95vw',
+      panelClass: 'sale-print-dialog-panel'
     });
   }
 }

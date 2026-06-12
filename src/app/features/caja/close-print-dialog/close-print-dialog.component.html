@@ -1,0 +1,68 @@
+<div class="print-dialog receipt-print-area">
+  <article class="receipt">
+    <header class="receipt-header">
+      <h1 class="store-name">Lo'Postigli</h1>
+      @if (isShift) {
+        <p class="receipt-title">TURNO</p>
+        <p class="receipt-section-title">Comprobante cierre de turno</p>
+      } @else {
+        <p class="receipt-title">CAJA</p>
+        <p class="receipt-section-title">Comprobante cierre de caja</p>
+      }
+    </header>
+
+    <div class="receipt-divider"></div>
+
+    <section class="receipt-meta">
+      <p class="receipt-section-title">Caja</p>
+      <p><span>INICIO CAJA</span><span>{{ report.cashRegisterOpenedAt | date:'dd/MM/yy HH:mm' }}</span></p>
+      <p><span>ABIERTA POR</span><span>{{ report.cashRegisterOpenedByName }}</span></p>
+      <p><span>EFECTIV.</span><span>{{ report.cashRegisterInitialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+      @if (!isShift && report.cashRegisterClosedAt) {
+        <p><span>CIERRE CAJA</span><span>{{ report.cashRegisterClosedAt | date:'dd/MM/yy HH:mm' }}</span></p>
+        <p><span>CERRADA POR</span><span>{{ report.cashRegisterClosedByName }}</span></p>
+      }
+    </section>
+
+    @if (isShift) {
+      <div class="receipt-divider"></div>
+      <section class="receipt-meta">
+        <p class="receipt-section-title">Turno</p>
+        <p><span>INICIO</span><span>{{ report.shiftStartedAt | date:'dd/MM/yy HH:mm' }}</span></p>
+        <p><span>ABIERTO POR</span><span>{{ report.shiftOpenedByName }}</span></p>
+        <p><span>EFECT.</span><span>{{ report.shiftInitialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+        <p><span>CIERRE</span><span>{{ report.shiftClosedAt | date:'dd/MM/yy HH:mm' }}</span></p>
+        <p><span>CERRADO POR</span><span>{{ report.shiftClosedByName }}</span></p>
+        <p class="grand-total"><span>EFECT.</span><span>{{ report.finalCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+      </section>
+    }
+
+    <div class="receipt-divider"></div>
+
+    <section class="receipt-totals">
+      @if (!isShift) {
+        <p class="grand-total">
+          <span>EFECTIV.</span>
+          <span>{{ report.finalCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+        </p>
+        <div class="receipt-divider"></div>
+      }
+      <p><span>VENTAS</span><span>{{ report.salesCount }}</span></p>
+      <p><span>EFECT.</span><span>{{ report.paymentTotals.cash | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+      <p><span>TARJ.</span><span>{{ report.paymentTotals.card | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+      <p><span>TRANSF.</span><span>{{ report.paymentTotals.transfer | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+      <p class="grand-total">
+        <span>TOTAL:</span>
+        <span>{{ report.totalSalesAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+      </p>
+    </section>
+
+    <div class="receipt-divider"></div>
+    <p class="receipt-footer">FIN DEL COMPROBANTE</p>
+  </article>
+
+  <div class="actions no-print">
+    <button mat-stroked-button (click)="close()">Cerrar</button>
+    <button mat-flat-button color="primary" (click)="print()">Imprimir</button>
+  </div>
+</div>

@@ -76,8 +76,11 @@
       </mat-card-header>
       <mat-card-content>
         <p><strong>Efectivo inicial:</strong> {{ lastReport.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        <p><strong>Efectivo final (ventas en efectivo):</strong> {{ lastReport.finalCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        <p><strong>Monto final (efectivo):</strong> {{ lastReport.finalCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
         <p><strong>Cantidad de ventas:</strong> {{ lastReport.salesCount }}</p>
+        <p><strong>Efectivo:</strong> {{ lastReport.paymentTotals.cash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        <p><strong>Tarjeta:</strong> {{ lastReport.paymentTotals.card | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        <p><strong>Transferencia:</strong> {{ lastReport.paymentTotals.transfer | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
         <p><strong>Total vendido:</strong> {{ lastReport.totalSalesAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
       </mat-card-content>
     </mat-card>
