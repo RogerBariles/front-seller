@@ -8,8 +8,16 @@ h1 {
 }
 
 .pos-layout {
-  display: grid;
+  display: flex;
   gap: 16px;
+
+  app-ventas-search {
+    width: 40%;
+  }
+
+  app-ventas-cart {
+    width: 60%;
+  }
 }
 
 @media (min-width: 900px) {

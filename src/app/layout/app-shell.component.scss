@@ -4,6 +4,16 @@
 
 .sidenav {
   width: 260px;
+
+  .nav-item {
+    .mdc-list-item__primary-text {
+      display: flex !important;
+    }
+
+    mat-icon {
+      font-size: 20px !important;
+    }
+  }
 }
 
 .topbar .title {
@@ -23,6 +33,8 @@
 .user-info {
   margin-right: 12px;
   font-size: 14px;
+  display: flex;
+  align-items: center;
 }
 
 .content {
@@ -31,4 +43,12 @@
 
 a.active {
   background: rgba(0, 0, 0, 0.08);
+}
+
+
+:host ::ng-deep {
+  .mdc-list-item__primary-text {
+    display: flex !important;
+    gap: 12px !important;
+  }
 }

@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,6 +18,7 @@ import {
   ProductCategory,
   ProductPriceAudit
 } from '../../models';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-productos',
@@ -33,7 +34,9 @@ import {
     MatButtonModule,
     MatTableModule,
     MatSlideToggleModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatIconModule,
+    CommonModule
   ],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss'

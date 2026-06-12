@@ -9,6 +9,7 @@ import { AuthService } from '../core/services/auth.service';
 import { ROLE_LABELS } from '../models';
 
 interface NavItem {
+  icon: string;
   label: string;
   path: string;
   roles?: string[];
@@ -37,12 +38,12 @@ export class AppShellComponent {
   readonly navItems = computed(() => {
     const role = this.user()?.role;
     const items: NavItem[] = [
-      { label: 'Ventas', path: '/app/ventas' },
-      { label: 'Caja y Turnos', path: '/app/caja', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN'] },
-      { label: 'Productos', path: '/app/productos' },
-      { label: 'Usuarios', path: '/app/usuarios', roles: ['ADMIN', 'SUPER_ADMIN'] },
-      { label: 'Reportes', path: '/app/reportes', roles: ['SUPER_ADMIN'] },
-      { label: 'Empresas', path: '/app/empresas', roles: ['SUPER_ADMIN'] }
+      { label: 'Ventas', path: '/app/ventas', icon: 'shopping_cart'},
+      { label: 'Caja y Turnos', path: '/app/caja', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN'], icon: 'payments'},
+      { label: 'Productos', path: '/app/productos', icon: 'inventory' },
+      { label: 'Usuarios', path: '/app/usuarios', roles: ['ADMIN', 'SUPER_ADMIN'], icon: 'people' },
+      { label: 'Reportes', path: '/app/reportes', roles: ['SUPER_ADMIN'], icon: 'analytics' },
+      { label: 'Empresas', path: '/app/empresas', roles: ['SUPER_ADMIN'], icon: 'business' }
     ];
     return items.filter(item => !item.roles || (role && item.roles.includes(role)));
   });

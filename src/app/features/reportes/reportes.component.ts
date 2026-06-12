@@ -41,7 +41,7 @@ export class ReportesComponent implements OnInit {
 
   readonly paymentMethods = Object.keys(PAYMENT_LABELS) as PaymentMethod[];
   readonly paymentLabels = PAYMENT_LABELS;
-  displayedColumns = ['date', 'seller', 'payment', 'total'];
+  displayedColumns = ['date', 'seller', 'payment', 'subtotal', 'discount', 'total'];
 
   form = this.fb.nonNullable.group({
     fromDate: [new Date().toISOString().slice(0, 10), Validators.required],

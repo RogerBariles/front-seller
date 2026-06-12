@@ -2,6 +2,10 @@
   display: grid;
   gap: 16px;
   margin-bottom: 16px;
+
+  mat-card-content {
+    padding: 16px;
+  }
 }
 
 @media (min-width: 900px) {
@@ -13,6 +17,15 @@
 .form-grid {
   display: grid;
   gap: 12px;
+}
+
+.form-grid-row {
+  display: flex;
+  gap: 10px;
+
+  mat-form-field {
+    width: 50%;
+  }
 }
 
 .actions, .bulk-form {

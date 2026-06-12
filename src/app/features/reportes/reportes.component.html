@@ -55,20 +55,20 @@
   @if (report) {
     <div class="card-grid summary">
       <mat-card>
-        <mat-card-content>
+        <mat-card-content class="card-content">
           <h3>Ventas</h3>
           <p class="big">{{ report.totalSalesCount }}</p>
         </mat-card-content>
       </mat-card>
       <mat-card>
-        <mat-card-content>
+        <mat-card-content class="card-content">
           <h3>Total vendido</h3>
           <p class="big">{{ report.totalAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
         </mat-card-content>
       </mat-card>
       @for (pm of paymentMethods; track pm) {
         <mat-card>
-          <mat-card-content>
+          <mat-card-content class="card-content">
             <h3>{{ paymentLabels[pm] }}</h3>
             <p class="big">{{ paymentAmount(pm) | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
           </mat-card-content>
@@ -84,7 +84,7 @@
             <td mat-cell *matCellDef="let s">{{ s.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
           </ng-container>
           <ng-container matColumnDef="seller">
-            <th mat-header-cell *matHeaderCellDef>Vendedora</th>
+            <th mat-header-cell *matHeaderCellDef>Vendedor/a</th>
             <td mat-cell *matCellDef="let s">{{ s.sellerName }}</td>
           </ng-container>
           <ng-container matColumnDef="payment">
@@ -95,6 +95,14 @@
                 ({{ s.installments }} cuotas)
               }
             </td>
+          </ng-container>
+          <ng-container matColumnDef="subtotal">
+            <th mat-header-cell *matHeaderCellDef>Sub-total</th>
+            <td mat-cell *matCellDef="let s">{{ s.subtotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="discount">
+            <th mat-header-cell *matHeaderCellDef>Descuento</th>
+            <td mat-cell *matCellDef="let s">{{ s.discountTotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
           </ng-container>
           <ng-container matColumnDef="total">
             <th mat-header-cell *matHeaderCellDef>Total</th>

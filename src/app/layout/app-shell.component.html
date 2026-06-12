@@ -3,8 +3,8 @@
     <mat-toolbar color="primary">Lo'Postigli</mat-toolbar>
     <mat-nav-list>
       @for (item of navItems(); track item.path) {
-        <a mat-list-item [routerLink]="item.path" routerLinkActive="active" (click)="drawer.close()">
-          {{ item.label }}
+        <a  class="nav-item" mat-list-item [routerLink]="item.path" routerLinkActive="active" (click)="drawer.close()">
+          <mat-icon>{{ item.icon }}</mat-icon> {{ item.label }}
         </a>
       }
     </mat-nav-list>
@@ -15,14 +15,18 @@
       <button mat-icon-button (click)="drawer.toggle()" aria-label="Menú">
         <mat-icon>menu</mat-icon>
       </button>
-      <span class="title">Lo'Postigli</span>
+      <span class="title">@if (user(); as u) {
+        @if (u.companyName) {
+          <span class="company-info hide-mobile">{{ u.companyName }}</span>
+        }
+      }</span>
       <span class="spacer"></span>
       @if (user(); as u) {
         @if (u.companyName) {
           <span class="company-info hide-mobile">{{ u.companyName }}</span>
         }
-        <span class="user-info hide-mobile">{{ u.name }}</span>
-        <button mat-button (click)="logout()">Salir</button>
+        <span class="user-info hide-mobile">{{ u.name }} <mat-icon>person</mat-icon></span>
+        <button mat-button (click)="logout()">Salir <mat-icon>logout</mat-icon></button>
       }
     </mat-toolbar>
     <main class="content">

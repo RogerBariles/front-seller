@@ -7,6 +7,10 @@
 
 .summary {
   margin-top: 16px;
+
+  .mat-mdc-card {
+    height: 85px;
+  }
 }
 
 .big {
@@ -17,4 +21,14 @@
 
 .table-card {
   margin-top: 16px;
+}
+
+.card-content {
+  height: 30px;
+
+  h3 {
+    font-size: 18px;
+    margin: 0;
+    margin-bottom: 10px;
+  }
 }
