@@ -1,5 +1,5 @@
 export type UserRole = 'SELLER' | 'ADMIN' | 'SUPER_ADMIN';
-export type ProductCategory = 'TORTAS' | 'TARTAS' | 'TARTINES' | 'POSTRES' | 'COTILLON';
+export type ProductCategory = 'TORTAS' | 'TARTAS' | 'TARTINES' | 'POSTRES' | 'COTILLON' | 'ALFAJORES';
 export type PaymentMethod = 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA';
 export type DiscountType = 'PERCENTAGE' | 'FIXED';
 export type PriceField = 'SALE' | 'PURCHASE' | 'BOTH';
@@ -142,7 +142,8 @@ export const CATEGORY_LABELS: Record<ProductCategory, string> = {
   TARTAS: 'Tartas',
   TARTINES: 'Tartines',
   COTILLON: 'Cotillón',
-  POSTRES: 'Postres'
+  POSTRES: 'Postres',
+  ALFAJORES: 'Alfajores'
 };
 
 export const PRICE_FIELD_LABELS: Record<PriceField, string> = {

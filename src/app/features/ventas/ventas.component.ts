@@ -87,10 +87,12 @@ export class VentasComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.loadProducts();
     this.checkSalesReadiness();
-    this.searchForm.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => {
-      this.loadProducts();
+    this.searchForm.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe((event) => {
+      if (event.q) {
+        event.q.length >= 2 && this.loadProducts();
+        event.q.length < 2 && this.products.set([]);
+      }
     });
   }
 
