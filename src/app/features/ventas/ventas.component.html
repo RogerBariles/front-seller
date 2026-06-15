@@ -2,12 +2,10 @@
   <h1>Ventas</h1>
 
   @if (!canSell()) {
-    <mat-card class="alert-card">
-      <mat-card-content>
-        {{ salesBlockMessage() }}
-        <button mat-button color="primary" (click)="goToCaja()">Ir a Caja y Turnos</button>
-      </mat-card-content>
-    </mat-card>
+    <div class="alert-card">
+      {{ salesBlockMessage() }}
+      <button mat-button color="primary" (click)="goToCaja()">Ir a Caja y Turnos</button>
+    </div>
   }
   <!--
   <mat-tab-group class="tabs-mobile">

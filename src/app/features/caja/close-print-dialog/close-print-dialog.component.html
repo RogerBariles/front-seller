@@ -37,6 +37,21 @@
       </section>
     }
 
+    @if (isShift && report.cashMovements?.length) {
+      <div class="receipt-divider"></div>
+      <section class="receipt-items">
+        <p class="receipt-section-title">Movimientos efectivo</p>
+        @for (m of report.cashMovements; track m.id) {
+          <p class="receipt-item">
+            <span>{{ movementLabels[m.type] }}: {{ m.detail }}</span>
+            <span>{{ m.type === 'WITHDRAWAL' ? '-' : '+' }}{{ m.amount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+          </p>
+        }
+        <p><span>INGRESOS</span><span>{{ report.cashIncome | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+        <p><span>RETIROS</span><span>{{ report.cashWithdrawal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+      </section>
+    }
+
     <div class="receipt-divider"></div>
 
     <section class="receipt-totals">

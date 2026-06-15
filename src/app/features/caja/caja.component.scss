@@ -20,3 +20,43 @@ h1 {
   color: #1565c0;
   font-size: 13px;
 }
+
+.movement-section {
+  margin: 16px 0;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.section-title {
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.movement-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.movement-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 16px;
+}
+
+.movement-list li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+}
+
+.movement-list li.withdrawal .movement-amount {
+  color: #c62828;
+}
+
+.movement-type {
+  font-weight: 500;
+}

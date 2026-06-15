@@ -6,9 +6,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../core/services/api.service';
-import { CashRegister, CloseReport, Shift } from '../../models';
+import { CashRegister, CloseReport, ShiftActive, CASH_MOVEMENT_LABELS } from '../../models';
 import { ClosePrintDialogComponent } from './close-print-dialog/close-print-dialog.component';
 
 @Component({
@@ -21,9 +22,10 @@ import { ClosePrintDialogComponent } from './close-print-dialog/close-print-dial
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
     MatButtonModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
   ],
   templateUrl: './caja.component.html',
   styleUrl: './caja.component.scss'
@@ -34,15 +36,24 @@ export class CajaComponent implements OnInit {
   private snack = inject(MatSnackBar);
   private dialog = inject(MatDialog);
 
+  readonly movementLabels = CASH_MOVEMENT_LABELS;
+  readonly movementTypes = ['INCOME', 'WITHDRAWAL'] as const;
+
   cashRegister: CashRegister | null = null;
   closedTodayCount = 0;
-  activeShift: Shift | null = null;
+  shiftActive: ShiftActive | null = null;
   lastReport: CloseReport | null = null;
   loading = false;
   loadError = false;
 
   openForm = this.fb.nonNullable.group({
     initialCash: [0, [Validators.required, Validators.min(0)]]
+  });
+
+  movementForm = this.fb.nonNullable.group({
+    type: ['INCOME' as const, Validators.required],
+    amount: [0, [Validators.required, Validators.min(0.01)]],
+    detail: ['', [Validators.required, Validators.maxLength(500)]]
   });
 
   ngOnInit(): void {
@@ -64,8 +75,8 @@ export class CajaComponent implements OnInit {
       }
     });
     this.api.getActiveShift().subscribe({
-      next: (shift) => this.activeShift = shift,
-      error: () => this.activeShift = null
+      next: (active) => this.shiftActive = active,
+      error: () => this.shiftActive = null
     });
   }
 
@@ -90,10 +101,10 @@ export class CajaComponent implements OnInit {
   startShift(): void {
     this.loading = true;
     this.api.startShift().subscribe({
-      next: (shift) => {
-        this.activeShift = shift;
+      next: () => {
         this.loading = false;
         this.snack.open('Turno iniciado. Ya puede vender.', 'Cerrar', { duration: 3000 });
+        this.refresh();
       },
       error: (err) => {
         this.loading = false;
@@ -102,16 +113,33 @@ export class CajaComponent implements OnInit {
     });
   }
 
-  closeShift(): void {
-    if (!this.activeShift) return;
+  addCashMovement(): void {
+    if (!this.shiftActive || this.movementForm.invalid) return;
     this.loading = true;
-    this.api.closeShift(this.activeShift.id).subscribe({
+    const shiftId = this.shiftActive.shift.id;
+    this.api.addShiftCashMovement(shiftId, this.movementForm.getRawValue()).subscribe({
+      next: () => {
+        this.loading = false;
+        this.movementForm.patchValue({ amount: 0, detail: '' });
+        this.snack.open('Movimiento registrado', 'Cerrar', { duration: 3000 });
+        this.refresh();
+      },
+      error: (err) => {
+        this.loading = false;
+        this.snack.open(err.error?.message || 'No se pudo registrar el movimiento', 'Cerrar', { duration: 4000 });
+      }
+    });
+  }
+
+  closeShift(): void {
+    if (!this.shiftActive) return;
+    this.loading = true;
+    this.api.closeShift(this.shiftActive.shift.id).subscribe({
       next: (report) => {
         this.lastReport = report;
-        this.activeShift = null;
+        this.shiftActive = null;
         this.loading = false;
         this.openClosePrintDialog(report);
-        //this.snack.open('Turno cerrado', 'Cerrar', { duration: 3000 });
       },
       error: (err) => {
         this.loading = false;
@@ -129,7 +157,6 @@ export class CajaComponent implements OnInit {
         this.cashRegister = { ...this.cashRegister!, status: 'CLOSED' };
         this.loading = false;
         this.openClosePrintDialog(report);
-        //this.snack.open('Caja cerrada', 'Cerrar', { duration: 3000 });
       },
       error: (err) => {
         this.loading = false;
@@ -144,6 +171,8 @@ export class CajaComponent implements OnInit {
       width: '270px',
       maxWidth: '95vw',
       panelClass: 'sale-print-dialog-panel'
+    }).afterClosed().subscribe(() => {
+      this.refresh();
     });
   }
 }

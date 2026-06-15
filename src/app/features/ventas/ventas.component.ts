@@ -102,7 +102,7 @@ export class VentasComponent implements OnInit {
       error: () => this.cashRegister.set(null)
     });
     this.api.getActiveShift().subscribe({
-      next: (shift) => this.activeShift.set(shift),
+      next: (active) => this.activeShift.set(active?.shift ?? null),
       error: () => this.activeShift.set(null)
     });
   }

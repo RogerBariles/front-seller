@@ -36,12 +36,12 @@
           <p><strong>Efectivo inicial:</strong> {{ cashRegister.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
           <p><strong>Abierta por:</strong> {{ cashRegister.openedByName }}</p>
           @if (cashRegister.status === 'OPEN') {
-            <button mat-stroked-button color="warn" (click)="closeCashRegister()" [disabled]="loading || !!activeShift">
-              Cerrar caja
-            </button>
-            @if (activeShift) {
+            @if (shiftActive) {
               <p class="hint">Cierre su turno antes de cerrar la caja.</p>
             } @else {
+              <button mat-stroked-button color="warn" (click)="closeCashRegister()" [disabled]="loading || !!shiftActive">
+                Cerrar caja
+              </button>
               <p class="info">Al cerrar esta caja podrá abrir otra nueva el mismo día.</p>
             }
           }
@@ -56,14 +56,56 @@
       <mat-card-content>
         @if (!cashRegister || cashRegister.status !== 'OPEN') {
           <p>Primero debe abrir la caja del día.</p>
-        } @else if (!activeShift) {
+        } @else if (!shiftActive) {
           <p>La caja está abierta. Inicie su turno para poder vender.</p>
           <button mat-flat-button color="primary" (click)="startShift()" [disabled]="loading">Iniciar turno</button>
         } @else {
-          <p><strong>Vendedora:</strong> {{ activeShift.sellerName }}</p>
-          <p><strong>Efectivo inicial (caja):</strong> {{ activeShift.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-          <p><strong>Inicio:</strong> {{ activeShift.startedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-          <button mat-stroked-button color="accent" (click)="closeShift()" [disabled]="loading">Cerrar turno</button>
+          <p><strong>Vendedora:</strong> {{ shiftActive.shift.sellerName }}</p>
+          <p><strong>Efectivo inicial (caja):</strong> {{ shiftActive.shift.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Ventas en efectivo:</strong> {{ shiftActive.cashSales | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Ingresos:</strong> {{ shiftActive.cashIncome | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Retiros:</strong> {{ shiftActive.cashWithdrawal | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Efectivo esperado:</strong> {{ shiftActive.expectedFinalCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Inicio:</strong> {{ shiftActive.shift.startedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+
+          <div class="movement-section">
+            <p class="section-title">Ingreso / retiro de efectivo</p>
+            <form [formGroup]="movementForm" (ngSubmit)="addCashMovement()" class="movement-form">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Tipo</mat-label>
+                <mat-select formControlName="type">
+                  @for (t of movementTypes; track t) {
+                    <mat-option [value]="t">{{ movementLabels[t] }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Monto</mat-label>
+                <input matInput type="number" formControlName="amount" step="0.01" min="0.01" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Detalle</mat-label>
+                <input matInput formControlName="detail" maxlength="500" />
+              </mat-form-field>
+              <button mat-flat-button color="primary" type="submit" [disabled]="loading || movementForm.invalid">
+                Registrar
+              </button>
+            </form>
+
+            @if (shiftActive.cashMovements.length > 0) {
+              <ul class="movement-list">
+                @for (m of shiftActive.cashMovements; track m.id) {
+                  <li [class.withdrawal]="m.type === 'WITHDRAWAL'">
+                    <span class="movement-type">{{ movementLabels[m.type] }}</span>
+                    <span class="movement-detail">{{ m.detail }}</span>
+                    <span class="movement-amount">{{ m.amount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+
+          <button mat-stroked-button color="warn" (click)="closeShift()" [disabled]="loading">Cerrar turno</button>
         }
       </mat-card-content>
     </mat-card>
@@ -77,6 +119,10 @@
       <mat-card-content>
         <p><strong>Efectivo inicial:</strong> {{ lastReport.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
         <p><strong>Monto final (efectivo):</strong> {{ lastReport.finalCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        @if (lastReport.cashIncome > 0 || lastReport.cashWithdrawal > 0) {
+          <p><strong>Ingresos:</strong> {{ lastReport.cashIncome | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Retiros:</strong> {{ lastReport.cashWithdrawal | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        }
         <p><strong>Cantidad de ventas:</strong> {{ lastReport.salesCount }}</p>
         <p><strong>Efectivo:</strong> {{ lastReport.paymentTotals.cash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
         <p><strong>Tarjeta:</strong> {{ lastReport.paymentTotals.card | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>

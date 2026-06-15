@@ -45,3 +45,10 @@
 .full-width {
   width: 100%;
 }
+
+.card-ventas {
+  &__header {
+    margin-bottom: 10px !important;
+  }
+
+}

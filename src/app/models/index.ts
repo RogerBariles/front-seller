@@ -61,6 +61,26 @@ export interface Shift {
   endedAt?: string;
 }
 
+export type CashMovementType = 'INCOME' | 'WITHDRAWAL';
+
+export interface ShiftCashMovement {
+  id: string;
+  type: CashMovementType;
+  amount: number;
+  detail: string;
+  createdByName: string;
+  createdAt: string;
+}
+
+export interface ShiftActive {
+  shift: Shift;
+  cashMovements: ShiftCashMovement[];
+  cashSales: number;
+  cashIncome: number;
+  cashWithdrawal: number;
+  expectedFinalCash: number;
+}
+
 export type CloseReportType = 'SHIFT' | 'CASH_REGISTER';
 
 export interface PaymentTotals {
@@ -86,6 +106,9 @@ export interface CloseReport {
   salesCount: number;
   totalSalesAmount: number;
   paymentTotals: PaymentTotals;
+  cashMovements: ShiftCashMovement[];
+  cashIncome: number;
+  cashWithdrawal: number;
 }
 
 export interface CartItem {
@@ -170,6 +193,11 @@ export const PRICE_FIELD_LABELS: Record<PriceField, string> = {
   SALE: 'Precio de venta',
   PURCHASE: 'Precio de compra',
   BOTH: 'Venta y compra'
+};
+
+export const CASH_MOVEMENT_LABELS: Record<CashMovementType, string> = {
+  INCOME: 'Ingreso',
+  WITHDRAWAL: 'Retiro'
 };
 
 export const PAYMENT_LABELS: Record<PaymentMethod, string> = {

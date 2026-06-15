@@ -1,5 +1,5 @@
 <mat-card>
-  <mat-card-header><mat-card-title>Buscar productos</mat-card-title></mat-card-header>
+  <mat-card-header class="header-card">Buscar productos</mat-card-header>
   <mat-card-content>
     <form [formGroup]="searchForm" class="search-row">
       <mat-form-field appearance="outline">
@@ -27,7 +27,7 @@
         <td mat-cell *matCellDef="let p">{{ p.price | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
       </ng-container>
       <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef></th>
+        <th mat-header-cell *matHeaderCellDef>Agregar</th>
         <td mat-cell *matCellDef="let p">
           <button mat-stroked-button color="primary" [disabled]="disabled" (click)="onAdd(p)">
             +

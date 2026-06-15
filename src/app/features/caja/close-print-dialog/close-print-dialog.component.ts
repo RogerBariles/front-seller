@@ -2,7 +2,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { CloseReport } from '../../../models';
+import { CASH_MOVEMENT_LABELS, CloseReport } from '../../../models';
 
 @Component({
   selector: 'app-close-print-dialog',
@@ -12,6 +12,8 @@ import { CloseReport } from '../../../models';
   styleUrl: './close-print-dialog.component.scss'
 })
 export class ClosePrintDialogComponent {
+  readonly movementLabels = CASH_MOVEMENT_LABELS;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) readonly report: CloseReport,
     private dialogRef: MatDialogRef<ClosePrintDialogComponent>

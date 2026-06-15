@@ -16,6 +16,9 @@ import {
   Sale,
   SalesReport,
   Shift,
+  ShiftActive,
+  CashMovementType,
+  ShiftCashMovement,
   User
 } from '../../models';
 
@@ -75,10 +78,17 @@ export class ApiService {
     return this.http.get<CashRegister[]>(`${this.baseUrl}/cash-registers/today/history`);
   }
 
-  getActiveShift(): Observable<Shift | null> {
+  getActiveShift(): Observable<ShiftActive | null> {
     return this.http
-      .get<Shift>(`${this.baseUrl}/shifts/active`, { observe: 'response' })
+      .get<ShiftActive>(`${this.baseUrl}/shifts/active`, { observe: 'response' })
       .pipe(map((res) => (res.status === 204 || res.body == null ? null : res.body)));
+  }
+
+  addShiftCashMovement(
+    shiftId: string,
+    body: { type: CashMovementType; amount: number; detail: string }
+  ): Observable<ShiftCashMovement> {
+    return this.http.post<ShiftCashMovement>(`${this.baseUrl}/shifts/${shiftId}/cash-movements`, body);
   }
 
   openCashRegister(initialCash: number): Observable<CashRegister> {
