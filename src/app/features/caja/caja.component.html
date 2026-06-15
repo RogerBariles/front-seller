@@ -16,7 +16,7 @@
         <mat-card-title>Caja del día</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        @if (!cashRegister) {
+        @if (!registerActive) {
           <p>No hay caja abierta en este momento.</p>
           @if (closedTodayCount > 0) {
             <p class="info">Hoy ya se cerraron {{ closedTodayCount }} caja(s). Puede abrir una nueva.</p>
@@ -31,11 +31,28 @@
             <button mat-flat-button color="primary" [disabled]="loading || openForm.invalid">Abrir caja</button>
           </form>
         } @else {
-          <p><strong>Fecha:</strong> {{ cashRegister.businessDate | date:'dd/MM/yyyy' }}</p>
-          <p><strong>Estado:</strong> {{ cashRegister.status === 'OPEN' ? 'Abierta' : 'Cerrada' }}</p>
-          <p><strong>Efectivo inicial:</strong> {{ cashRegister.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-          <p><strong>Abierta por:</strong> {{ cashRegister.openedByName }}</p>
-          @if (cashRegister.status === 'OPEN') {
+          <p><strong>Fecha:</strong> {{ registerActive.cashRegister.businessDate | date:'dd/MM/yyyy' }}</p>
+          <p><strong>Estado:</strong> {{ registerActive.cashRegister.status === 'OPEN' ? 'Abierta' : 'Cerrada' }}</p>
+          <p><strong>Efectivo inicial:</strong> {{ registerActive.cashRegister.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Ventas en efectivo:</strong> {{ registerActive.cashSales | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Ingresos:</strong> {{ registerActive.cashIncome | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Retiros:</strong> {{ registerActive.cashWithdrawal | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Efectivo esperado:</strong> {{ registerActive.expectedFinalCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Abierta por:</strong> {{ registerActive.cashRegister.openedByName }}</p>
+
+          @if (registerActive.cashMovements.length > 0) {
+            <ul class="movement-list">
+              @for (m of registerActive.cashMovements; track m.id) {
+                <li [class.withdrawal]="m.type === 'WITHDRAWAL'">
+                  <span class="movement-type">{{ movementLabels[m.type] }}</span>
+                  <span class="movement-detail">{{ m.detail }}</span>
+                  <span class="movement-amount">{{ m.amount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+                </li>
+              }
+            </ul>
+          }
+
+          @if (registerActive.cashRegister.status === 'OPEN') {
             @if (shiftActive) {
               <p class="hint">Cierre su turno antes de cerrar la caja.</p>
             } @else {
@@ -54,7 +71,7 @@
         <mat-card-title>Turno actual</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        @if (!cashRegister || cashRegister.status !== 'OPEN') {
+        @if (!registerActive || registerActive.cashRegister.status !== 'OPEN') {
           <p>Primero debe abrir la caja del día.</p>
         } @else if (!shiftActive) {
           <p>La caja está abierta. Inicie su turno para poder vender.</p>

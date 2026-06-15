@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../core/services/api.service';
-import { CashRegister, CloseReport, ShiftActive, CASH_MOVEMENT_LABELS } from '../../models';
+import { CashRegisterActive, CloseReport, ShiftActive, CASH_MOVEMENT_LABELS } from '../../models';
 import { ClosePrintDialogComponent } from './close-print-dialog/close-print-dialog.component';
 
 @Component({
@@ -39,7 +39,7 @@ export class CajaComponent implements OnInit {
   readonly movementLabels = CASH_MOVEMENT_LABELS;
   readonly movementTypes = ['INCOME', 'WITHDRAWAL'] as const;
 
-  cashRegister: CashRegister | null = null;
+  registerActive: CashRegisterActive | null = null;
   closedTodayCount = 0;
   shiftActive: ShiftActive | null = null;
   lastReport: CloseReport | null = null;
@@ -63,9 +63,9 @@ export class CajaComponent implements OnInit {
   refresh(): void {
     this.loadError = false;
     this.api.getTodayCashRegister().subscribe({
-      next: (cr) => this.cashRegister = cr,
+      next: (active) => this.registerActive = active,
       error: () => {
-        this.cashRegister = null;
+        this.registerActive = null;
         this.loadError = true;
       }
     });
@@ -84,10 +84,10 @@ export class CajaComponent implements OnInit {
     if (this.openForm.invalid) return;
     this.loading = true;
     this.api.openCashRegister(this.openForm.getRawValue().initialCash).subscribe({
-      next: (cr) => {
-        this.cashRegister = cr;
+      next: () => {
         this.loading = false;
         this.snack.open('Caja abierta correctamente', 'Cerrar', { duration: 3000 });
+        this.refresh();
       },
       error: (err) => {
         this.loading = false;
@@ -149,12 +149,15 @@ export class CajaComponent implements OnInit {
   }
 
   closeCashRegister(): void {
-    if (!this.cashRegister) return;
+    if (!this.registerActive) return;
     this.loading = true;
-    this.api.closeCashRegister(this.cashRegister.id).subscribe({
+    this.api.closeCashRegister(this.registerActive.cashRegister.id).subscribe({
       next: (report) => {
         this.lastReport = report;
-        this.cashRegister = { ...this.cashRegister!, status: 'CLOSED' };
+        this.registerActive = {
+          ...this.registerActive!,
+          cashRegister: { ...this.registerActive!.cashRegister, status: 'CLOSED' }
+        };
         this.loading = false;
         this.openClosePrintDialog(report);
       },

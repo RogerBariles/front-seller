@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import {
   AuthResponse,
   CashRegister,
+  CashRegisterActive,
   CloseReport,
   Company,
   CreateSaleRequest,
@@ -68,9 +69,9 @@ export class ApiService {
     return this.http.put<User>(`${this.baseUrl}/users/${id}`, body);
   }
 
-  getTodayCashRegister(): Observable<CashRegister | null> {
+  getTodayCashRegister(): Observable<CashRegisterActive | null> {
     return this.http
-      .get<CashRegister>(`${this.baseUrl}/cash-registers/today`, { observe: 'response' })
+      .get<CashRegisterActive>(`${this.baseUrl}/cash-registers/today`, { observe: 'response' })
       .pipe(map((res) => (res.status === 204 || res.body == null ? null : res.body)));
   }
 

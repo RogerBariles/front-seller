@@ -50,6 +50,15 @@ export interface CashRegister {
   closedAt?: string;
 }
 
+export interface CashRegisterActive {
+  cashRegister: CashRegister;
+  cashMovements: ShiftCashMovement[];
+  cashSales: number;
+  cashIncome: number;
+  cashWithdrawal: number;
+  expectedFinalCash: number;
+}
+
 export interface Shift {
   id: string;
   cashRegisterId: string;

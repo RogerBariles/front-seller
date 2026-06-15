@@ -98,7 +98,7 @@ export class VentasComponent implements OnInit {
 
   checkSalesReadiness(): void {
     this.api.getTodayCashRegister().subscribe({
-      next: (cr) => this.cashRegister.set(cr),
+      next: (active) => this.cashRegister.set(active?.cashRegister ?? null),
       error: () => this.cashRegister.set(null)
     });
     this.api.getActiveShift().subscribe({
