@@ -37,7 +37,7 @@
       </section>
     }
 
-    @if (isShift && report.cashMovements?.length) {
+    @if (isShift && report.cashMovements && report.cashMovements.length) {
       <div class="receipt-divider"></div>
       <section class="receipt-items">
         <p class="receipt-section-title">Movimientos efectivo</p>
