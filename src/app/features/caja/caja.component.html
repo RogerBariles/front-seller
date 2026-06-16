@@ -78,7 +78,7 @@
           <button mat-flat-button color="primary" (click)="startShift()" [disabled]="loading">Iniciar turno</button>
         } @else {
           <p><strong>Vendedora:</strong> {{ shiftActive.shift.sellerName }}</p>
-          <p><strong>Efectivo inicial (caja):</strong> {{ shiftActive.shift.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          <p><strong>Efectivo inicial del turno:</strong> {{ shiftActive.shift.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
           <p><strong>Ventas en efectivo:</strong> {{ shiftActive.cashSales | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
           <p><strong>Ingresos:</strong> {{ shiftActive.cashIncome | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
           <p><strong>Retiros:</strong> {{ shiftActive.cashWithdrawal | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
