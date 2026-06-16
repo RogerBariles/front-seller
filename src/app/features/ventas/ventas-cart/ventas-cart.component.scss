@@ -12,6 +12,7 @@
   gap: 12px;
   align-items: center;
   flex-wrap: wrap;
+  align-items: flex-start;
 }
 
 .cart-item-header {
@@ -35,6 +36,80 @@
 
 .checkout-form {
   margin-top: 12px;
+}
+
+.total-row {
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.manual-total-field {
+  width: 100%;
+  max-width: 220px;
+}
+
+.manual-adjust {
+  color: #c62828;
+  font-size: 14px;
+  margin: 4px 0 0;
+
+  &.surcharge {
+    color: #2e7d32;
+  }
+}
+
+.cash-calculator {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px dashed #bdbdbd;
+  border-radius: 8px;
+  background: #fafafa;
+
+  &__title {
+    margin: 0 0 15px;
+    font-weight: 500;
+    font-size: 13px;
+  }
+}
+
+.change-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 120px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #e8f5e9;
+
+  &.insufficient {
+    background: #ffebee;
+  }
+}
+
+.change-label {
+  font-size: 12px;
+  color: #616161;
+}
+
+.change-amount {
+  font-size: 20px;
+  color: #2e7d32;
+}
+
+.change-box.insufficient .change-amount {
+  color: #c62828;
+}
+
+.cash-hint {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #c62828;
+}
+
+mat-slide-toggle {
+  display: block;
+  margin: 12px 0;
 }
 
 .actions {

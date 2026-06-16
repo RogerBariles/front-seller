@@ -60,7 +60,10 @@ export class VentasComponent implements OnInit {
     paymentMethod: ['EFECTIVO' as PaymentMethod, Validators.required],
     installments: [1, [Validators.min(1)]],
     totalDiscountType: ['' as DiscountType | ''],
-    totalDiscountValue: [0, [Validators.min(0)]]
+    totalDiscountValue: [0, [Validators.min(0)]],
+    manualTotalEnabled: [false],
+    manualTotal: [0, [Validators.min(0.01)]],
+    amountReceived: [0, [Validators.min(0)]]
   });
 
   canSell = computed(() =>
@@ -165,7 +168,10 @@ export class VentasComponent implements OnInit {
       paymentMethod: 'EFECTIVO',
       installments: 1,
       totalDiscountType: '',
-      totalDiscountValue: 0
+      totalDiscountValue: 0,
+      manualTotalEnabled: false,
+      manualTotal: 0,
+      amountReceived: 0
     });
   }
 
@@ -202,7 +208,21 @@ export class VentasComponent implements OnInit {
       return;
     }
 
-    const totalDiscount = this.normalizeTotalDiscount(checkout.totalDiscountType, checkout.totalDiscountValue);
+    const requiredTotal = checkout.manualTotalEnabled && checkout.manualTotal > 0
+      ? checkout.manualTotal
+      : this.computeEstimatedTotal();
+
+    if (checkout.paymentMethod === 'EFECTIVO') {
+      if (!checkout.amountReceived || checkout.amountReceived < requiredTotal) {
+        this.snack.open('El efectivo recibido debe cubrir el total', 'Cerrar', { duration: 3000 });
+        return;
+      }
+    }
+
+    const useManualTotal = checkout.manualTotalEnabled && checkout.manualTotal > 0;
+    const totalDiscount = useManualTotal
+      ? {}
+      : this.normalizeTotalDiscount(checkout.totalDiscountType, checkout.totalDiscountValue);
 
     this.loading = true;
     this.api.createSale({
@@ -216,7 +236,8 @@ export class VentasComponent implements OnInit {
       }),
       paymentMethod: checkout.paymentMethod,
       installments: checkout.paymentMethod === 'TARJETA' ? checkout.installments : undefined,
-      ...totalDiscount
+      ...totalDiscount,
+      ...(useManualTotal ? { manualTotal: checkout.manualTotal } : {})
     }).subscribe({
       next: (sale) => {
         this.loading = false;
@@ -252,5 +273,31 @@ export class VentasComponent implements OnInit {
       return {};
     }
     return { totalDiscountType: type, totalDiscountValue: value };
+  }
+
+  private computeEstimatedTotal(): number {
+    const checkout = this.checkoutForm.getRawValue();
+    const lineDiscountTotal = this.cart().reduce((sum, item) => {
+      const line = item.product.price * item.quantity;
+      return sum + this.applyDiscount(line, item.discountType, item.discountValue);
+    }, 0);
+    const afterLineDiscounts = this.subtotal() - lineDiscountTotal;
+    const totalDiscount = this.applyDiscount(
+      afterLineDiscounts,
+      checkout.totalDiscountType || undefined,
+      checkout.totalDiscountValue > 0 ? checkout.totalDiscountValue : undefined
+    );
+    return Math.round((afterLineDiscounts - totalDiscount) * 100) / 100;
+  }
+
+  private applyDiscount(amount: number, type?: DiscountType, value?: number): number {
+    if (!type || !value || value <= 0) return 0;
+    if (type === 'PERCENTAGE') {
+      return Math.round(amount * value) / 100;
+    }
+    if (type === 'PERCENTAGE_EXTRA') {
+      return -Math.round(amount * value) / 100;
+    }
+    return Math.min(value, amount);
   }
 }

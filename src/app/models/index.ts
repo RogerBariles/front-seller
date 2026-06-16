@@ -140,6 +140,7 @@ export interface CreateSaleRequest {
   installments?: number;
   totalDiscountType?: DiscountType;
   totalDiscountValue?: number;
+  manualTotal?: number;
 }
 
 export interface Sale {
