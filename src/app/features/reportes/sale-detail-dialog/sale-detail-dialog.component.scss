@@ -1,0 +1,36 @@
+.meta {
+  margin-bottom: 16px;
+
+  p {
+    margin: 4px 0;
+  }
+}
+
+.items-table {
+  margin-bottom: 16px;
+}
+
+.totals {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 12px;
+
+  p {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+  }
+
+  .grand {
+    font-weight: 600;
+    font-size: 16px;
+  }
+}
+
+.profit {
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+mat-dialog-content {
+  min-width: min(720px, 90vw);
+}

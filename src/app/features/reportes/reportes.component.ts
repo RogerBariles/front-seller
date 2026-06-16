@@ -8,8 +8,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { ApiService } from '../../core/services/api.service';
-import { Company, PAYMENT_LABELS, PaymentMethod, SalesReport, User } from '../../models';
+import { Company, PAYMENT_LABELS, PaymentMethod, Sale, SalesReport, User } from '../../models';
+import { SaleDetailDialogComponent } from './sale-detail-dialog/sale-detail-dialog.component';
 
 @Component({
   selector: 'app-reportes',
@@ -24,7 +27,9 @@ import { Company, PAYMENT_LABELS, PaymentMethod, SalesReport, User } from '../..
     MatSelectModule,
     MatButtonModule,
     MatTableModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatDialogModule,
+    MatIconModule
   ],
   templateUrl: './reportes.component.html',
   styleUrl: './reportes.component.scss'
@@ -33,6 +38,7 @@ export class ReportesComponent implements OnInit {
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
   private snack = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
 
   sellers: User[] = [];
   companies: Company[] = [];
@@ -41,7 +47,7 @@ export class ReportesComponent implements OnInit {
 
   readonly paymentMethods = Object.keys(PAYMENT_LABELS) as PaymentMethod[];
   readonly paymentLabels = PAYMENT_LABELS;
-  displayedColumns = ['date', 'seller', 'payment', 'subtotal', 'discount', 'total', 'cost', 'profit'];
+  displayedColumns = ['date', 'seller', 'payment', 'subtotal', 'discount', 'total', 'cost', 'profit', 'actions'];
 
   form = this.fb.nonNullable.group({
     fromDate: [new Date().toISOString().slice(0, 10), Validators.required],
@@ -68,6 +74,14 @@ export class ReportesComponent implements OnInit {
 
   paymentAmount(method: PaymentMethod): number {
     return this.report?.amountByPaymentMethod?.[method] ?? 0;
+  }
+
+  openSaleDetail(sale: Sale): void {
+    this.dialog.open(SaleDetailDialogComponent, {
+      data: sale,
+      width: '760px',
+      maxWidth: '95vw'
+    });
   }
 
   search(): void {
