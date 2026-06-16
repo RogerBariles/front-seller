@@ -153,6 +153,8 @@ export interface Sale {
   total: number;
   totalDiscountType?: DiscountType;
   totalDiscountValue?: number;
+  costTotal: number;
+  profit: number;
   createdAt: string;
   items: SaleItem[];
 }
@@ -162,16 +164,22 @@ export interface SaleItem {
   productName: string;
   quantity: number;
   unitPrice: number;
+  unitPurchasePrice: number;
+  unitRealPrice: number;
   discountType?: DiscountType;
   discountValue?: number;
   lineSubtotal: number;
   lineDiscount: number;
   lineTotal: number;
+  lineCost: number;
+  lineProfit: number;
 }
 
 export interface SalesReport {
   totalSalesCount: number;
   totalAmount: number;
+  totalCost: number;
+  totalProfit: number;
   amountByPaymentMethod: Record<PaymentMethod, number>;
   sales: Sale[];
 }
