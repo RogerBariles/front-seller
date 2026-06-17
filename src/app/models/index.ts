@@ -1,6 +1,6 @@
 export type UserRole = 'SELLER' | 'ADMIN' | 'SUPER_ADMIN';
 export type ProductCategory = 'TORTAS' | 'TARTAS' | 'TARTINES' | 'POSTRES' | 'COTILLON' | 'ALFAJORES';
-export type PaymentMethod = 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA';
+export type PaymentMethod = 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA' | 'PEDIDOSYA' | 'DEBITO' | 'QR';
 export type DiscountType = 'PERCENTAGE' | 'FIXED' | 'PERCENTAGE_EXTRA';
 export type PriceField = 'SALE' | 'PURCHASE' | 'BOTH';
 export type CashRegisterStatus = 'OPEN' | 'CLOSED';
@@ -221,7 +221,10 @@ export const CASH_MOVEMENT_LABELS: Record<CashMovementType, string> = {
 export const PAYMENT_LABELS: Record<PaymentMethod, string> = {
   EFECTIVO: 'Efectivo',
   TARJETA: 'Tarjeta',
-  TRANSFERENCIA: 'Transferencia'
+  TRANSFERENCIA: 'Transferencia',
+  PEDIDOSYA: 'Pedidos Ya',
+  DEBITO: 'Débito',
+  QR: 'QR'
 };
 
 export const ROLE_LABELS: Record<UserRole, string> = {

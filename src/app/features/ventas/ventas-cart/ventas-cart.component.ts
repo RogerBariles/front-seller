@@ -47,11 +47,6 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
   private formSub?: Subscription;
 
   ngOnInit(): void {
-    this.formSub = this.checkoutForm.valueChanges.subscribe(() => {
-      if (this.isCash && !this.checkoutForm.getRawValue().manualTotalEnabled) {
-        this.syncAmountReceived();
-      }
-    });
     if (this.isCash) {
       this.syncAmountReceived();
     }
@@ -134,8 +129,13 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onPaymentMethodChange(): void {
+    this.checkoutForm.patchValue({ totalDiscountType: '', totalDiscountValue: 0 }, { emitEvent: false });
     if (this.isCash) {
       this.syncAmountReceived();
+    }
+    if (this.checkoutForm.value.paymentMethod === 'PEDIDOSYA') {
+      this.checkoutForm.patchValue({ totalDiscountType: 'PERCENTAGE' });
+      this.checkoutForm.patchValue({ totalDiscountValue: 9.5 });
     }
   }
 
@@ -156,5 +156,19 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
       return -Math.round(amount * value) / 100;
     }
     return Math.min(value, amount);
+  }
+
+  isAvailableTypeByPaymentMethod(type: string): boolean {
+    if (type == 'DISCOUNT') {
+      const notAvailablePaymentMethods = ['PEDIDOSYA', 'DEBITO', 'QR'];
+      return !notAvailablePaymentMethods.includes(this.checkoutForm.value.paymentMethod);
+    }
+
+    if (type == 'MANUAL_TOTAL') {
+      const notAvailablePaymentMethods = ['PEDIDOSYA', 'DEBITO', 'QR'];
+      return !notAvailablePaymentMethods.includes(this.checkoutForm.value.paymentMethod);
+    }
+
+    return true;
   }
 }
