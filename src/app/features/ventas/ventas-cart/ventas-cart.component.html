@@ -55,12 +55,6 @@
               <input matInput type="number" formControlName="manualTotal" step="0.01" min="0.01"
                 [disabled]="disabled" (change)="syncAmountReceived()" />
             </mat-form-field>
-            @if (manualAdjustment !== 0) {
-              <p class="manual-adjust" [class.surcharge]="manualAdjustment < 0">
-                Ajuste por redondeo:
-                {{ manualAdjustment > 0 ? '-' : '+' }}{{ Math.abs(manualAdjustment) | currency:'ARS':'symbol-narrow':'1.2-2' }}
-              </p>
-            }
           }
           @if (isAvailableTypeByPaymentMethod('MANUAL_TOTAL')) {
             <mat-slide-toggle
@@ -88,7 +82,7 @@
           </mat-form-field>
         }
 
-        @if (!checkoutForm.value.manualTotalEnabled && isAvailableTypeByPaymentMethod('DISCOUNT')) {
+        @if (isAvailableTypeByPaymentMethod('DISCOUNT')) {
           <div class="cart-item-row">
             <mat-form-field appearance="outline" [style.width]="'170px'">
               <mat-label>Descuento total</mat-label>
