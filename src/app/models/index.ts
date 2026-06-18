@@ -96,6 +96,9 @@ export interface PaymentTotals {
   cash: number;
   card: number;
   transfer: number;
+  pedidosYa: number;
+  debito: number;
+  qr: number;
 }
 
 export interface CloseReport {

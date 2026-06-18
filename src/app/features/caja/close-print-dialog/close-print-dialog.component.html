@@ -61,9 +61,12 @@
         <div class="receipt-divider"></div>
       }
       <p><span>VENTAS</span><span>{{ report.salesCount }}</span></p>
-      <p><span>EFECT.</span><span>{{ report.paymentTotals.cash | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
-      <p><span>TARJ.</span><span>{{ report.paymentTotals.card | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
-      <p><span>TRANSF.</span><span>{{ report.paymentTotals.transfer | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+      @for (pm of paymentMethods; track pm) {
+        <p>
+          <span>{{ receiptPaymentLabels[pm] }}</span>
+          <span>{{ paymentAmount(pm) | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+        </p>
+      }
       <p class="grand-total">
         <span>TOTAL:</span>
         <span>{{ report.totalSalesAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
