@@ -141,6 +141,7 @@ export interface CreateSaleRequest {
   totalDiscountType?: DiscountType;
   totalDiscountValue?: number;
   manualTotal?: number;
+  cashAmount?: number;
 }
 
 export interface Sale {
@@ -152,6 +153,7 @@ export interface Sale {
   subtotal: number;
   discountTotal: number;
   total: number;
+  cashAmount?: number;
   totalDiscountType?: DiscountType;
   totalDiscountValue?: number;
   costTotal: number;

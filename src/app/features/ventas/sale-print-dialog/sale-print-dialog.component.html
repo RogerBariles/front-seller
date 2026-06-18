@@ -13,12 +13,23 @@
       <p>
         <span>PAGO</span>
         <span>
-          {{ paymentLabels[sale.paymentMethod] }}
+          @if (hasPartialCash) {
+            Mixto
+          } @else {
+            {{ paymentLabels[sale.paymentMethod] }}
+          }
           @if (sale.paymentMethod === 'TARJETA' && sale.installments) {
             ({{ sale.installments }} cuotas)
           }
         </span>
       </p>
+      @if (hasPartialCash) {
+        <p><span>EFECTIVO</span><span>{{ sale.cashAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+        <p>
+          <span>{{ paymentLabels[sale.paymentMethod] }}</span>
+          <span>{{ otherPaymentAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+        </p>
+      }
     </section>
 
     <div class="receipt-divider"></div>

@@ -39,11 +39,64 @@
 
       <form [formGroup]="checkoutForm" class="checkout-form" (ngSubmit)="$event.preventDefault()">
         <p class="subtotal">Subtotal: {{ subtotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        @if (hasDiscounts && (totalDiscountAmount > 0 || lineDiscountTotal > 0)) {
-          <p class="discount">Descuentos: -{{ (lineDiscountTotal + totalDiscountAmount) | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        @if (lineDiscountTotal > 0) {
+          <p class="discount">Descuentos por ítem: -{{ lineDiscountTotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
         }
-        @if (hasDiscounts && totalDiscountAmount < 0) {
-          <p class="discount-extra">Recargo: {{ Math.abs(lineDiscountTotal + totalDiscountAmount) | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        <p class="subtotal">Después de ítems: {{ afterLineDiscounts | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+
+        <mat-form-field appearance="outline" class="full-width" [style.width]="'170px'">
+          <mat-label>Método de pago</mat-label>
+          <mat-select formControlName="paymentMethod" (selectionChange)="onPaymentMethodChange()">
+            @for (pm of paymentMethods; track pm) {
+              <mat-option [value]="pm">{{ paymentLabels[pm] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        @if (checkoutForm.value.paymentMethod === 'TARJETA') {
+          <mat-form-field appearance="outline" class="full-width" [style.width]="'80px'">
+            <mat-label>Cuotas</mat-label>
+            <input matInput type="number" formControlName="installments" />
+          </mat-form-field>
+        }
+
+        @if (allowsPartialCash) {
+          <mat-form-field appearance="outline" class="partial-cash-field">
+            <mat-label>Parte en efectivo</mat-label>
+            <input matInput type="number" formControlName="cashAmount" step="0.01" min="0"
+              [max]="afterLineDiscounts" [disabled]="disabled" (change)="onCashAmountChange()" />
+          </mat-form-field>
+          @if (partialCashAmount > 0) {
+            <p class="split-payment">
+              Saldo para {{ paymentLabels[checkoutForm.value.paymentMethod] }}:
+              {{ discountBase | currency:'ARS':'symbol-narrow':'1.2-2' }} (antes de desc./recargo)
+            </p>
+          }
+        }
+
+        @if (isAvailableTypeByPaymentMethod('DISCOUNT')) {
+          <div class="cart-item-row">
+            <mat-form-field appearance="outline" [style.width]="'170px'">
+              <mat-label>Descuento / recargo total</mat-label>
+              <mat-select formControlName="totalDiscountType">
+                @if (checkoutForm.value.paymentMethod === 'TARJETA') {
+                  <mat-option default value="PERCENTAGE_EXTRA">Recargo</mat-option>
+                } @else {
+                  <mat-option default value="">Sin descuento</mat-option>
+                  <mat-option value="PERCENTAGE">Porcentaje</mat-option>
+                  <mat-option value="FIXED">Monto fijo</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Valor</mat-label>
+              <input matInput type="number" formControlName="totalDiscountValue"
+                [disabled]="!checkoutForm.value.totalDiscountType" />
+            </mat-form-field>
+          </div>
+          @if (partialCashAmount > 0 && checkoutForm.value.totalDiscountType) {
+            <p class="discount-note">Se aplica sobre {{ discountBase | currency:'ARS':'symbol-narrow':'1.2-2' }} (sin el efectivo).</p>
+          }
         }
 
         <div class="total-row">
@@ -66,43 +119,12 @@
           }
         </div>
 
-        <mat-form-field appearance="outline" class="full-width" [style.width]="'170px'">
-          <mat-label>Método de pago</mat-label>
-          <mat-select formControlName="paymentMethod" (selectionChange)="onPaymentMethodChange()">
-            @for (pm of paymentMethods; track pm) {
-              <mat-option [value]="pm">{{ paymentLabels[pm] }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
-        @if (checkoutForm.value.paymentMethod === 'TARJETA') {
-          <mat-form-field appearance="outline" class="full-width" [style.width]="'80px'">
-            <mat-label>Cuotas</mat-label>
-            <input matInput type="number" formControlName="installments" />
-          </mat-form-field>
-        }
-
-        @if (isAvailableTypeByPaymentMethod('DISCOUNT')) {
-          <div class="cart-item-row">
-            <mat-form-field appearance="outline" [style.width]="'170px'">
-              <mat-label>Descuento total</mat-label>
-              <mat-select formControlName="totalDiscountType">
-                @if (checkoutForm.value.paymentMethod === 'TARJETA') {
-                  <mat-option default value="PERCENTAGE_EXTRA">Recargo</mat-option>
-                }
-                @else {
-                  <mat-option default value="">Sin descuento</mat-option>
-                  <mat-option value="PERCENTAGE">Porcentaje</mat-option>
-                  <mat-option value="FIXED">Monto fijo</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Valor</mat-label>
-              <input matInput type="number" formControlName="totalDiscountValue"
-                [disabled]="!checkoutForm.value.totalDiscountType" />
-            </mat-form-field>
-          </div>
+        @if (partialCashAmount > 0 && !isCash) {
+          <p class="split-payment">
+            {{ paymentLabels[checkoutForm.value.paymentMethod] }}:
+            {{ otherPaymentAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}
+            · Efectivo: {{ partialCashAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}
+          </p>
         }
 
         @if (isCash) {

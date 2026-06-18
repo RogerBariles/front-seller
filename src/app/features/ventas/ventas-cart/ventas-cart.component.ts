@@ -11,6 +11,8 @@ import { CartItem, DiscountType, PAYMENT_LABELS, PaymentMethod } from '../../../
 import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
 
+const PAYMENTS_WITHOUT_PARTIAL_CASH: PaymentMethod[] = ['EFECTIVO', 'PEDIDOSYA'];
+
 @Component({
   selector: 'app-ventas-cart',
   standalone: true,
@@ -42,7 +44,7 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
   @Output() confirmSale = new EventEmitter<void>();
 
   readonly paymentMethods = Object.keys(PAYMENT_LABELS) as PaymentMethod[];
-  readonly paymentLabels = PAYMENT_LABELS;
+  readonly paymentLabels: any = PAYMENT_LABELS;
   Math = Math;
   private formSub?: Subscription;
 
@@ -72,18 +74,35 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get afterLineDiscounts(): number {
-    return this.subtotal - this.lineDiscountTotal;
+    return Math.round((this.subtotal - this.lineDiscountTotal) * 100) / 100;
+  }
+
+  get allowsPartialCash(): boolean {
+    const checkout = this.checkoutForm.getRawValue();
+    return !checkout.manualTotalEnabled
+      && !PAYMENTS_WITHOUT_PARTIAL_CASH.includes(checkout.paymentMethod);
+  }
+
+  get partialCashAmount(): number {
+    if (!this.allowsPartialCash) return 0;
+    return Math.max(0, this.checkoutForm.getRawValue().cashAmount ?? 0);
+  }
+
+  /** Base para descuento/recargo total: subtotal después de ítems menos efectivo parcial. */
+  get discountBase(): number {
+    return Math.round((this.afterLineDiscounts - this.partialCashAmount) * 100) / 100;
   }
 
   get totalDiscountAmount(): number {
     const checkout = this.checkoutForm.getRawValue();
+    if (checkout.manualTotalEnabled) return 0;
     const type = checkout.totalDiscountType || undefined;
     const value = checkout.totalDiscountValue > 0 ? checkout.totalDiscountValue : undefined;
-    return this.applyDiscount(this.afterLineDiscounts, type, value);
+    return this.applyDiscount(this.discountBase, type, value);
   }
 
   get estimatedTotal(): number {
-    return Math.round((this.afterLineDiscounts - this.totalDiscountAmount) * 100) / 100;
+    return Math.round((this.partialCashAmount + this.discountBase - this.totalDiscountAmount) * 100) / 100;
   }
 
   get finalTotal(): number {
@@ -96,6 +115,11 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
 
   get isCash(): boolean {
     return this.checkoutForm.getRawValue().paymentMethod === 'EFECTIVO';
+  }
+
+  get otherPaymentAmount(): number {
+    if (this.isCash) return 0;
+    return Math.round((this.finalTotal - this.partialCashAmount) * 100) / 100;
   }
 
   get changeAmount(): number {
@@ -120,7 +144,8 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
         manualTotalEnabled: true,
         manualTotal: this.estimatedTotal,
         totalDiscountType: '',
-        totalDiscountValue: 0
+        totalDiscountValue: 0,
+        cashAmount: 0
       });
     } else {
       this.checkoutForm.patchValue({ manualTotalEnabled: false });
@@ -129,13 +154,23 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onPaymentMethodChange(): void {
-    this.checkoutForm.patchValue({ totalDiscountType: '', totalDiscountValue: 0 }, { emitEvent: false });
+    this.checkoutForm.patchValue({
+      totalDiscountType: '',
+      totalDiscountValue: 0,
+      cashAmount: 0
+    }, { emitEvent: false });
     if (this.isCash) {
       this.syncAmountReceived();
     }
     if (this.checkoutForm.value.paymentMethod === 'PEDIDOSYA') {
-      this.checkoutForm.patchValue({ totalDiscountType: 'PERCENTAGE' });
-      this.checkoutForm.patchValue({ totalDiscountValue: 9.5 });
+      this.checkoutForm.patchValue({ totalDiscountType: 'PERCENTAGE', totalDiscountValue: 9.5 });
+    }
+  }
+
+  onCashAmountChange(): void {
+    const cashAmount = this.checkoutForm.getRawValue().cashAmount ?? 0;
+    if (cashAmount > this.afterLineDiscounts) {
+      this.checkoutForm.patchValue({ cashAmount: this.afterLineDiscounts });
     }
   }
 
@@ -159,12 +194,12 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   isAvailableTypeByPaymentMethod(type: string): boolean {
-    if (type == 'DISCOUNT') {
+    if (type === 'DISCOUNT') {
       const notAvailablePaymentMethods = ['PEDIDOSYA', 'DEBITO', 'QR'];
       return !notAvailablePaymentMethods.includes(this.checkoutForm.value.paymentMethod);
     }
 
-    if (type == 'MANUAL_TOTAL') {
+    if (type === 'MANUAL_TOTAL') {
       const notAvailablePaymentMethods = ['PEDIDOSYA', 'DEBITO', 'QR'];
       return !notAvailablePaymentMethods.includes(this.checkoutForm.value.paymentMethod);
     }

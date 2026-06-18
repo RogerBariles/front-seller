@@ -11,6 +11,7 @@ import { ApiService } from '../../core/services/api.service';
 import {
   CartItem,
   CashRegister,
+  CreateSaleRequest,
   DiscountType,
   PaymentMethod,
   Product,
@@ -63,6 +64,7 @@ export class VentasComponent implements OnInit {
     totalDiscountValue: [0, [Validators.min(0)]],
     manualTotalEnabled: [false],
     manualTotal: [0, [Validators.min(0.01)]],
+    cashAmount: [0, [Validators.min(0)]],
     amountReceived: [0, [Validators.min(0)]]
   });
 
@@ -171,6 +173,7 @@ export class VentasComponent implements OnInit {
       totalDiscountValue: 0,
       manualTotalEnabled: false,
       manualTotal: 0,
+      cashAmount: 0,
       amountReceived: 0
     });
   }
@@ -208,6 +211,16 @@ export class VentasComponent implements OnInit {
       return;
     }
 
+    const afterLineDiscounts = this.computeAfterLineDiscounts();
+    const allowsPartialCash = checkout.paymentMethod !== 'EFECTIVO'
+      && checkout.paymentMethod !== 'PEDIDOSYA'
+      && !checkout.manualTotalEnabled;
+
+    if (allowsPartialCash && checkout.cashAmount > afterLineDiscounts) {
+      this.snack.open('El efectivo no puede superar el subtotal después de descuentos por ítem', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
     const requiredTotal = checkout.manualTotalEnabled && checkout.manualTotal > 0
       ? checkout.manualTotal
       : this.computeEstimatedTotal();
@@ -224,8 +237,7 @@ export class VentasComponent implements OnInit {
       ? {}
       : this.normalizeTotalDiscount(checkout.totalDiscountType, checkout.totalDiscountValue);
 
-    this.loading = true;
-    this.api.createSale({
+    const salePayload: CreateSaleRequest = {
       items: this.cart().map(item => {
         const itemDiscount = this.normalizeItemDiscount(item.discountType, item.discountValue);
         return {
@@ -235,10 +247,17 @@ export class VentasComponent implements OnInit {
         };
       }),
       paymentMethod: checkout.paymentMethod,
-      installments: checkout.paymentMethod === 'TARJETA' ? checkout.installments : undefined,
+      ...(checkout.paymentMethod === 'TARJETA' ? { installments: checkout.installments } : {}),
       ...totalDiscount,
       ...(useManualTotal ? { manualTotal: checkout.manualTotal } : {})
-    }).subscribe({
+    };
+
+    if (allowsPartialCash) {
+      salePayload.cashAmount = Number(checkout.cashAmount) || 0;
+    }
+
+    this.loading = true;
+    this.api.createSale(salePayload).subscribe({
       next: (sale) => {
         this.loading = false;
         this.clearCart();
@@ -275,19 +294,28 @@ export class VentasComponent implements OnInit {
     return { totalDiscountType: type, totalDiscountValue: value };
   }
 
-  private computeEstimatedTotal(): number {
-    const checkout = this.checkoutForm.getRawValue();
+  private computeAfterLineDiscounts(): number {
     const lineDiscountTotal = this.cart().reduce((sum, item) => {
       const line = item.product.price * item.quantity;
       return sum + this.applyDiscount(line, item.discountType, item.discountValue);
     }, 0);
-    const afterLineDiscounts = this.subtotal() - lineDiscountTotal;
+    return Math.round((this.subtotal() - lineDiscountTotal) * 100) / 100;
+  }
+
+  private computeEstimatedTotal(): number {
+    const checkout = this.checkoutForm.getRawValue();
+    const afterLineDiscounts = this.computeAfterLineDiscounts();
+    const allowsPartialCash = checkout.paymentMethod !== 'EFECTIVO'
+      && checkout.paymentMethod !== 'PEDIDOSYA'
+      && !checkout.manualTotalEnabled;
+    const partialCash = allowsPartialCash && checkout.cashAmount > 0 ? checkout.cashAmount : 0;
+    const discountBase = Math.round((afterLineDiscounts - partialCash) * 100) / 100;
     const totalDiscount = this.applyDiscount(
-      afterLineDiscounts,
+      discountBase,
       checkout.totalDiscountType || undefined,
       checkout.totalDiscountValue > 0 ? checkout.totalDiscountValue : undefined
     );
-    return Math.round((afterLineDiscounts - totalDiscount) * 100) / 100;
+    return Math.round((partialCash + discountBase - totalDiscount) * 100) / 100;
   }
 
   private applyDiscount(amount: number, type?: DiscountType, value?: number): number {

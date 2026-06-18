@@ -55,6 +55,14 @@ export class SalePrintDialogComponent {
     private dialogRef: MatDialogRef<SalePrintDialogComponent>
   ) {}
 
+  get hasPartialCash(): boolean {
+    return (this.sale.cashAmount ?? 0) > 0 && this.sale.paymentMethod !== 'EFECTIVO';
+  }
+
+  get otherPaymentAmount(): number {
+    return Math.round(((this.sale.total ?? 0) - (this.sale.cashAmount ?? 0)) * 100) / 100;
+  }
+
   print(): void {
     const receipt = this.receiptRef?.nativeElement;
     if (!receipt) {
