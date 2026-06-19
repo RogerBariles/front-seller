@@ -47,6 +47,11 @@
             <button mat-button color="primary" type="button" (click)="viewCashRegister(row)">
               <mat-icon>visibility</mat-icon>
             </button>
+            @if (row.status === 'OPEN') {
+              <button mat-stroked-button color="warn" type="button" (click)="closeCashRegister(row)" [disabled]="loading">
+                Cerrar
+              </button>
+            }
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="cashRegisterColumns"></tr>
