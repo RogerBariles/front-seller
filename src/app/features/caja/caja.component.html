@@ -1,6 +1,12 @@
 <div class="container">
   <h1>Caja y Turnos</h1>
 
+  @if (isSuperAdmin) {
+    <div class="container__report">
+      <app-caja-turno-reporte (stateChanged)="refresh()"></app-caja-turno-reporte>
+    </div>
+  }
+
   @if (loadError) {
     <mat-card class="alert-card">
       <mat-card-content>

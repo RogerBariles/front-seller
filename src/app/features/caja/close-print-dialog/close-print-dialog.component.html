@@ -21,6 +21,8 @@
       @if (!isShift && report.cashRegisterClosedAt) {
         <p><span>CIERRE CAJA</span><span>{{ report.cashRegisterClosedAt | date:'dd/MM/yy HH:mm' }}</span></p>
         <p><span>CERRADA POR</span><span>{{ report.cashRegisterClosedByName }}</span></p>
+      } @else if (!isShift) {
+        <p><span>ESTADO</span><span>Abierta</span></p>
       }
     </section>
 
@@ -31,8 +33,8 @@
         <p><span>INICIO</span><span>{{ report.shiftStartedAt | date:'dd/MM/yy HH:mm' }}</span></p>
         <p><span>ABIERTO POR</span><span>{{ report.shiftOpenedByName }}</span></p>
         <p><span>EFECT.</span><span>{{ report.shiftInitialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
-        <p><span>CIERRE</span><span>{{ report.shiftClosedAt | date:'dd/MM/yy HH:mm' }}</span></p>
-        <p><span>CERRADO POR</span><span>{{ report.shiftClosedByName }}</span></p>
+        <p><span>CIERRE</span><span>{{ report.shiftClosedAt ? (report.shiftClosedAt | date:'dd/MM/yy HH:mm') : 'Abierto' }}</span></p>
+        <p><span>CERRADO POR</span><span>{{ report.shiftClosedByName || '—' }}</span></p>
         <p class="grand-total"><span>EFECT.</span><span>{{ report.finalCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
       </section>
     }

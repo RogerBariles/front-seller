@@ -123,6 +123,31 @@ export interface CloseReport {
   cashWithdrawal: number;
 }
 
+export interface CashRegisterSummary {
+  id: string;
+  businessDate: string;
+  status: CashRegisterStatus;
+  openedByName: string;
+  closedByName?: string;
+  openedAt: string;
+  closedAt?: string;
+  initialCash: number;
+  salesCount: number;
+  totalSalesAmount: number;
+}
+
+export interface ShiftSummary {
+  id: string;
+  cashRegisterId: string;
+  sellerName: string;
+  status: ShiftStatus;
+  startedAt: string;
+  endedAt?: string;
+  initialCash: number;
+  salesCount: number;
+  totalSalesAmount: number;
+}
+
 export interface CartItem {
   product: Product;
   quantity: number;

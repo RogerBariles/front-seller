@@ -1,0 +1,44 @@
+.report-section {
+  margin-top: 24px;
+
+  h3 {
+    margin: 20px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+.filter-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+h3 {
+  margin: 20px 0 8px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.empty {
+  color: #666;
+  font-size: 14px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.actions-cell {
+  white-space: nowrap;
+}
+
+.open {
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.closed {
+  color: #757575;
+}

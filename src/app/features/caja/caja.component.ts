@@ -11,6 +11,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../core/services/api.service';
 import { CashRegisterActive, CloseReport, ShiftActive, CASH_MOVEMENT_LABELS } from '../../models';
 import { ClosePrintDialogComponent } from './close-print-dialog/close-print-dialog.component';
+import { CajaTurnoReporteComponent } from './caja-turno-reporte/caja-turno-reporte.component';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-caja',
@@ -26,6 +28,7 @@ import { ClosePrintDialogComponent } from './close-print-dialog/close-print-dial
     MatButtonModule,
     MatSnackBarModule,
     MatDialogModule,
+    CajaTurnoReporteComponent,
   ],
   templateUrl: './caja.component.html',
   styleUrl: './caja.component.scss'
@@ -55,7 +58,13 @@ export class CajaComponent implements OnInit {
     amount: [0, [Validators.required, Validators.min(0.01)]],
     detail: ['', [Validators.required, Validators.maxLength(500)]]
   });
+  
+  isSuperAdmin = false;
 
+  constructor(private auth: AuthService) {
+    this.isSuperAdmin = this.auth.hasRole('SUPER_ADMIN');
+  }
+  
   ngOnInit(): void {
     this.refresh();
   }
