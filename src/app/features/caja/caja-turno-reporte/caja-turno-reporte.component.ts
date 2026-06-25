@@ -43,8 +43,8 @@ export class CajaTurnoReporteComponent implements OnInit {
   loading = false;
   isSuperAdmin = false;
 
-  readonly cashRegisterColumns = ['openedAt', 'openedBy', 'status', 'sales', 'total', 'actions'];
-  readonly shiftColumns = ['startedAt', 'seller', 'status', 'sales', 'total', 'actions'];
+  readonly cashRegisterColumns = ['openedAt', 'closedAt', 'openedBy', 'status', 'sales', 'total', 'actions'];
+  readonly shiftColumns = ['startedAt', 'endedAt', 'seller', 'status', 'sales', 'total', 'actions'];
 
   stateChanged = output<void>();
 

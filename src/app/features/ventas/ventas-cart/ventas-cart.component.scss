@@ -36,6 +36,10 @@
 
 .checkout-form {
   margin-top: 12px;
+
+  mat-form-field {
+    margin-right: 12px !important;
+  }
 }
 
 .total-row {
@@ -110,6 +114,24 @@
 mat-slide-toggle {
   display: block;
   margin: 12px 0;
+}
+
+.partial-cash-field {
+  width: 100%;
+  max-width: 220px;
+  margin-top: 8px;
+}
+
+.split-payment {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #1565c0;
+}
+
+.discount-note {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #616161;
 }
 
 .actions {
