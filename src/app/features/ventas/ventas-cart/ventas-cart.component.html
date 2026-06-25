@@ -66,18 +66,12 @@
             <input matInput type="number" formControlName="cashAmount" step="0.01" min="0"
               [max]="afterLineDiscounts" [disabled]="disabled" (change)="onCashAmountChange()" />
           </mat-form-field>
-          @if (partialCashAmount > 0) {
-            <p class="split-payment">
-              Saldo para {{ paymentLabels[checkoutForm.value.paymentMethod] }}:
-              {{ discountBase | currency:'ARS':'symbol-narrow':'1.2-2' }} (antes de desc./recargo)
-            </p>
-          }
         }
 
         @if (isAvailableTypeByPaymentMethod('DISCOUNT')) {
           <div class="cart-item-row">
             <mat-form-field appearance="outline" [style.width]="'170px'">
-              <mat-label>Descuento / recargo total</mat-label>
+              <mat-label>Desc. / Recar.</mat-label>
               <mat-select formControlName="totalDiscountType">
                 @if (checkoutForm.value.paymentMethod === 'TARJETA') {
                   <mat-option default value="PERCENTAGE_EXTRA">Recargo</mat-option>
@@ -94,9 +88,6 @@
                 [disabled]="!checkoutForm.value.totalDiscountType" />
             </mat-form-field>
           </div>
-          @if (partialCashAmount > 0 && checkoutForm.value.totalDiscountType) {
-            <p class="discount-note">Se aplica sobre {{ discountBase | currency:'ARS':'symbol-narrow':'1.2-2' }} (sin el efectivo).</p>
-          }
         }
 
         <div class="total-row">

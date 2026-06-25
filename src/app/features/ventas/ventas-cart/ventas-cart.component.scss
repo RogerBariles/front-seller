@@ -36,6 +36,10 @@
 
 .checkout-form {
   margin-top: 12px;
+
+  mat-form-field {
+    margin-right: 12px !important;
+  }
 }
 
 .total-row {

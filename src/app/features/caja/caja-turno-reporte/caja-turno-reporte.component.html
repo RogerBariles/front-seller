@@ -21,6 +21,10 @@
           <th mat-header-cell *matHeaderCellDef>Apertura</th>
           <td mat-cell *matCellDef="let row">{{ row.openedAt | date:'dd/MM/yyyy HH:mm' }}</td>
         </ng-container>
+        <ng-container matColumnDef="closedAt">
+          <th mat-header-cell *matHeaderCellDef>Cierre</th>
+          <td mat-cell *matCellDef="let row">{{ row.closedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        </ng-container>
         <ng-container matColumnDef="openedBy">
           <th mat-header-cell *matHeaderCellDef>Abierta por</th>
           <td mat-cell *matCellDef="let row">{{ row.openedByName }}</td>
@@ -65,11 +69,15 @@
     } @else {
       <table mat-table [dataSource]="shifts" class="full-width">
         <ng-container matColumnDef="startedAt">
-          <th mat-header-cell *matHeaderCellDef>Inicio</th>
+          <th mat-header-cell *matHeaderCellDef>Apertura</th>
           <td mat-cell *matCellDef="let row">{{ row.startedAt | date:'dd/MM/yyyy HH:mm' }}</td>
         </ng-container>
+        <ng-container matColumnDef="endedAt">
+          <th mat-header-cell *matHeaderCellDef>Cierre</th>
+          <td mat-cell *matCellDef="let row">{{ row.endedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        </ng-container>
         <ng-container matColumnDef="seller">
-          <th mat-header-cell *matHeaderCellDef>Vendedora</th>
+          <th mat-header-cell *matHeaderCellDef>Abierto por</th>
           <td mat-cell *matCellDef="let row">{{ row.sellerName }}</td>
         </ng-container>
         <ng-container matColumnDef="status">
