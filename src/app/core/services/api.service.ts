@@ -7,6 +7,7 @@ import {
   AuthResponse,
   CashRegister,
   CashRegisterActive,
+  CashRegisterSummary,
   CloseReport,
   Company,
   CreateSaleRequest,
@@ -18,6 +19,7 @@ import {
   SalesReport,
   Shift,
   ShiftActive,
+  ShiftSummary,
   CashMovementType,
   ShiftCashMovement,
   User
@@ -106,6 +108,24 @@ export class ApiService {
 
   closeShift(id: string): Observable<CloseReport> {
     return this.http.post<CloseReport>(`${this.baseUrl}/shifts/${id}/close`, {});
+  }
+
+  getCashRegistersByDate(date: string): Observable<CashRegisterSummary[]> {
+    const params = new HttpParams().set('date', date);
+    return this.http.get<CashRegisterSummary[]>(`${this.baseUrl}/cash-registers/by-date`, { params });
+  }
+
+  getShiftsByDate(date: string): Observable<ShiftSummary[]> {
+    const params = new HttpParams().set('date', date);
+    return this.http.get<ShiftSummary[]>(`${this.baseUrl}/shifts/by-date`, { params });
+  }
+
+  getCashRegisterReport(id: string): Observable<CloseReport> {
+    return this.http.get<CloseReport>(`${this.baseUrl}/cash-registers/${id}/report`);
+  }
+
+  getShiftReport(id: string): Observable<CloseReport> {
+    return this.http.get<CloseReport>(`${this.baseUrl}/shifts/${id}/report`);
   }
 
   listProducts(): Observable<Product[]> {

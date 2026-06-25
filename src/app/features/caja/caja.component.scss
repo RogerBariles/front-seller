@@ -60,3 +60,9 @@ h1 {
 .movement-type {
   font-weight: 500;
 }
+
+.container {
+  &__report {
+    margin-bottom: 16px;
+  }
+}

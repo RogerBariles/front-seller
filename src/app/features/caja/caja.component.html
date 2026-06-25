@@ -1,6 +1,12 @@
 <div class="container">
   <h1>Caja y Turnos</h1>
 
+  @if (isSuperAdmin) {
+    <div class="container__report">
+      <app-caja-turno-reporte (stateChanged)="refresh()"></app-caja-turno-reporte>
+    </div>
+  }
+
   @if (loadError) {
     <mat-card class="alert-card">
       <mat-card-content>
@@ -144,6 +150,9 @@
         <p><strong>Efectivo:</strong> {{ lastReport.paymentTotals.cash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
         <p><strong>Tarjeta:</strong> {{ lastReport.paymentTotals.card | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
         <p><strong>Transferencia:</strong> {{ lastReport.paymentTotals.transfer | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        <p><strong>Pedidos Ya:</strong> {{ lastReport.paymentTotals.pedidosYa | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        <p><strong>Débito:</strong> {{ lastReport.paymentTotals.debito | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        <p><strong>QR:</strong> {{ lastReport.paymentTotals.qr | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
         <p><strong>Total vendido:</strong> {{ lastReport.totalSalesAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
       </mat-card-content>
     </mat-card>

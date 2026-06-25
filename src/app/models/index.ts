@@ -96,6 +96,9 @@ export interface PaymentTotals {
   cash: number;
   card: number;
   transfer: number;
+  pedidosYa: number;
+  debito: number;
+  qr: number;
 }
 
 export interface CloseReport {
@@ -118,6 +121,31 @@ export interface CloseReport {
   cashMovements: ShiftCashMovement[];
   cashIncome: number;
   cashWithdrawal: number;
+}
+
+export interface CashRegisterSummary {
+  id: string;
+  businessDate: string;
+  status: CashRegisterStatus;
+  openedByName: string;
+  closedByName?: string;
+  openedAt: string;
+  closedAt?: string;
+  initialCash: number;
+  salesCount: number;
+  totalSalesAmount: number;
+}
+
+export interface ShiftSummary {
+  id: string;
+  cashRegisterId: string;
+  sellerName: string;
+  status: ShiftStatus;
+  startedAt: string;
+  endedAt?: string;
+  initialCash: number;
+  salesCount: number;
+  totalSalesAmount: number;
 }
 
 export interface CartItem {
