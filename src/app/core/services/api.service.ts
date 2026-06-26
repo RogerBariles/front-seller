@@ -10,7 +10,10 @@ import {
   CashRegisterSummary,
   CloseReport,
   Company,
+  ContabilidadSummary,
+  CreateExpenseRequest,
   CreateSaleRequest,
+  ExpenseResponse,
   Product,
   PriceField,
   ProductCategory,
@@ -174,5 +177,17 @@ export class ApiService {
       if (value) httpParams = httpParams.set(key, value);
     });
     return this.http.get<TopStats>(`${this.baseUrl}/reports/top-stats`, { params: httpParams });
+  }
+
+  getContabilidadSummary(params: Record<string, string>): Observable<ContabilidadSummary> {
+    let httpParams = new HttpParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value) httpParams = httpParams.set(key, value);
+    });
+    return this.http.get<ContabilidadSummary>(`${this.baseUrl}/contabilidad/summary`, { params: httpParams });
+  }
+
+  createExpense(body: CreateExpenseRequest): Observable<ExpenseResponse> {
+    return this.http.post<ExpenseResponse>(`${this.baseUrl}/contabilidad/expenses`, body);
   }
 }

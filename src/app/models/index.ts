@@ -251,6 +251,26 @@ export interface ProductPriceAudit {
   changedAt: string;
 }
 
+export interface ContabilidadSummary {
+  totalSales: number;
+  totalExpenses: number;
+  netAmount: number;
+  expenses: ExpenseResponse[];
+}
+
+export interface CreateExpenseRequest {
+  detail: string;
+  amount: number;
+}
+
+export interface ExpenseResponse {
+  id: string;
+  detail: string;
+  amount: number;
+  createdByName: string;
+  createdAt: string;
+}
+
 export const CATEGORY_LABELS: Record<ProductCategory, string> = {
   TORTAS: 'Tortas',
   TARTAS: 'Tartas',

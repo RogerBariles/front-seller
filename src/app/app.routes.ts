@@ -32,9 +32,19 @@ export const routes: Routes = [
         loadComponent: () => import('./features/usuarios/usuarios.component').then(m => m.UsuariosComponent)
       },
       {
-        path: 'reportes',
+        path: 'administracion',
+        canActivate: [roleGuard('SUPER_ADMIN')],
+        loadComponent: () => import('./features/administracion/administracion.component').then(m => m.AdministracionComponent)
+      },
+      {
+        path: 'reporte-ventas',
         canActivate: [roleGuard('SUPER_ADMIN')],
         loadComponent: () => import('./features/reportes/reportes.component').then(m => m.ReportesComponent)
+      },
+      {
+        path: 'contabilidad',
+        canActivate: [roleGuard('SUPER_ADMIN')],
+        loadComponent: () => import('./features/contabilidad/contabilidad.component').then(m => m.ContabilidadComponent)
       },
       {
         path: 'empresas',

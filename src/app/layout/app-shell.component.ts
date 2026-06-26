@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,6 +13,14 @@ interface NavItem {
   label: string;
   path: string;
   roles?: string[];
+}
+
+interface NavGroup {
+  icon: string;
+  label: string;
+  path: string;
+  roles?: string[];
+  children: NavItem[];
 }
 
 @Component({
@@ -34,6 +42,11 @@ interface NavItem {
 export class AppShellComponent {
   private auth = inject(AuthService);
   readonly user = this.auth.currentUser;
+  adminExpanded = signal(false);
+
+  toggleAdmin(): void {
+    this.adminExpanded.update(v => !v);
+  }
 
   readonly navItems = computed(() => {
     const role = this.user()?.role;
@@ -42,10 +55,25 @@ export class AppShellComponent {
       { label: 'Caja y Turnos', path: '/app/caja', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN'], icon: 'payments'},
       { label: 'Productos', path: '/app/productos', icon: 'inventory' },
       { label: 'Usuarios', path: '/app/usuarios', roles: ['ADMIN', 'SUPER_ADMIN'], icon: 'people' },
-      { label: 'Reportes', path: '/app/reportes', roles: ['SUPER_ADMIN'], icon: 'analytics' },
       { label: 'Empresas', path: '/app/empresas', roles: ['SUPER_ADMIN'], icon: 'business' }
     ];
     return items.filter(item => !item.roles || (role && item.roles.includes(role)));
+  });
+
+  readonly adminGroup = computed<NavGroup | null>(() => {
+    const role = this.user()?.role;
+    if (!role) return null;
+    if (!['SUPER_ADMIN'].includes(role)) return null;
+    return {
+      icon: 'analytics',
+      label: 'Administración',
+      path: '',
+      children: [
+        //{ label: 'Administración', path: '/app/administracion', icon: 'admin_panel_settings' },
+        { label: 'Reporte de ventas', path: '/app/reporte-ventas', icon: 'assessment' },
+        { label: 'Contabilidad', path: '/app/contabilidad', icon: 'account_balance' }
+      ]
+    };
   });
 
   roleLabel(role?: string): string {

@@ -1,0 +1,73 @@
+<div class="container">
+  <div class="header">
+    <h1>Contabilidad</h1>
+    <button mat-flat-button color="primary" (click)="openExpenseDialog()">
+      <mat-icon>add</mat-icon> Nuevo egreso
+    </button>
+  </div>
+
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="search()" class="filters">
+        <mat-form-field appearance="outline">
+          <mat-label>Desde</mat-label>
+          <input matInput type="date" formControlName="fromDate" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Hasta</mat-label>
+          <input matInput type="date" formControlName="toDate" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" [disabled]="loading || form.invalid">Buscar</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  @if (summary) {
+    <div class="card-grid">
+      <mat-card>
+        <mat-card-content class="card-content">
+          <h3>Total ventas</h3>
+          <p class="big">{{ summary.totalSales | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content class="card-content">
+          <h3>Total egresos</h3>
+          <p class="big expense">{{ summary.totalExpenses | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content class="card-content">
+          <h3>Monto final</h3>
+          <p class="big" [class.profit]="summary.netAmount >= 0" [class.expense]="summary.netAmount < 0">{{ summary.netAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="table-card">
+      <mat-card-content>
+        <h2>Egresos</h2>
+        <table mat-table [dataSource]="summary.expenses" class="full-width">
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Fecha</th>
+            <td mat-cell *matCellDef="let e">{{ e.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="detail">
+            <th mat-header-cell *matHeaderCellDef>Detalle</th>
+            <td mat-cell *matCellDef="let e">{{ e.detail }}</td>
+          </ng-container>
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef>Monto</th>
+            <td mat-cell *matCellDef="let e" class="expense">{{ e.amount | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="createdBy">
+            <th mat-header-cell *matHeaderCellDef>Registrado por</th>
+            <td mat-cell *matCellDef="let e">{{ e.createdByName }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedExpenseColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedExpenseColumns"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

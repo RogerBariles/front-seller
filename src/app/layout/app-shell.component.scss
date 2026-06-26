@@ -5,13 +5,33 @@
 .sidenav {
   width: 260px;
 
-  .nav-item {
-    .mdc-list-item__primary-text {
-      display: flex !important;
-    }
-
+  .nav-item, .nav-group-header {
     mat-icon {
       font-size: 20px !important;
+    }
+  }
+}
+
+.nav-group {
+  .nav-group-header {
+    width: 100%;
+    cursor: pointer;
+
+    .mdc-list-item__primary-text {
+      display: flex !important;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .expand-icon {
+      margin-left: auto;
+    }
+  }
+
+  .children {
+    .child-item {
+      padding-left: 16px;
     }
   }
 }
@@ -44,7 +64,6 @@
 a.active {
   background: rgba(0, 0, 0, 0.08);
 }
-
 
 :host ::ng-deep {
   .mdc-list-item__primary-text {

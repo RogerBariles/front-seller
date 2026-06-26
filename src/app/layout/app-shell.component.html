@@ -3,9 +3,28 @@
     <mat-toolbar color="primary">Lo'Postigli</mat-toolbar>
     <mat-nav-list>
       @for (item of navItems(); track item.path) {
-        <a  class="nav-item" mat-list-item [routerLink]="item.path" routerLinkActive="active" (click)="drawer.close()">
+        <a class="nav-item" mat-list-item [routerLink]="item.path" routerLinkActive="active" (click)="drawer.close()">
           <mat-icon>{{ item.icon }}</mat-icon> {{ item.label }}
         </a>
+      }
+
+      @if (adminGroup(); as group) {
+        <div class="nav-group">
+          <button mat-list-item class="nav-group-header" (click)="toggleAdmin()">
+            <mat-icon>{{ group.icon }}</mat-icon>
+            <span>{{ group.label }}</span>
+            <mat-icon class="expand-icon">{{ adminExpanded() ? 'expand_less' : 'expand_more' }}</mat-icon>
+          </button>
+          @if (adminExpanded()) {
+            <div class="children">
+              @for (child of group.children; track child.path) {
+                <a class="nav-item child-item" mat-list-item [routerLink]="child.path" routerLinkActive="active" (click)="drawer.close()">
+                  <mat-icon>{{ child.icon }}</mat-icon> {{ child.label }}
+                </a>
+              }
+            </div>
+          }
+        </div>
       }
     </mat-nav-list>
   </mat-sidenav>
