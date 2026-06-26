@@ -9,9 +9,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
+import { forkJoin } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
-import { Company, PAYMENT_LABELS, PaymentMethod, Sale, SalesReport, User } from '../../models';
+import { Company, PAYMENT_LABELS, PaymentMethod, Sale, SalesReport, TopStats, User } from '../../models';
 import { SaleDetailDialogComponent } from './sale-detail-dialog/sale-detail-dialog.component';
 
 @Component({
@@ -29,6 +31,7 @@ import { SaleDetailDialogComponent } from './sale-detail-dialog/sale-detail-dial
     MatTableModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatExpansionModule,
     MatIconModule
   ],
   templateUrl: './reportes.component.html',
@@ -43,17 +46,19 @@ export class ReportesComponent implements OnInit {
   sellers: User[] = [];
   companies: Company[] = [];
   report: SalesReport | null = null;
+  topStats: TopStats | null = null;
   loading = false;
 
   readonly paymentMethods = Object.keys(PAYMENT_LABELS) as PaymentMethod[];
   readonly paymentLabels = PAYMENT_LABELS;
   displayedColumns = ['date', 'seller', 'payment', 'subtotal', 'discount', 'total', 'cost', 'profit', 'actions'];
+  displayedTopColumns = ['position', 'product', 'quantity'];
+  topDaysDisplayedColumns = ['position', 'date', 'quantity'];
+  topSellersDisplayedColumns = ['position', 'seller', 'sales', 'amount'];
 
   form = this.fb.nonNullable.group({
     fromDate: [new Date().toISOString().slice(0, 10), Validators.required],
     toDate: [new Date().toISOString().slice(0, 10), Validators.required],
-    fromTime: [''],
-    toTime: [''],
     paymentMethod: ['' as PaymentMethod | ''],
     sellerId: [''],
     companyId: ['']
@@ -92,15 +97,17 @@ export class ReportesComponent implements OnInit {
       fromDate: v.fromDate,
       toDate: v.toDate
     };
-    if (v.fromTime) params['fromTime'] = v.fromTime;
-    if (v.toTime) params['toTime'] = v.toTime;
     if (v.paymentMethod) params['paymentMethod'] = v.paymentMethod;
     if (v.sellerId) params['sellerId'] = v.sellerId;
     if (v.companyId) params['companyId'] = v.companyId;
 
-    this.api.getSalesReport(params).subscribe({
-      next: (report) => {
+    forkJoin({
+      report: this.api.getSalesReport(params),
+      topStats: this.api.getTopStats(params)
+    }).subscribe({
+      next: ({ report, topStats }) => {
         this.report = report;
+        this.topStats = topStats;
         this.loading = false;
       },
       error: (err) => {

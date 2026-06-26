@@ -28,6 +28,38 @@
   margin-top: 16px;
 }
 
+.top-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+
+  .table-card {
+    margin-top: 0;
+
+    .full-width {
+      width: 100%;
+    }
+  }
+}
+
+mat-accordion {
+  display: block;
+  margin-top: 12px;
+}
+
+mat-expansion-panel {
+  .card-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+
+    .mat-mdc-card {
+      height: 85px;
+    }
+  }
+}
+
 .card-content {
   height: 30px;
 
@@ -36,4 +68,9 @@
     margin: 0;
     margin-bottom: 10px;
   }
+}
+
+h2 {
+  margin: 6px 0 !important;
+  font-size: 18px;
 }

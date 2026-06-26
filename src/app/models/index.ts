@@ -206,6 +206,28 @@ export interface SaleItem {
   lineProfit: number;
 }
 
+export interface TopProduct {
+  productName: string;
+  totalQuantity: number;
+}
+
+export interface TopDay {
+  date: string;
+  totalQuantity: number;
+}
+
+export interface TopSeller {
+  sellerName: string;
+  totalSales: number;
+  totalAmount: number;
+}
+
+export interface TopStats {
+  topProducts: TopProduct[];
+  topDays: TopDay[];
+  topSellers: TopSeller[];
+}
+
 export interface SalesReport {
   totalSalesCount: number;
   totalAmount: number;
@@ -213,6 +235,7 @@ export interface SalesReport {
   totalProfit: number;
   amountByPaymentMethod: Record<PaymentMethod, number>;
   sales: Sale[];
+  topProducts: TopProduct[];
 }
 
 export interface ProductPriceAudit {

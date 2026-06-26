@@ -17,6 +17,7 @@ import {
   ProductPriceAudit,
   Sale,
   SalesReport,
+  TopStats,
   Shift,
   ShiftActive,
   ShiftSummary,
@@ -165,5 +166,13 @@ export class ApiService {
       if (value) httpParams = httpParams.set(key, value);
     });
     return this.http.get<SalesReport>(`${this.baseUrl}/reports/sales`, { params: httpParams });
+  }
+
+  getTopStats(params: Record<string, string>): Observable<TopStats> {
+    let httpParams = new HttpParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value) httpParams = httpParams.set(key, value);
+    });
+    return this.http.get<TopStats>(`${this.baseUrl}/reports/top-stats`, { params: httpParams });
   }
 }
