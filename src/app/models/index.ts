@@ -261,6 +261,7 @@ export interface ContabilidadSummary {
 export interface CreateExpenseRequest {
   detail: string;
   amount: number;
+  date?: string;
 }
 
 export interface ExpenseResponse {

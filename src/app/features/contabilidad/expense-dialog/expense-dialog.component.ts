@@ -30,6 +30,10 @@ import { ApiService } from '../../../core/services/api.service';
           <mat-label>Monto</mat-label>
           <input matInput type="number" formControlName="amount" placeholder="0.00" />
         </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Fecha</mat-label>
+          <input matInput type="date" formControlName="date" />
+        </mat-form-field>
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
@@ -54,14 +58,15 @@ export class ExpenseDialogComponent {
 
   form = this.fb.nonNullable.group({
     detail: ['', Validators.required],
-    amount: [0, [Validators.required, Validators.min(0.01)]]
+    amount: [0, [Validators.required, Validators.min(0.01)]],
+    date: [new Date().toISOString().slice(0, 10), Validators.required]
   });
 
   save(): void {
     if (this.form.invalid) return;
     this.saving = true;
     const v = this.form.getRawValue();
-    this.api.createExpense({ detail: v.detail, amount: v.amount }).subscribe({
+    this.api.createExpense({ detail: v.detail, amount: v.amount, date: v.date }).subscribe({
       next: () => {
         this.snack.open('Egreso registrado', 'Cerrar', { duration: 3000 });
         this.dialogRef.close(true);
