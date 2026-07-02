@@ -10,6 +10,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/services/auth.service';
 import {
   CATEGORY_LABELS,
   PRICE_FIELD_LABELS,
@@ -43,6 +44,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class ProductosComponent implements OnInit {
   private api = inject(ApiService);
+  readonly auth = inject(AuthService);
   private fb = inject(FormBuilder);
   private snack = inject(MatSnackBar);
 
@@ -55,14 +57,15 @@ export class ProductosComponent implements OnInit {
   readonly categoryLabels = CATEGORY_LABELS;
   readonly priceFieldLabels = PRICE_FIELD_LABELS;
   readonly bulkTargets: PriceField[] = ['SALE', 'PURCHASE', 'BOTH'];
-  displayedColumns = ['name', 'category', 'price', 'purchasePrice', 'margin', 'active', 'actions'];
+  displayedColumns = ['name', 'category', 'price', 'purchasePrice', 'margin', 'company', 'active', 'actions'];
 
   form = this.fb.nonNullable.group({
     name: ['', Validators.required],
     category: ['TORTAS' as ProductCategory, Validators.required],
     price: [0, [Validators.required, Validators.min(0.01)]],
     purchasePrice: [0, [Validators.required, Validators.min(0)]],
-    active: [true]
+    active: [true],
+    companyId: [{ value: '' as string, disabled: true }]
   });
 
   bulkForm = this.fb.nonNullable.group({
@@ -72,6 +75,14 @@ export class ProductosComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
+    this.fillCompanyFromUser();
+  }
+
+  private fillCompanyFromUser(): void {
+    const user = this.auth.currentUser();
+    if (user?.companyId) {
+      this.form.patchValue({ companyId: user.companyId });
+    }
   }
 
   loadProducts(): void {
@@ -82,7 +93,12 @@ export class ProductosComponent implements OnInit {
 
   resetForm(): void {
     this.editingId = null;
-    this.form.reset({ name: '', category: 'TORTAS', price: 0, purchasePrice: 0, active: true });
+    this.form.reset({
+      name: '', category: 'TORTAS' as ProductCategory,
+      price: 0, purchasePrice: 0, active: true,
+      companyId: ''
+    });
+    this.fillCompanyFromUser();
     this.audits = [];
   }
 
@@ -93,8 +109,10 @@ export class ProductosComponent implements OnInit {
       category: product.category,
       price: product.price,
       purchasePrice: product.purchasePrice,
-      active: product.active
+      active: product.active,
+      companyId: product.companyId || ''
     });
+    this.fillCompanyFromUser();
     this.api.getProductAudits(product.id).subscribe({
       next: (audits) => this.audits = audits
     });

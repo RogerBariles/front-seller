@@ -37,6 +37,8 @@ export interface Product {
   purchasePrice: number;
   active: boolean;
   updatedAt: string;
+  companyId?: string;
+  companyName?: string;
 }
 
 export interface CashRegister {
