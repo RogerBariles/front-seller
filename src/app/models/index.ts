@@ -50,6 +50,8 @@ export interface CashRegister {
   openedByName: string;
   openedAt: string;
   closedAt?: string;
+  companyId: string;
+  companyName: string;
 }
 
 export interface CashRegisterActive {
@@ -70,6 +72,8 @@ export interface Shift {
   status: ShiftStatus;
   startedAt: string;
   endedAt?: string;
+  companyId: string;
+  companyName: string;
 }
 
 export type CashMovementType = 'INCOME' | 'WITHDRAWAL';
@@ -136,6 +140,8 @@ export interface CashRegisterSummary {
   initialCash: number;
   salesCount: number;
   totalSalesAmount: number;
+  companyId: string;
+  companyName: string;
 }
 
 export interface ShiftSummary {
@@ -148,6 +154,8 @@ export interface ShiftSummary {
   initialCash: number;
   salesCount: number;
   totalSalesAmount: number;
+  companyId: string;
+  companyName: string;
 }
 
 export interface CartItem {
