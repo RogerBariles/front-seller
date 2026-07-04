@@ -68,10 +68,6 @@ export class UsuariosComponent implements OnInit {
       : ['SELLER', 'ADMIN'];
   }
 
-  get isSellerRole(): boolean {
-    return this.form.controls.role.value === 'SELLER';
-  }
-
   get activeCompanies(): Company[] {
     return this.companies.filter(c => c.active);
   }
@@ -119,8 +115,8 @@ export class UsuariosComponent implements OnInit {
       this.snack.open('La contraseña es obligatoria para nuevos usuarios', 'Cerrar', { duration: 3000 });
       return;
     }
-    if (body.role === 'SELLER' && !body.companyId) {
-      this.snack.open('Seleccione una empresa para la vendedora', 'Cerrar', { duration: 3000 });
+    if (!body.companyId) {
+      this.snack.open('Seleccione una empresa para el usuario', 'Cerrar', { duration: 3000 });
       return;
     }
 
@@ -131,7 +127,7 @@ export class UsuariosComponent implements OnInit {
       role: body.role,
       active: body.active,
       birthDate: body.birthDate || undefined,
-      companyId: body.role === 'SELLER' ? body.companyId : (body.companyId || undefined),
+      companyId: body.companyId,
       ...(body.password ? { password: body.password } : {})
     };
 
@@ -155,11 +151,7 @@ export class UsuariosComponent implements OnInit {
 
   private updateCompanyValidators(): void {
     const control = this.form.controls.companyId;
-    if (this.isSellerRole) {
-      control.setValidators([Validators.required]);
-    } else {
-      control.clearValidators();
-    }
+    control.setValidators([Validators.required]);
     control.updateValueAndValidity();
   }
 }

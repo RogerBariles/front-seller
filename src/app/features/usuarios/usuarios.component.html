@@ -31,7 +31,6 @@
             }
           </mat-select>
         </mat-form-field>
-        @if (isSellerRole) {
           <mat-form-field appearance="outline">
             <mat-label>Empresa</mat-label>
             <mat-select formControlName="companyId">
@@ -40,7 +39,6 @@
               }
             </mat-select>
           </mat-form-field>
-        }
         <mat-slide-toggle formControlName="active">Activo</mat-slide-toggle>
         <div class="actions">
           @if (editingId) {

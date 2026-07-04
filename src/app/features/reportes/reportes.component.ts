@@ -13,7 +13,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { forkJoin } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
-import { Company, PAYMENT_LABELS, PaymentMethod, Sale, SalesReport, TopStats, User } from '../../models';
+import { AuthService } from '../../core/services/auth.service';
+import { PAYMENT_LABELS, PaymentMethod, Sale, SalesReport, TopStats, User } from '../../models';
 import { SaleDetailDialogComponent } from './sale-detail-dialog/sale-detail-dialog.component';
 
 @Component({
@@ -39,12 +40,12 @@ import { SaleDetailDialogComponent } from './sale-detail-dialog/sale-detail-dial
 })
 export class ReportesComponent implements OnInit {
   private api = inject(ApiService);
+  private auth = inject(AuthService);
   private fb = inject(FormBuilder);
   private snack = inject(MatSnackBar);
   private dialog = inject(MatDialog);
 
   sellers: User[] = [];
-  companies: Company[] = [];
   report: SalesReport | null = null;
   topStats: TopStats | null = null;
   loading = false;
@@ -60,16 +61,12 @@ export class ReportesComponent implements OnInit {
     fromDate: [new Date().toISOString().slice(0, 10), Validators.required],
     toDate: [new Date().toISOString().slice(0, 10), Validators.required],
     paymentMethod: ['' as PaymentMethod | ''],
-    sellerId: [''],
-    companyId: ['']
+    sellerId: ['']
   });
 
   ngOnInit(): void {
     this.api.getSellers().subscribe({
       next: (sellers) => this.sellers = sellers
-    });
-    this.api.getCompanies().subscribe({
-      next: (companies) => this.companies = companies
     });
   }
 
@@ -99,7 +96,9 @@ export class ReportesComponent implements OnInit {
     };
     if (v.paymentMethod) params['paymentMethod'] = v.paymentMethod;
     if (v.sellerId) params['sellerId'] = v.sellerId;
-    if (v.companyId) params['companyId'] = v.companyId;
+
+    const user = this.auth.currentUser();
+    if (user?.companyId) params['companyId'] = user.companyId;
 
     forkJoin({
       report: this.api.getSalesReport(params),
