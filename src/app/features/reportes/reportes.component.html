@@ -30,6 +30,15 @@
             }
           </mat-select>
         </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="category">
+            <mat-option value="">Todas</mat-option>
+            @for (cat of categories; track cat) {
+              <mat-option [value]="cat">{{ categoryLabels[cat] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
         <button mat-flat-button color="primary" [disabled]="loading || form.invalid">Buscar</button>
       </form>
     </mat-card-content>

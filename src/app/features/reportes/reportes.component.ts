@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { forkJoin } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
-import { PAYMENT_LABELS, PaymentMethod, Sale, SalesReport, TopStats, User } from '../../models';
+import { CATEGORY_LABELS, PAYMENT_LABELS, PaymentMethod, ProductCategory, Sale, SalesReport, TopStats, User } from '../../models';
 import { SaleDetailDialogComponent } from './sale-detail-dialog/sale-detail-dialog.component';
 
 @Component({
@@ -52,6 +52,8 @@ export class ReportesComponent implements OnInit {
 
   readonly paymentMethods = Object.keys(PAYMENT_LABELS) as PaymentMethod[];
   readonly paymentLabels = PAYMENT_LABELS;
+  readonly categories = Object.keys(CATEGORY_LABELS) as ProductCategory[];
+  readonly categoryLabels = CATEGORY_LABELS;
   displayedColumns = ['date', 'seller', 'payment', 'subtotal', 'discount', 'total', 'cost', 'profit', 'actions'];
   displayedTopColumns = ['position', 'product', 'quantity'];
   topDaysDisplayedColumns = ['position', 'date', 'quantity'];
@@ -61,7 +63,8 @@ export class ReportesComponent implements OnInit {
     fromDate: [new Date().toISOString().slice(0, 10), Validators.required],
     toDate: [new Date().toISOString().slice(0, 10), Validators.required],
     paymentMethod: ['' as PaymentMethod | ''],
-    sellerId: ['']
+    sellerId: [''],
+    category: ['' as ProductCategory | '']
   });
 
   ngOnInit(): void {
@@ -96,6 +99,7 @@ export class ReportesComponent implements OnInit {
     };
     if (v.paymentMethod) params['paymentMethod'] = v.paymentMethod;
     if (v.sellerId) params['sellerId'] = v.sellerId;
+    if (v.category) params['category'] = v.category;
 
     const user = this.auth.currentUser();
     if (user?.companyId) params['companyId'] = user.companyId;
