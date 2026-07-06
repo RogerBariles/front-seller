@@ -42,6 +42,11 @@ export class LoginComponent {
     this.auth.login(username, password).subscribe({
       next: () => {
         this.loading = false;
+        const user = this.auth.currentUser();
+        if (user?.role === 'DEVELOPER') {
+          this.router.navigate(['/app/usuarios']);
+          return;
+        }
         this.router.navigate(['/app/ventas']);
       },
       error: (err) => {

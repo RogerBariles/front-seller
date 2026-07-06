@@ -10,6 +10,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { ClosePrintDialogComponent } from '../close-print-dialog/close-print-dialog.component';
 import { ApiService } from '../../../core/services/api.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { CashRegisterSummary, CloseReport, ShiftSummary } from '../../../models';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -34,6 +35,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class CajaTurnoReporteComponent implements OnInit {
   private api = inject(ApiService);
+  private auth = inject(AuthService);
   private fb = inject(FormBuilder);
   private snack = inject(MatSnackBar);
   private dialog = inject(MatDialog);
@@ -41,7 +43,8 @@ export class CajaTurnoReporteComponent implements OnInit {
   cashRegisters: CashRegisterSummary[] = [];
   shifts: ShiftSummary[] = [];
   loading = false;
-  isSuperAdmin = false;
+
+  private companyId?: string;
 
   readonly cashRegisterColumns = ['openedAt', 'closedAt', 'openedBy', 'status', 'sales', 'total', 'actions'];
   readonly shiftColumns = ['startedAt', 'endedAt', 'seller', 'status', 'sales', 'total', 'actions'];
@@ -53,6 +56,8 @@ export class CajaTurnoReporteComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    const user = this.auth.currentUser();
+    this.companyId = user?.companyId;
     this.load();
   }
 
@@ -65,7 +70,7 @@ export class CajaTurnoReporteComponent implements OnInit {
       pending--;
       if (pending === 0) this.loading = false;
     };
-    this.api.getCashRegistersByDate(date).subscribe({
+    this.api.getCashRegistersByDate(date, this.companyId).subscribe({
       next: (rows) => {
         this.cashRegisters = rows;
         done();
@@ -76,7 +81,7 @@ export class CajaTurnoReporteComponent implements OnInit {
         done();
       }
     });
-    this.api.getShiftsByDate(date).subscribe({
+    this.api.getShiftsByDate(date, this.companyId).subscribe({
       next: (rows) => {
         this.shifts = rows;
         done();

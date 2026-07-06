@@ -114,13 +114,15 @@ export class ApiService {
     return this.http.post<CloseReport>(`${this.baseUrl}/shifts/${id}/close`, {});
   }
 
-  getCashRegistersByDate(date: string): Observable<CashRegisterSummary[]> {
-    const params = new HttpParams().set('date', date);
+  getCashRegistersByDate(date: string, companyId?: string): Observable<CashRegisterSummary[]> {
+    let params = new HttpParams().set('date', date);
+    if (companyId) params = params.set('companyId', companyId);
     return this.http.get<CashRegisterSummary[]>(`${this.baseUrl}/cash-registers/by-date`, { params });
   }
 
-  getShiftsByDate(date: string): Observable<ShiftSummary[]> {
-    const params = new HttpParams().set('date', date);
+  getShiftsByDate(date: string, companyId?: string): Observable<ShiftSummary[]> {
+    let params = new HttpParams().set('date', date);
+    if (companyId) params = params.set('companyId', companyId);
     return this.http.get<ShiftSummary[]>(`${this.baseUrl}/shifts/by-date`, { params });
   }
 

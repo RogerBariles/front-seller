@@ -51,11 +51,11 @@ export class AppShellComponent {
   readonly navItems = computed(() => {
     const role = this.user()?.role;
     const items: NavItem[] = [
-      { label: 'Ventas', path: '/app/ventas', icon: 'shopping_cart'},
+      { label: 'Ventas', path: '/app/ventas', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN'], icon: 'shopping_cart'},
       { label: 'Caja y Turnos', path: '/app/caja', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN'], icon: 'payments'},
-      { label: 'Productos', path: '/app/productos', icon: 'inventory' },
-      { label: 'Usuarios', path: '/app/usuarios', roles: ['ADMIN', 'SUPER_ADMIN'], icon: 'people' },
-      { label: 'Empresas', path: '/app/empresas', roles: ['SUPER_ADMIN'], icon: 'business' }
+      { label: 'Productos', path: '/app/productos', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN'], icon: 'inventory' },
+      { label: 'Usuarios', path: '/app/usuarios', roles: ['ADMIN', 'SUPER_ADMIN', 'DEVELOPER'], icon: 'people' },
+      { label: 'Empresas', path: '/app/empresas', roles: ['DEVELOPER'], icon: 'business' }
     ];
     return items.filter(item => !item.roles || (role && item.roles.includes(role)));
   });

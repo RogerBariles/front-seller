@@ -28,7 +28,7 @@ export const routes: Routes = [
       },
       {
         path: 'usuarios',
-        canActivate: [roleGuard('ADMIN', 'SUPER_ADMIN')],
+        canActivate: [roleGuard('ADMIN', 'SUPER_ADMIN', 'DEVELOPER')],
         loadComponent: () => import('./features/usuarios/usuarios.component').then(m => m.UsuariosComponent)
       },
       {
@@ -48,7 +48,7 @@ export const routes: Routes = [
       },
       {
         path: 'empresas',
-        canActivate: [roleGuard('SUPER_ADMIN')],
+        canActivate: [roleGuard('SUPER_ADMIN', 'DEVELOPER')],
         loadComponent: () => import('./features/empresas/empresas.component').then(m => m.EmpresasComponent)
       },
       { path: '', pathMatch: 'full', redirectTo: 'ventas' }

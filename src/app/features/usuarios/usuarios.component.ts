@@ -43,7 +43,7 @@ export class UsuariosComponent implements OnInit {
   loading = false;
 
   readonly roleLabels = ROLE_LABELS;
-  readonly allRoles: UserRole[] = ['SELLER', 'ADMIN', 'SUPER_ADMIN'];
+  readonly allRoles: UserRole[] = ['SELLER', 'ADMIN', 'SUPER_ADMIN', 'DEVELOPER'];
   displayedColumns = ['name', 'username', 'birthDate', 'role', 'company', 'active', 'actions'];
 
   form = this.fb.nonNullable.group({
@@ -63,9 +63,9 @@ export class UsuariosComponent implements OnInit {
   }
 
   get availableRoles(): UserRole[] {
-    return this.auth.hasRole('SUPER_ADMIN')
-      ? this.allRoles
-      : ['SELLER', 'ADMIN'];
+    if (this.auth.hasRole('SUPER_ADMIN')) return this.allRoles;
+    if (this.auth.hasRole('DEVELOPER')) return ['SELLER', 'ADMIN', 'DEVELOPER'];
+    return ['SELLER', 'ADMIN'];
   }
 
   get activeCompanies(): Company[] {

@@ -1,4 +1,4 @@
-export type UserRole = 'SELLER' | 'ADMIN' | 'SUPER_ADMIN';
+export type UserRole = 'SELLER' | 'ADMIN' | 'SUPER_ADMIN' | 'DEVELOPER';
 export type ProductCategory = 'TORTAS' | 'TARTAS' | 'TARTINES' | 'POSTRES' | 'COTILLON' | 'ALFAJORES';
 export type PaymentMethod = 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA' | 'PEDIDOSYA' | 'DEBITO' | 'QR';
 export type DiscountType = 'PERCENTAGE' | 'FIXED' | 'PERCENTAGE_EXTRA';
@@ -314,5 +314,6 @@ export const PAYMENT_LABELS: Record<PaymentMethod, string> = {
 export const ROLE_LABELS: Record<UserRole, string> = {
   SELLER: 'Vendedora',
   ADMIN: 'Administrador',
-  SUPER_ADMIN: 'Super Admin'
+  SUPER_ADMIN: 'Super Admin',
+  DEVELOPER: 'Developer'
 };
