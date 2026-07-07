@@ -38,6 +38,10 @@ export class VentasSearchComponent {
   readonly categoryLabels = CATEGORY_LABELS;
   readonly displayedColumns = ['name', 'price', 'action'];
 
+  getCategoryLabel(category: ProductCategory): string {
+    return this.categoryLabels[category];
+  }
+
   onAdd(product: Product): void {
     if (!this.disabled) {
       this.addProduct.emit(product);
