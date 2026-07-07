@@ -39,6 +39,26 @@
   margin-top: 16px;
 }
 
+.filter-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  mat-form-field {
+    width: 260px;
+  }
+}
+
+@media (max-width: 700px) {
+  .filter-row {
+    flex-direction: column;
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}
+
 .margin-pct {
   color: #2e7d32;
   font-size: 0.9em;

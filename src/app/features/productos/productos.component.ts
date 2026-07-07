@@ -1,14 +1,15 @@
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 import {
@@ -34,6 +35,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatSelectModule,
     MatButtonModule,
     MatTableModule,
+    MatPaginatorModule,
     MatSlideToggleModule,
     MatSnackBarModule,
     MatIconModule,
@@ -42,16 +44,21 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss'
 })
-export class ProductosComponent implements OnInit {
+export class ProductosComponent implements OnInit, AfterViewInit {
   private api = inject(ApiService);
   readonly auth = inject(AuthService);
   private fb = inject(FormBuilder);
   private snack = inject(MatSnackBar);
 
-  products: Product[] = [];
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  dataSource = new MatTableDataSource<Product>([]);
   audits: ProductPriceAudit[] = [];
   editingId: string | null = null;
   loading = false;
+
+  filterName = '';
+  filterCategory = '';
 
   readonly categories = Object.keys(CATEGORY_LABELS) as ProductCategory[];
   readonly categoryLabels = CATEGORY_LABELS;
@@ -69,13 +76,28 @@ export class ProductosComponent implements OnInit {
   });
 
   bulkForm = this.fb.nonNullable.group({
+    category: ['' as ProductCategory | ''],
     percentage: [10, [Validators.required, Validators.min(0.01)]],
     target: ['SALE' as PriceField, Validators.required]
   });
 
   ngOnInit(): void {
+    this.dataSource.filterPredicate = (product: Product, filter: string): boolean => {
+      const [name, category] = filter.split('|');
+      const matchName = !name || product.name.toLowerCase().includes(name.toLowerCase());
+      const matchCategory = !category || product.category === category;
+      return matchName && matchCategory;
+    };
     this.loadProducts();
     this.fillCompanyFromUser();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+  }
+
+  applyFilter(): void {
+    this.dataSource.filter = `${this.filterName}|${this.filterCategory}`;
   }
 
   private fillCompanyFromUser(): void {
@@ -87,7 +109,13 @@ export class ProductosComponent implements OnInit {
 
   loadProducts(): void {
     this.api.listProducts().subscribe({
-      next: (products) => this.products = products
+      next: (products) => {
+        const companyId = this.auth.currentUser()?.companyId;
+        const companyProducts = companyId
+          ? products.filter(p => p.companyId === companyId)
+          : products;
+        this.dataSource.data = companyProducts;
+      }
     });
   }
 
@@ -163,12 +191,13 @@ export class ProductosComponent implements OnInit {
 
   bulkIncrease(): void {
     if (this.bulkForm.invalid) return;
-    const { percentage, target } = this.bulkForm.getRawValue();
-    if (!confirm(`¿Aumentar ${this.bulkTargetLabel(target).toLowerCase()} de todos los productos activos un ${percentage}%?`)) {
+    const { percentage, target, category } = this.bulkForm.getRawValue();
+    const categoryLabel = category ? this.categoryLabels[category] : 'todas las categorías';
+    if (!confirm(`¿Aumentar ${this.bulkTargetLabel(target).toLowerCase()} de productos activos de ${categoryLabel} un ${percentage}%?`)) {
       return;
     }
     this.loading = true;
-    this.api.bulkPriceIncrease(percentage, target).subscribe({
+    this.api.bulkPriceIncrease(percentage, target, category || undefined).subscribe({
       next: (res) => {
         this.loading = false;
         this.snack.open(`${res.updated} productos actualizados`, 'Cerrar', { duration: 3000 });

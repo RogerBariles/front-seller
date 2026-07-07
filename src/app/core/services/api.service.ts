@@ -153,8 +153,8 @@ export class ApiService {
     return this.http.put<Product>(`${this.baseUrl}/products/${id}`, body);
   }
 
-  bulkPriceIncrease(percentage: number, target: PriceField): Observable<{ updated: number }> {
-    return this.http.patch<{ updated: number }>(`${this.baseUrl}/products/bulk-price-increase`, { percentage, target });
+  bulkPriceIncrease(percentage: number, target: PriceField, category?: ProductCategory): Observable<{ updated: number }> {
+    return this.http.patch<{ updated: number }>(`${this.baseUrl}/products/bulk-price-increase`, { percentage, target, category });
   }
 
   getProductAudits(id: string): Observable<ProductPriceAudit[]> {
