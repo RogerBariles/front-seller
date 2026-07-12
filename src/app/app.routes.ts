@@ -47,6 +47,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/contabilidad/contabilidad.component').then(m => m.ContabilidadComponent)
       },
       {
+        path: 'stock',
+        canActivate: [roleGuard('SELLER', 'ADMIN', 'SUPER_ADMIN')],
+        loadComponent: () => import('./features/stock/stock.component').then(m => m.StockComponent)
+      },
+      {
         path: 'empresas',
         canActivate: [roleGuard('SUPER_ADMIN', 'DEVELOPER')],
         loadComponent: () => import('./features/empresas/empresas.component').then(m => m.EmpresasComponent)

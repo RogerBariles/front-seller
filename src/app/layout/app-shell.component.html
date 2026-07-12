@@ -8,6 +8,25 @@
         </a>
       }
 
+      @if (productosGroup(); as group) {
+        <div class="nav-group">
+          <button mat-list-item class="nav-group-header" (click)="toggleProductos()">
+            <mat-icon>{{ group.icon }}</mat-icon>
+            <span>{{ group.label }}</span>
+            <mat-icon class="expand-icon">{{ productosExpanded() ? 'expand_less' : 'expand_more' }}</mat-icon>
+          </button>
+          @if (productosExpanded()) {
+            <div class="children">
+              @for (child of group.children; track child.path) {
+                <a class="nav-item child-item" mat-list-item [routerLink]="child.path" routerLinkActive="active" (click)="drawer.close()">
+                  <mat-icon>{{ child.icon }}</mat-icon> {{ child.label }}
+                </a>
+              }
+            </div>
+          }
+        </div>
+      }
+
       @if (adminGroup(); as group) {
         <div class="nav-group">
           <button mat-list-item class="nav-group-header" (click)="toggleAdmin()">

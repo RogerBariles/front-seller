@@ -39,6 +39,7 @@ export interface Product {
   updatedAt: string;
   companyId?: string;
   companyName?: string;
+  currentStock?: number;
 }
 
 export interface CashRegister {
@@ -74,6 +75,37 @@ export interface Shift {
   endedAt?: string;
   companyId: string;
   companyName: string;
+}
+
+export type StockMovementType = 'IN' | 'OUT' | 'ADJUSTMENT';
+export type StockReferenceType = 'SALE' | 'PURCHASE' | 'ADJUSTMENT';
+
+export interface StockResponse {
+  productId: string;
+  productName: string;
+  currentStock: number;
+}
+
+export interface StockMovement {
+  id: string;
+  quantityChange: number;
+  type: StockMovementType;
+  referenceType: StockReferenceType;
+  notes?: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface StockAdjustRequest {
+  productId: string;
+  quantityChange: number;
+  notes?: string;
+}
+
+export interface StockPurchaseRequest {
+  productId: string;
+  quantity: number;
+  notes?: string;
 }
 
 export type CashMovementType = 'INCOME' | 'WITHDRAWAL';

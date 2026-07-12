@@ -26,6 +26,10 @@ import {
   ShiftSummary,
   CashMovementType,
   ShiftCashMovement,
+  StockAdjustRequest,
+  StockMovement,
+  StockPurchaseRequest,
+  StockResponse,
   User
 } from '../../models';
 
@@ -191,5 +195,21 @@ export class ApiService {
 
   createExpense(body: CreateExpenseRequest): Observable<ExpenseResponse> {
     return this.http.post<ExpenseResponse>(`${this.baseUrl}/contabilidad/expenses`, body);
+  }
+
+  getStock(productId: string): Observable<StockResponse> {
+    return this.http.get<StockResponse>(`${this.baseUrl}/stock/product/${productId}`);
+  }
+
+  getStockMovements(productId: string): Observable<StockMovement[]> {
+    return this.http.get<StockMovement[]>(`${this.baseUrl}/stock/product/${productId}/movements`);
+  }
+
+  adjustStock(body: StockAdjustRequest): Observable<StockResponse> {
+    return this.http.post<StockResponse>(`${this.baseUrl}/stock/adjust`, body);
+  }
+
+  recordPurchase(body: StockPurchaseRequest): Observable<StockResponse> {
+    return this.http.post<StockResponse>(`${this.baseUrl}/stock/purchase`, body);
   }
 }

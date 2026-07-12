@@ -43,9 +43,14 @@ export class AppShellComponent {
   private auth = inject(AuthService);
   readonly user = this.auth.currentUser;
   adminExpanded = signal(false);
+  productosExpanded = signal(false);
 
   toggleAdmin(): void {
     this.adminExpanded.update(v => !v);
+  }
+
+  toggleProductos(): void {
+    this.productosExpanded.update(v => !v);
   }
 
   readonly navItems = computed(() => {
@@ -53,11 +58,26 @@ export class AppShellComponent {
     const items: NavItem[] = [
       { label: 'Ventas', path: '/app/ventas', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN'], icon: 'shopping_cart'},
       { label: 'Caja y Turnos', path: '/app/caja', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN'], icon: 'payments'},
-      { label: 'Productos', path: '/app/productos', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN'], icon: 'inventory' },
       { label: 'Usuarios', path: '/app/usuarios', roles: ['ADMIN', 'SUPER_ADMIN', 'DEVELOPER'], icon: 'people' },
       { label: 'Empresas', path: '/app/empresas', roles: ['DEVELOPER'], icon: 'business' }
     ];
     return items.filter(item => !item.roles || (role && item.roles.includes(role)));
+  });
+
+  readonly productosGroup = computed<NavGroup | null>(() => {
+    const role = this.user()?.role;
+    if (!role) return null;
+    if (!['SELLER', 'ADMIN', 'SUPER_ADMIN'].includes(role)) return null;
+    const children: NavItem[] = [
+      { label: 'Precios', path: '/app/productos', icon: 'attach_money' }
+    ];
+    children.push({ label: 'Stock', path: '/app/stock', icon: 'inventory' });
+    return {
+      icon: 'inventory_2',
+      label: 'Productos',
+      path: '',
+      children
+    };
   });
 
   readonly adminGroup = computed<NavGroup | null>(() => {
