@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { ApiService } from '../../core/services/api.service';
@@ -18,6 +19,7 @@ import html2canvas from 'html2canvas';
     MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
     MatSelectModule,
     MatTableModule,
   ],
@@ -33,6 +35,7 @@ export class StockComponent implements OnInit {
   error = signal<string | null>(null);
   copySuccess = signal(false);
   selectedCategories = signal<ProductCategory[]>([]);
+  searchName = signal('');
 
   availableCategories = computed(() => {
     const all = this.products();
@@ -41,8 +44,13 @@ export class StockComponent implements OnInit {
 
   filteredProducts = computed(() => {
     const cats = this.selectedCategories();
-    if (cats.length === 0) return [];
-    return this.products().filter(p => cats.includes(p.category));
+    const nameFilter = this.searchName().toLowerCase().trim();
+
+    return this.products().filter(p => {
+      if (cats.length > 0 && !cats.includes(p.category)) return false;
+      if (nameFilter && !p.name.toLowerCase().includes(nameFilter)) return false;
+      return true;
+    });
   });
 
   allSelected = computed(() => {

@@ -43,6 +43,18 @@
             }
           </mat-select>
         </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Buscar producto</mat-label>
+          <input matInput [value]="searchName()"
+                 (input)="searchName.set($any($event.target).value)"
+                 placeholder="Nombre del producto...">
+          @if (searchName()) {
+            <button matSuffix mat-icon-button (click)="searchName.set('')">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
       </div>
 
       <table mat-table [dataSource]="filteredProducts()" class="mat-elevation-z1">
