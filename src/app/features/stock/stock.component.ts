@@ -46,11 +46,13 @@ export class StockComponent implements OnInit {
     const cats = this.selectedCategories();
     const nameFilter = this.searchName().toLowerCase().trim();
 
-    return this.products().filter(p => {
-      if (cats.length > 0 && !cats.includes(p.category)) return false;
-      if (nameFilter && !p.name.toLowerCase().includes(nameFilter)) return false;
-      return true;
-    });
+    return this.products()
+      .filter(p => {
+        if (cats.length > 0 && !cats.includes(p.category)) return false;
+        if (nameFilter && !p.name.toLowerCase().includes(nameFilter)) return false;
+        return true;
+      })
+      .sort((a, b) => (b.currentStock ?? 0) - (a.currentStock ?? 0));
   });
 
   allSelected = computed(() => {
