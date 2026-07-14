@@ -1,9 +1,9 @@
-<div class="login-page">
-  <mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-title>Lo'Postigli</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
+<div class="login-container">
+
+  <div class="login-container_left">
+    <div class="login-container_left_content">
+      <h1>Lo'Postigli</h1>
+      
       <form [formGroup]="form" (ngSubmit)="submit()">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Usuario</mat-label>
@@ -17,6 +17,10 @@
           {{ loading ? 'Ingresando...' : 'Ingresar' }}
         </button>
       </form>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
+
+  <div class="login-container_right">
+
+  </div>
 </div>
