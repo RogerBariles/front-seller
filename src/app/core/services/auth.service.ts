@@ -7,15 +7,16 @@ import { ApiService } from './api.service';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly tokenKey = 'pos_token';
-  readonly currentUser = signal<User | null>(null);
+  private readonly userKey = 'pos_user';
+  currentUser = signal<User | null>(null);
 
   constructor(private api: ApiService, private router: Router) {
     const token = localStorage.getItem(this.tokenKey);
     if (token) {
-      this.api.me().subscribe({
-        next: (user) => this.currentUser.set(user),
-        error: () => this.logout()
-      });
+      const user: User | null = {
+        ...this.getUserFromStorage()
+      }
+      this.currentUser.set(user);
     }
   }
 
@@ -23,6 +24,7 @@ export class AuthService {
     return this.api.login(username, password).pipe(
       tap((response) => {
         localStorage.setItem(this.tokenKey, response.token);
+        localStorage.setItem(this.userKey, JSON.stringify(response.user));
         this.currentUser.set(response.user);
       })
     );
@@ -45,5 +47,10 @@ export class AuthService {
   hasRole(...roles: UserRole[]): boolean {
     const user = this.currentUser();
     return !!user && roles.includes(user.role);
+  }
+
+  private getUserFromStorage(): any | null {
+    const user = localStorage.getItem(this.userKey);
+    return user ? JSON.parse(user) : null;
   }
 }
