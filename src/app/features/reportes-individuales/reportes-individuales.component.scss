@@ -1,0 +1,80 @@
+.filters {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: center;
+}
+
+.summary {
+  margin-top: 16px;
+
+  .mat-mdc-card {
+    height: 85px;
+  }
+}
+
+.big {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.profit {
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.table-card {
+  margin-top: 16px;
+
+  .full-width {
+    width: 100%;
+  }
+}
+
+.top-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+
+  .table-card {
+    margin-top: 0;
+
+    .full-width {
+      width: 100%;
+    }
+  }
+}
+
+mat-accordion {
+  display: block;
+  margin-top: 12px;
+}
+
+mat-expansion-panel {
+  .card-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+
+    .mat-mdc-card {
+      height: 85px;
+    }
+  }
+}
+
+.card-content {
+  height: 30px;
+
+  h3 {
+    font-size: 18px;
+    margin: 0;
+    margin-bottom: 10px;
+  }
+}
+
+h2 {
+  margin: 6px 0 !important;
+  font-size: 18px;
+}
