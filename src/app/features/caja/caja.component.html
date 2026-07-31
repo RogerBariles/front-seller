@@ -37,14 +37,24 @@
             <button mat-flat-button color="primary" [disabled]="loading || openForm.invalid">Abrir caja</button>
           </form>
         } @else {
-          <p><strong>Fecha:</strong> {{ registerActive.cashRegister.businessDate | date:'dd/MM/yyyy' }}</p>
-          <p><strong>Estado:</strong> {{ registerActive.cashRegister.status === 'OPEN' ? 'Abierta' : 'Cerrada' }}</p>
+          <div class="info-section">
+            <p class="info-section__item">
+              <mat-icon fontIcon="person"></mat-icon> {{ registerActive.cashRegister.openedByName }}
+              <span>-</span>
+              <mat-icon fontIcon="calendar_month"></mat-icon> {{ registerActive.cashRegister.businessDate | date:'dd/MM/yyyy' }}
+              <span>-</span>
+              {{ registerActive.cashRegister.status === 'OPEN' ? 'Abierto' : 'Cerrado' }}
+            </p>
+
+            <p class="info-section__item">
+              <strong>Ingresos:</strong> {{ registerActive.cashIncome | currency:'ARS':'symbol-narrow':'1.2-2' }}
+              <span>-</span>
+              <strong>Retiros:</strong> {{ registerActive.cashWithdrawal | currency:'ARS':'symbol-narrow':'1.2-2' }}
+            </p>
+          </div>
           <p><strong>Efectivo inicial:</strong> {{ registerActive.cashRegister.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
           <p><strong>Ventas en efectivo:</strong> {{ registerActive.cashSales | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-          <p><strong>Ingresos:</strong> {{ registerActive.cashIncome | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-          <p><strong>Retiros:</strong> {{ registerActive.cashWithdrawal | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
           <p><strong>Efectivo esperado:</strong> {{ registerActive.expectedFinalCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-          <p><strong>Abierta por:</strong> {{ registerActive.cashRegister.openedByName }}</p>
 
           @if (registerActive.cashMovements.length > 0) {
             <ul class="movement-list">
@@ -83,29 +93,44 @@
           <p>La caja está abierta. Inicie su turno para poder vender.</p>
           <button mat-flat-button color="primary" (click)="startShift()" [disabled]="loading">Iniciar turno</button>
         } @else {
-          <p><strong>Vendedora:</strong> {{ shiftActive.shift.sellerName }}</p>
+          <div class="info-section">
+            <p class="info-section__item">
+              <mat-icon fontIcon="person"></mat-icon> {{ shiftActive.shift.sellerName }}
+              <span>-</span>
+              <mat-icon fontIcon="calendar_month"></mat-icon> {{ shiftActive.shift.startedAt | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+
+            <p class="info-section__item">
+              <strong>Ingresos:</strong> {{ shiftActive.cashIncome | currency:'ARS':'symbol-narrow':'1.2-2' }}
+              <span>-</span>
+              <strong>Retiros:</strong> {{ shiftActive.cashWithdrawal | currency:'ARS':'symbol-narrow':'1.2-2' }}
+            </p>
+          </div>
+
+          
           <p><strong>Efectivo inicial del turno:</strong> {{ shiftActive.shift.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
           <p><strong>Ventas en efectivo:</strong> {{ shiftActive.cashSales | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-          <p><strong>Ingresos:</strong> {{ shiftActive.cashIncome | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-          <p><strong>Retiros:</strong> {{ shiftActive.cashWithdrawal | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+
           <p><strong>Efectivo esperado:</strong> {{ shiftActive.expectedFinalCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-          <p><strong>Inicio:</strong> {{ shiftActive.shift.startedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+          
 
           <div class="movement-section">
             <p class="section-title">Ingreso / retiro de efectivo</p>
             <form [formGroup]="movementForm" (ngSubmit)="addCashMovement()" class="movement-form">
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Tipo</mat-label>
-                <mat-select formControlName="type">
-                  @for (t of movementTypes; track t) {
-                    <mat-option [value]="t">{{ movementLabels[t] }}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Monto</mat-label>
-                <input matInput type="number" formControlName="amount" step="0.01" min="0.01" />
-              </mat-form-field>
+              <div class="movement-form__row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Tipo</mat-label>
+                  <mat-select formControlName="type">
+                    @for (t of movementTypes; track t) {
+                      <mat-option [value]="t">{{ movementLabels[t] }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Monto</mat-label>
+                  <input matInput type="number" formControlName="amount" step="0.01" min="0.01" />
+                </mat-form-field>
+              </div>
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Detalle</mat-label>
                 <input matInput formControlName="detail" maxlength="500" />

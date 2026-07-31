@@ -1,12 +1,12 @@
 .search-row {
   display: grid;
   gap: 12px;
-  grid-template-columns: 1fr;
+  //grid-template-columns: 1fr;
 }
 
 @media (min-width: 700px) {
   .search-row {
-    grid-template-columns: 2fr 1fr;
+    //grid-template-columns: 2fr 1fr;
   }
 }
 

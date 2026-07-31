@@ -33,9 +33,15 @@ h1 {
 }
 
 .movement-form {
+  margin-top: 30px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+
+  &__row {
+    display: flex;
+    gap: 10px;
+  }
 }
 
 .movement-list {
@@ -64,5 +70,17 @@ h1 {
 .container {
   &__report {
     margin-bottom: 16px;
+  }
+}
+
+.info-section {
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    span {
+      margin: 0 8px;
+    }
   }
 }

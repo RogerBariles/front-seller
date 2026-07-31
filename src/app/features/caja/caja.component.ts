@@ -13,6 +13,7 @@ import { CashRegisterActive, CloseReport, ShiftActive, CASH_MOVEMENT_LABELS } fr
 import { ClosePrintDialogComponent } from './close-print-dialog/close-print-dialog.component';
 import { CajaTurnoReporteComponent } from './caja-turno-reporte/caja-turno-reporte.component';
 import { AuthService } from '../../core/services/auth.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-caja',
@@ -29,6 +30,7 @@ import { AuthService } from '../../core/services/auth.service';
     MatSnackBarModule,
     MatDialogModule,
     CajaTurnoReporteComponent,
+    MatIconModule,
   ],
   templateUrl: './caja.component.html',
   styleUrl: './caja.component.scss'
