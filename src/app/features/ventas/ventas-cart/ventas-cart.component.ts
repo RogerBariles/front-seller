@@ -195,12 +195,12 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
 
   isAvailableTypeByPaymentMethod(type: string): boolean {
     if (type === 'DISCOUNT') {
-      const notAvailablePaymentMethods = ['PEDIDOSYA', 'DEBITO', 'QR'];
+      const notAvailablePaymentMethods = ['DEBITO', 'QR'];
       return !notAvailablePaymentMethods.includes(this.checkoutForm.value.paymentMethod);
     }
 
     if (type === 'MANUAL_TOTAL') {
-      const notAvailablePaymentMethods = ['PEDIDOSYA', 'DEBITO', 'QR'];
+      const notAvailablePaymentMethods = ['DEBITO', 'QR'];
       return !notAvailablePaymentMethods.includes(this.checkoutForm.value.paymentMethod);
     }
 
