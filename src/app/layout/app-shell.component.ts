@@ -58,6 +58,7 @@ export class AppShellComponent {
     const items: NavItem[] = [
       { label: 'Ventas', path: '/app/ventas', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN'], icon: 'shopping_cart'},
       { label: 'Caja y Turnos', path: '/app/caja', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN'], icon: 'payments'},
+      { label: 'Reporte de ventas ind.', path: '/app/reporte-ventas-individuales', roles: ['SELLER'], icon: 'assessment' },
       { label: 'Usuarios', path: '/app/usuarios', roles: ['ADMIN', 'SUPER_ADMIN', 'DEVELOPER'], icon: 'people' },
       { label: 'Empresas', path: '/app/empresas', roles: ['DEVELOPER'], icon: 'business' }
     ];

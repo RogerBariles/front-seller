@@ -43,7 +43,7 @@ export const routes: Routes = [
       },
       {
         path: 'reporte-ventas-individuales',
-        canActivate: [roleGuard('SUPER_ADMIN')],
+        canActivate: [roleGuard('SELLER', 'SUPER_ADMIN')],
         loadComponent: () => import('./features/reportes-individuales/reportes-individuales.component').then(m => m.ReportesIndividualesComponent)
       },
       {

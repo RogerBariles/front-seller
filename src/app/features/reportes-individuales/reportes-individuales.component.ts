@@ -62,12 +62,15 @@ export class ReportesIndividualesComponent implements OnInit {
   topStats: TopStats | null = null;
   productRows: SaleProductRow[] = [];
   loading = false;
+  readonly isSeller = this.auth.hasRole('SELLER');
 
   readonly paymentMethods = Object.keys(PAYMENT_LABELS) as PaymentMethod[];
   readonly paymentLabels = PAYMENT_LABELS;
   readonly categories = Object.keys(CATEGORY_LABELS) as ProductCategory[];
   readonly categoryLabels = CATEGORY_LABELS;
-  displayedColumns = ['date', 'seller', 'product', 'quantity', 'payment', 'unitPrice', 'discount', 'total', 'cost', 'profit'];
+  readonly displayedColumns = this.isSeller
+    ? ['date', 'seller', 'product', 'quantity', 'payment', 'unitPrice', 'discount', 'total']
+    : ['date', 'seller', 'product', 'quantity', 'payment', 'unitPrice', 'discount', 'total', 'cost', 'profit'];
   displayedTopColumns = ['position', 'product', 'quantity'];
   topDaysDisplayedColumns = ['position', 'date', 'quantity'];
   topSellersDisplayedColumns = ['position', 'seller', 'sales', 'amount'];
@@ -81,6 +84,13 @@ export class ReportesIndividualesComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    if (this.isSeller) {
+      const user = this.auth.currentUser();
+      if (user?.id) {
+        this.form.patchValue({ sellerId: user.id });
+      }
+      return;
+    }
     this.api.getSellers().subscribe({
       next: (sellers) => this.sellers = sellers
     });
@@ -121,10 +131,14 @@ export class ReportesIndividualesComponent implements OnInit {
       toDate: v.toDate
     };
     if (v.paymentMethod) params['paymentMethod'] = v.paymentMethod;
-    if (v.sellerId) params['sellerId'] = v.sellerId;
     if (v.category) params['category'] = v.category;
 
     const user = this.auth.currentUser();
+    if (this.isSeller && user?.id) {
+      params['sellerId'] = user.id;
+    } else if (v.sellerId) {
+      params['sellerId'] = v.sellerId;
+    }
     if (user?.companyId) params['companyId'] = user.companyId;
 
     forkJoin({

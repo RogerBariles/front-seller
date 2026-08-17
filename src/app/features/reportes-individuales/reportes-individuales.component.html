@@ -21,15 +21,17 @@
             }
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Vendedora</mat-label>
-          <mat-select formControlName="sellerId">
-            <mat-option value="">Todas</mat-option>
-            @for (seller of sellers; track seller.id) {
-              <mat-option [value]="seller.id">{{ seller.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        @if (!isSeller) {
+          <mat-form-field appearance="outline">
+            <mat-label>Vendedora</mat-label>
+            <mat-select formControlName="sellerId">
+              <mat-option value="">Todas</mat-option>
+              @for (seller of sellers; track seller.id) {
+                <mat-option [value]="seller.id">{{ seller.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
         <mat-form-field appearance="outline">
           <mat-label>Categoría</mat-label>
           <mat-select formControlName="category">
@@ -58,18 +60,20 @@
           <p class="big">{{ report.totalAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
         </mat-card-content>
       </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Costo total</h3>
-          <p class="big">{{ report.totalCost | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Ganancia</h3>
-          <p class="big profit">{{ report.totalProfit | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
+      @if (!isSeller) {
+        <mat-card>
+          <mat-card-content class="card-content">
+            <h3>Costo total</h3>
+            <p class="big">{{ report.totalCost | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          </mat-card-content>
+        </mat-card>
+        <mat-card>
+          <mat-card-content class="card-content">
+            <h3>Ganancia</h3>
+            <p class="big profit">{{ report.totalProfit | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
+          </mat-card-content>
+        </mat-card>
+      }
     </div>
 
     <mat-accordion>
