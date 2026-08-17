@@ -46,7 +46,7 @@
     </mat-card-content>
   </mat-card>
 
-  @if (report && topStats) {
+  @if (report) {
     <div class="card-grid summary">
       <mat-card>
         <mat-card-content class="card-content">
@@ -94,6 +94,7 @@
       </mat-expansion-panel>
     </mat-accordion>
 
+    @if (!isSeller && topStats) {
     <div class="top-grid">
       <mat-card class="table-card">
         <mat-card-content>
@@ -165,6 +166,7 @@
         </mat-card-content>
       </mat-card>
     </div>
+    }
 
     <mat-card class="table-card">
       <mat-card-content>

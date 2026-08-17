@@ -11,7 +11,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
-import { forkJoin } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 import { CATEGORY_LABELS, PAYMENT_LABELS, PaymentMethod, ProductCategory, Sale, SaleItem, SalesReport, TopStats, User } from '../../models';
@@ -141,9 +141,13 @@ export class ReportesIndividualesComponent implements OnInit {
     }
     if (user?.companyId) params['companyId'] = user.companyId;
 
+    const topStats$: Observable<TopStats | null> = this.isSeller
+      ? of(null)
+      : this.api.getTopStats(params);
+
     forkJoin({
       report: this.api.getSalesReport(params),
-      topStats: this.api.getTopStats(params)
+      topStats: topStats$
     }).subscribe({
       next: ({ report, topStats }) => {
         this.report = report;
