@@ -47,6 +47,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/reportes-individuales/reportes-individuales.component').then(m => m.ReportesIndividualesComponent)
       },
       {
+        path: 'reporte-tendencias',
+        canActivate: [roleGuard('SUPER_ADMIN')],
+        loadComponent: () => import('./features/reporte-tendencias/reporte-tendencias.component').then(m => m.ReporteTendenciasComponent)
+      },
+      {
         path: 'contabilidad',
         canActivate: [roleGuard('SUPER_ADMIN')],
         loadComponent: () => import('./features/contabilidad/contabilidad.component').then(m => m.ContabilidadComponent)

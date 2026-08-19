@@ -93,6 +93,7 @@ export class AppShellComponent {
         //{ label: 'Administración', path: '/app/administracion', icon: 'admin_panel_settings' },
         { label: 'Reporte de ventas', path: '/app/reporte-ventas', icon: 'assessment' },
         { label: 'Reporte de ventas ind.', path: '/app/reporte-ventas-individuales', icon: 'assessment' },
+        { label: 'Tendencias de ventas', path: '/app/reporte-tendencias', icon: 'insights' },
         { label: 'Contabilidad', path: '/app/contabilidad', icon: 'account_balance' }
       ]
     };
