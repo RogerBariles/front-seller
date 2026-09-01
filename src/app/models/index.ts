@@ -77,6 +77,21 @@ export interface Shift {
   companyName: string;
 }
 
+export interface ShiftHoursRow {
+  id: string;
+  startedAt: string;
+  endedAt?: string | null;
+  status: ShiftStatus;
+  durationMinutes: number;
+}
+
+export interface ShiftHoursReport {
+  sellerId: string;
+  sellerName: string;
+  totalDurationMinutes: number;
+  shifts: ShiftHoursRow[];
+}
+
 export type StockMovementType = 'IN' | 'OUT' | 'ADJUSTMENT';
 export type StockReferenceType = 'SALE' | 'PURCHASE' | 'ADJUSTMENT';
 

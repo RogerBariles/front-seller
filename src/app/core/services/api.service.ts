@@ -23,6 +23,7 @@ import {
   TopStats,
   Shift,
   ShiftActive,
+  ShiftHoursReport,
   ShiftSummary,
   CashMovementType,
   ShiftCashMovement,
@@ -183,6 +184,14 @@ export class ApiService {
       if (value) httpParams = httpParams.set(key, value);
     });
     return this.http.get<TopStats>(`${this.baseUrl}/reports/top-stats`, { params: httpParams });
+  }
+
+  getShiftHoursReport(params: Record<string, string>): Observable<ShiftHoursReport> {
+    let httpParams = new HttpParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value) httpParams = httpParams.set(key, value);
+    });
+    return this.http.get<ShiftHoursReport>(`${this.baseUrl}/reports/shifts`, { params: httpParams });
   }
 
   getContabilidadSummary(params: Record<string, string>): Observable<ContabilidadSummary> {

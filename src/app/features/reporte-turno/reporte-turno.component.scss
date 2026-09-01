@@ -1,0 +1,58 @@
+h1 {
+  margin: 0 0 16px;
+}
+
+.filter-card {
+  margin-bottom: 16px;
+}
+
+.filters {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: center;
+}
+
+.summary {
+  margin-bottom: 16px;
+
+  .mat-mdc-card {
+    height: 85px;
+  }
+}
+
+.card-content {
+  h3 {
+    font-size: 18px;
+    margin: 0 0 10px;
+  }
+}
+
+.big {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.table-card {
+  h2 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    font-weight: 500;
+  }
+}
+
+.empty {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.open {
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.closed {
+  color: #757575;
+}

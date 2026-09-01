@@ -57,6 +57,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/contabilidad/contabilidad.component').then(m => m.ContabilidadComponent)
       },
       {
+        path: 'reporte-turno',
+        canActivate: [roleGuard('SUPER_ADMIN')],
+        loadComponent: () => import('./features/reporte-turno/reporte-turno.component').then(m => m.ReporteTurnoComponent)
+      },
+      {
         path: 'stock',
         canActivate: [roleGuard('SELLER', 'ADMIN', 'SUPER_ADMIN')],
         loadComponent: () => import('./features/stock/stock.component').then(m => m.StockComponent)
