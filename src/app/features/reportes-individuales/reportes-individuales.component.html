@@ -14,8 +14,11 @@
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Forma de pago</mat-label>
-          <mat-select formControlName="paymentMethod">
-            <mat-option value="">Todas</mat-option>
+          <mat-select formControlName="paymentMethod" multiple>
+            <mat-select-trigger>{{ paymentMethodTriggerLabel() }}</mat-select-trigger>
+            <mat-option (click)="$event.stopPropagation()" (onSelectionChange)="toggleAllPaymentMethods($event)">
+              {{ allPaymentMethodsSelected() ? 'Deseleccionar todo' : 'Seleccionar todo' }}
+            </mat-option>
             @for (pm of paymentMethods; track pm) {
               <mat-option [value]="pm">{{ paymentLabels[pm] }}</mat-option>
             }
@@ -34,8 +37,11 @@
         }
         <mat-form-field appearance="outline">
           <mat-label>Categoría</mat-label>
-          <mat-select formControlName="category">
-            <mat-option value="">Todas</mat-option>
+          <mat-select formControlName="category" multiple>
+            <mat-select-trigger>{{ categoryTriggerLabel() }}</mat-select-trigger>
+            <mat-option (click)="$event.stopPropagation()" (onSelectionChange)="toggleAllCategories($event)">
+              {{ allCategoriesSelected() ? 'Deseleccionar todo' : 'Seleccionar todo' }}
+            </mat-option>
             @for (cat of categories; track cat) {
               <mat-option [value]="cat">{{ categoryLabels[cat] }}</mat-option>
             }

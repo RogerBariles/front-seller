@@ -78,9 +78,9 @@ export class ReportesIndividualesComponent implements OnInit {
   form = this.fb.nonNullable.group({
     fromDate: [new Date().toISOString().slice(0, 10), Validators.required],
     toDate: [new Date().toISOString().slice(0, 10), Validators.required],
-    paymentMethod: ['' as PaymentMethod | ''],
+    paymentMethod: [[] as PaymentMethod[]],
     sellerId: [''],
-    category: ['' as ProductCategory | '']
+    category: [[] as ProductCategory[]]
   });
 
   ngOnInit(): void {
@@ -102,6 +102,58 @@ export class ReportesIndividualesComponent implements OnInit {
 
   paymentAmount(method: PaymentMethod): number {
     return this.report?.amountByPaymentMethod?.[method] ?? 0;
+  }
+
+  allPaymentMethodsSelected(): boolean {
+    return this.selectedPaymentMethods().length === this.paymentMethods.length;
+  }
+
+  toggleAllPaymentMethods(event?: { isUserInput: boolean }): void {
+    if (event && !event.isUserInput) return;
+    this.form.controls.paymentMethod.setValue(
+      this.allPaymentMethodsSelected() ? [] : [...this.paymentMethods]
+    );
+  }
+
+  paymentMethodTriggerLabel(): string {
+    const selected = this.selectedPaymentMethods();
+    if (selected.length === 0 || selected.length === this.paymentMethods.length) {
+      return 'Todas';
+    }
+    if (selected.length === 1) {
+      return this.paymentLabels[selected[0]];
+    }
+    return `${selected.length} formas de pago`;
+  }
+
+  private selectedPaymentMethods(): PaymentMethod[] {
+    return this.form.controls.paymentMethod.value.filter((method): method is PaymentMethod =>
+      this.paymentMethods.includes(method));
+  }
+
+  allCategoriesSelected(): boolean {
+    return this.selectedCategories().length === this.categories.length;
+  }
+
+  toggleAllCategories(event?: { isUserInput: boolean }): void {
+    if (event && !event.isUserInput) return;
+    this.form.controls.category.setValue(this.allCategoriesSelected() ? [] : [...this.categories]);
+  }
+
+  categoryTriggerLabel(): string {
+    const selected = this.selectedCategories();
+    if (selected.length === 0 || selected.length === this.categories.length) {
+      return 'Todas';
+    }
+    if (selected.length === 1) {
+      return this.categoryLabels[selected[0]];
+    }
+    return `${selected.length} categorías`;
+  }
+
+  private selectedCategories(): ProductCategory[] {
+    return this.form.controls.category.value.filter((cat): cat is ProductCategory =>
+      this.categories.includes(cat));
   }
 
   private flattenSaleProducts(sales: Sale[]): SaleProductRow[] {
@@ -126,12 +178,18 @@ export class ReportesIndividualesComponent implements OnInit {
     if (this.form.invalid) return;
     this.loading = true;
     const v = this.form.getRawValue();
-    const params: Record<string, string> = {
+    const params: Record<string, string | string[]> = {
       fromDate: v.fromDate,
       toDate: v.toDate
     };
-    if (v.paymentMethod) params['paymentMethod'] = v.paymentMethod;
-    if (v.category) params['category'] = v.category;
+    const selectedPaymentMethods = this.selectedPaymentMethods();
+    if (selectedPaymentMethods.length > 0 && selectedPaymentMethods.length < this.paymentMethods.length) {
+      params['paymentMethod'] = selectedPaymentMethods;
+    }
+    const categories = this.selectedCategories();
+    if (categories.length > 0 && categories.length < this.categories.length) {
+      params['category'] = categories;
+    }
 
     const user = this.auth.currentUser();
     if (this.isSeller && user?.id) {

@@ -170,20 +170,12 @@ export class ApiService {
     return this.http.post<Sale>(`${this.baseUrl}/sales`, body);
   }
 
-  getSalesReport(params: Record<string, string>): Observable<SalesReport> {
-    let httpParams = new HttpParams();
-    Object.entries(params).forEach(([key, value]) => {
-      if (value) httpParams = httpParams.set(key, value);
-    });
-    return this.http.get<SalesReport>(`${this.baseUrl}/reports/sales`, { params: httpParams });
+  getSalesReport(params: Record<string, string | string[]>): Observable<SalesReport> {
+    return this.http.get<SalesReport>(`${this.baseUrl}/reports/sales`, { params: this.toHttpParams(params) });
   }
 
-  getTopStats(params: Record<string, string>): Observable<TopStats> {
-    let httpParams = new HttpParams();
-    Object.entries(params).forEach(([key, value]) => {
-      if (value) httpParams = httpParams.set(key, value);
-    });
-    return this.http.get<TopStats>(`${this.baseUrl}/reports/top-stats`, { params: httpParams });
+  getTopStats(params: Record<string, string | string[]>): Observable<TopStats> {
+    return this.http.get<TopStats>(`${this.baseUrl}/reports/top-stats`, { params: this.toHttpParams(params) });
   }
 
   getShiftHoursReport(params: Record<string, string>): Observable<ShiftHoursReport> {
@@ -220,5 +212,19 @@ export class ApiService {
 
   recordPurchase(body: StockPurchaseRequest): Observable<StockResponse> {
     return this.http.post<StockResponse>(`${this.baseUrl}/stock/purchase`, body);
+  }
+
+  private toHttpParams(params: Record<string, string | string[]>): HttpParams {
+    let httpParams = new HttpParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.filter(Boolean).forEach((item) => {
+          httpParams = httpParams.append(key, item);
+        });
+      } else if (value) {
+        httpParams = httpParams.set(key, value);
+      }
+    });
+    return httpParams;
   }
 }
