@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Observable, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
-import { CATEGORY_LABELS, formatIsoDate, PAYMENT_LABELS, PaymentMethod, ProductCategory, Sale, SaleItem, SalesReport, TopStats, User } from '../../models';
+import { CATEGORY_LABELS, formatIsoDate, PAYMENT_LABELS, PaymentMethod, pendingAccreditationAmount, ProductCategory, Sale, SaleItem, SalesReport, TopStats, User } from '../../models';
 
 export interface SaleProductRow {
   createdAt: string;
@@ -104,6 +104,10 @@ export class ReportesIndividualesComponent implements OnInit {
 
   paymentAmount(method: PaymentMethod): number {
     return this.report?.amountByPaymentMethod?.[method] ?? 0;
+  }
+
+  get pendingAccreditation(): number {
+    return pendingAccreditationAmount(this.report?.sales);
   }
 
   allPaymentMethodsSelected(): boolean {
