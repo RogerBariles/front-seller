@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { forkJoin } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
-import { CATEGORY_LABELS, formatIsoDate, PAYMENT_LABELS, PaymentMethod, ProductCategory, Sale, SalesReport, TopStats, User } from '../../models';
+import { CATEGORY_LABELS, formatIsoDate, PAYMENT_LABELS, PaymentMethod, pendingAccreditationAmount, ProductCategory, Sale, SalesReport, TopStats, User } from '../../models';
 import { SaleDetailDialogComponent } from './sale-detail-dialog/sale-detail-dialog.component';
 
 @Component({
@@ -80,6 +80,10 @@ export class ReportesComponent implements OnInit {
 
   paymentAmount(method: PaymentMethod): number {
     return this.report?.amountByPaymentMethod?.[method] ?? 0;
+  }
+
+  get pendingAccreditation(): number {
+    return pendingAccreditationAmount(this.report?.sales);
   }
 
   allPaymentMethodsSelected(): boolean {

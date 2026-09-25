@@ -255,6 +255,26 @@ export function formatIsoDate(isoDate: string | undefined): string {
   return `${day}/${month}/${year}`;
 }
 
+export function argentinaToday(now = new Date()): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Argentina/Buenos_Aires',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(now);
+}
+
+/** Parte de cada venta que todavía no se acreditó. El efectivo del pago mixto ya está cobrado. */
+export function pendingAccreditationAmount(sales: Sale[] | undefined, today = argentinaToday()): number {
+  if (!sales?.length) return 0;
+  return sales.reduce((sum, sale) => {
+    const accreditedAt = sale.accreditedAt?.slice(0, 10);
+    if (!accreditedAt || accreditedAt <= today) return sum;
+    const cashAlreadyReceived = sale.cashAmount ?? 0;
+    return sum + Math.max(0, sale.total - cashAlreadyReceived);
+  }, 0);
+}
+
 export interface SaleItem {
   productId: string;
   productName: string;
