@@ -14,10 +14,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { Observable, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
-import { CATEGORY_LABELS, PAYMENT_LABELS, PaymentMethod, ProductCategory, Sale, SaleItem, SalesReport, TopStats, User } from '../../models';
+import { CATEGORY_LABELS, formatIsoDate, PAYMENT_LABELS, PaymentMethod, ProductCategory, Sale, SaleItem, SalesReport, TopStats, User } from '../../models';
 
 export interface SaleProductRow {
   createdAt: string;
+  accreditedAt: string;
   sellerName: string;
   paymentMethod: PaymentMethod;
   installments?: number;
@@ -69,8 +70,9 @@ export class ReportesIndividualesComponent implements OnInit {
   readonly categories = Object.keys(CATEGORY_LABELS) as ProductCategory[];
   readonly categoryLabels = CATEGORY_LABELS;
   readonly displayedColumns = this.isSeller
-    ? ['date', 'seller', 'product', 'quantity', 'payment', 'unitPrice', 'discount', 'total']
-    : ['date', 'seller', 'product', 'quantity', 'payment', 'unitPrice', 'discount', 'total', 'cost', 'profit'];
+    ? ['date', 'seller', 'product', 'quantity', 'payment', 'accreditedAt', 'unitPrice', 'discount', 'total']
+    : ['date', 'seller', 'product', 'quantity', 'payment', 'accreditedAt', 'unitPrice', 'discount', 'total', 'cost', 'profit'];
+  readonly formatIsoDate = formatIsoDate;
   displayedTopColumns = ['position', 'product', 'quantity'];
   topDaysDisplayedColumns = ['position', 'date', 'quantity'];
   topSellersDisplayedColumns = ['position', 'seller', 'sales', 'amount'];
@@ -160,6 +162,7 @@ export class ReportesIndividualesComponent implements OnInit {
     return sales.flatMap((sale) =>
       (sale.items ?? []).map((item: SaleItem) => ({
         createdAt: sale.createdAt,
+        accreditedAt: sale.accreditedAt,
         sellerName: sale.sellerName,
         paymentMethod: sale.paymentMethod,
         installments: sale.installments,
