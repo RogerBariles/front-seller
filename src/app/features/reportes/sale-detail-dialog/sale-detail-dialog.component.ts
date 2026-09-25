@@ -3,7 +3,7 @@ import { Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
-import { PAYMENT_LABELS, Sale } from '../../../models';
+import { formatIsoDate, PAYMENT_LABELS, Sale } from '../../../models';
 
 @Component({
   selector: 'app-sale-detail-dialog',
@@ -14,6 +14,7 @@ import { PAYMENT_LABELS, Sale } from '../../../models';
 })
 export class SaleDetailDialogComponent {
   readonly paymentLabels = PAYMENT_LABELS;
+  readonly formatIsoDate = formatIsoDate;
   readonly itemColumns = ['product', 'qty', 'unitPrice', 'unitRealPrice', 'purchase', 'discount', 'lineTotal', 'profit'];
 
   constructor(

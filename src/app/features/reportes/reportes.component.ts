@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { forkJoin } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
-import { CATEGORY_LABELS, PAYMENT_LABELS, PaymentMethod, ProductCategory, Sale, SalesReport, TopStats, User } from '../../models';
+import { CATEGORY_LABELS, formatIsoDate, PAYMENT_LABELS, PaymentMethod, ProductCategory, Sale, SalesReport, TopStats, User } from '../../models';
 import { SaleDetailDialogComponent } from './sale-detail-dialog/sale-detail-dialog.component';
 
 @Component({
@@ -54,7 +54,8 @@ export class ReportesComponent implements OnInit {
   readonly paymentLabels = PAYMENT_LABELS;
   readonly categories = Object.keys(CATEGORY_LABELS) as ProductCategory[];
   readonly categoryLabels = CATEGORY_LABELS;
-  displayedColumns = ['date', 'seller', 'payment', 'subtotal', 'discount', 'total', 'cost', 'profit', 'actions'];
+  displayedColumns = ['date', 'seller', 'payment', 'accreditedAt', 'subtotal', 'discount', 'total', 'cost', 'profit', 'actions'];
+  readonly formatIsoDate = formatIsoDate;
   displayedTopColumns = ['position', 'product', 'quantity'];
   topDaysDisplayedColumns = ['position', 'date', 'quantity'];
   topSellersDisplayedColumns = ['position', 'seller', 'sales', 'amount'];

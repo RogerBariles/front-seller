@@ -3,6 +3,7 @@
 <mat-dialog-content>
   <section class="meta">
     <p><strong>Fecha:</strong> {{ sale.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+    <p><strong>Acreditación:</strong> {{ formatIsoDate(sale.accreditedAt) }}</p>
     <p><strong>Vendedor/a:</strong> {{ sale.sellerName }}</p>
     <p>
       <strong>Pago:</strong> {{ paymentLabels[sale.paymentMethod] }}
