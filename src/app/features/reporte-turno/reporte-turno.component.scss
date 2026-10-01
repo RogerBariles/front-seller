@@ -17,7 +17,8 @@ h1 {
   margin-bottom: 16px;
 
   .mat-mdc-card {
-    height: 85px;
+    height: auto;
+    min-height: 85px;
   }
 }
 
@@ -55,4 +56,10 @@ h1 {
 
 .closed {
   color: #757575;
+}
+
+.rate-kind {
+  display: block;
+  color: #757575;
+  font-size: 12px;
 }
