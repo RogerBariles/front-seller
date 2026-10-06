@@ -10,7 +10,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../core/services/api.service';
-import { ContabilidadSummary } from '../../models';
+import { CASH_MOVEMENT_LABELS, CashMovementType, ContabilidadSummary } from '../../models';
 import { ExpenseDialogComponent } from './expense-dialog/expense-dialog.component';
 
 @Component({
@@ -42,6 +42,8 @@ export class ContabilidadComponent implements OnInit {
   loading = false;
 
   displayedExpenseColumns = ['date', 'detail', 'amount', 'createdBy'];
+  displayedMovementColumns = ['date', 'type', 'detail', 'amount', 'createdBy'];
+  readonly movementLabels = CASH_MOVEMENT_LABELS;
 
   form = this.fb.nonNullable.group({
     fromDate: [new Date().toISOString().slice(0, 10), Validators.required],
@@ -71,6 +73,10 @@ export class ContabilidadComponent implements OnInit {
         this.snack.open(err.error?.message || 'Error al cargar', 'Cerrar', { duration: 4000 });
       }
     });
+  }
+
+  movementLabel(type: CashMovementType): string {
+    return this.movementLabels[type];
   }
 
   openExpenseDialog(): void {

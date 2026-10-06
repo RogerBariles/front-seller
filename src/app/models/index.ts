@@ -341,6 +341,9 @@ export interface ContabilidadSummary {
   totalExpenses: number;
   netAmount: number;
   expenses: ExpenseResponse[];
+  totalCashIncome: number;
+  totalCashWithdrawal: number;
+  cashMovements: ShiftCashMovement[];
 }
 
 export interface CreateExpenseRequest {
