@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../../core/services/api.service';
 import { Product, StockPurchaseRequest } from '../../../models';
@@ -22,67 +23,78 @@ export interface StockDialogResult {
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     MatSnackBarModule
   ],
   template: `
     <h2 mat-dialog-title>{{ product.name }}</h2>
     <mat-dialog-content>
-      <p class="stock-actual">
-        Stock actual:
-        <strong [class.stock-bajo]="stockActual() <= 5 && stockActual() > 0"
-                [class.stock-cero]="stockActual() === 0">
-          {{ stockActual() }}
-        </strong>
-      </p>
+      <div class="stock-actual" [class.stock-bajo]="stockActual() <= 5 && stockActual() > 0"
+           [class.stock-cero]="stockActual() === 0">
+        <span>Stock actual</span>
+        <strong>{{ stockActual() }}</strong>
+      </div>
 
-      <!-- Purchase form -->
-      <h3>Registrar compra</h3>
-      <div class="form-row">
-        <mat-form-field appearance="outline">
-          <mat-label>Cantidad</mat-label>
-          <input matInput type="number" [(ngModel)]="purchaseQty" min="1" placeholder="Ej: 50">
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Notas (opcional)</mat-label>
-          <input matInput [(ngModel)]="purchaseNotes" placeholder="Referencia de compra">
-        </mat-form-field>
-        <button mat-raised-button color="primary"
+      <section class="block">
+        <h3><mat-icon>add_shopping_cart</mat-icon> Registrar compra</h3>
+        <div class="form-row">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Cantidad</mat-label>
+            <input matInput type="number" inputmode="numeric" [(ngModel)]="purchaseQty" min="1" placeholder="Ej: 50">
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Notas (opcional)</mat-label>
+            <input matInput [(ngModel)]="purchaseNotes" placeholder="Referencia de compra">
+          </mat-form-field>
+        </div>
+        <button mat-flat-button color="primary"
                 (click)="recordPurchase()"
                 [disabled]="!purchaseQty || purchaseQty <= 0">
           Registrar compra
         </button>
-      </div>
+      </section>
 
-      <!-- Adjustment form -->
-      <h3>Ajustar stock</h3>
-      <div class="form-row">
-        <mat-form-field appearance="outline">
-          <mat-label>Cantidad (+/-)</mat-label>
-          <input matInput type="number" [(ngModel)]="adjustQty" placeholder="Ej: -5 o 10">
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Motivo (opcional)</mat-label>
-          <input matInput [(ngModel)]="adjustNotes" placeholder="Ej: Producto dañado">
-        </mat-form-field>
-        <button mat-raised-button color="accent"
+      <section class="block">
+        <h3><mat-icon>tune</mat-icon> Ajustar stock</h3>
+        <div class="form-row">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Cantidad (+/-)</mat-label>
+            <input matInput type="number" [(ngModel)]="adjustQty" placeholder="Ej: -5 o 10">
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Motivo (opcional)</mat-label>
+            <input matInput [(ngModel)]="adjustNotes" placeholder="Ej: Producto dañado">
+          </mat-form-field>
+        </div>
+        <button mat-stroked-button color="primary"
                 (click)="adjustStock()"
                 [disabled]="!adjustQty || adjustQty === 0">
           Aplicar ajuste
         </button>
-      </div>
+      </section>
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Cancelar</button>
-      <button mat-button color="primary" (click)="close()">Cerrar</button>
+      <button mat-flat-button color="primary" (click)="close()">Listo</button>
     </mat-dialog-actions>
   `,
   styles: [`
-    .stock-actual { font-size: 1.1rem; margin-bottom: 1rem; }
-    .stock-bajo { color: #e65100; }
-    .stock-cero { color: #c62828; }
-    .form-row { display: flex; gap: 0.75rem; align-items: baseline; flex-wrap: wrap; margin-bottom: 0.5rem; }
-    .form-row mat-form-field { flex: 1; min-width: 160px; }
+    .stock-actual {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; margin-bottom: 16px; border-radius: 12px;
+      background: var(--success-soft); color: #15803d; font-weight: 500;
+    }
+    .stock-actual strong { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .stock-actual.stock-bajo { background: var(--warning-soft); color: #b45309; }
+    .stock-actual.stock-cero { background: var(--danger-soft); color: #b91c1c; }
+    .block { padding: 14px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 12px; }
+    .block h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 14px; font-weight: 600; }
+    .block h3 mat-icon { font-size: 18px; width: 18px; height: 18px; color: var(--primary); }
+    .form-row { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; margin-bottom: 12px; }
+    @media (max-width: 599px) {
+      .form-row { grid-template-columns: 1fr; }
+      .block button { width: 100%; }
+    }
   `]
 })
 export class StockEditDialogComponent {

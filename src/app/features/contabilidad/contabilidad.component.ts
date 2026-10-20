@@ -41,8 +41,9 @@ export class ContabilidadComponent implements OnInit {
   summary: ContabilidadSummary | null = null;
   loading = false;
 
-  displayedExpenseColumns = ['date', 'detail', 'amount', 'createdBy'];
-  displayedMovementColumns = ['date', 'type', 'detail', 'amount', 'createdBy'];
+  // "Registrado por" se muestra debajo del detalle para ahorrar ancho
+  displayedExpenseColumns = ['date', 'detail', 'amount'];
+  displayedMovementColumns = ['date', 'type', 'detail', 'amount'];
   readonly movementLabels = CASH_MOVEMENT_LABELS;
 
   form = this.fb.nonNullable.group({
@@ -82,7 +83,8 @@ export class ContabilidadComponent implements OnInit {
   openExpenseDialog(): void {
     const ref = this.dialog.open(ExpenseDialogComponent, {
       width: '420px',
-      maxWidth: '95vw'
+      maxWidth: '95vw',
+      panelClass: 'responsive-dialog'
     });
     ref.afterClosed().subscribe(result => {
       if (result) {

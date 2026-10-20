@@ -1,22 +1,16 @@
 import { Component } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-administracion',
   standalone: true,
-  imports: [MatCardModule],
+  imports: [],
   template: `
-    <div class="container">
-      <h1>Administración</h1>
-      <mat-card>
-        <mat-card-content>
-          <p>Sección en desarrollo</p>
-        </mat-card-content>
-      </mat-card>
+    <div class="page">
+      <div class="page-header"><div><h1>Administración</h1></div></div>
+      <section class="surface empty-state">
+        <strong>Sección en desarrollo</strong>
+      </section>
     </div>
-  `,
-  styles: [`
-    .container { padding: 0; }
-  `]
+  `
 })
 export class AdministracionComponent {}
