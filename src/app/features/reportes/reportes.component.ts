@@ -142,7 +142,8 @@ export class ReportesComponent implements OnInit {
     this.dialog.open(SaleDetailDialogComponent, {
       data: sale,
       width: '760px',
-      maxWidth: '95vw'
+      maxWidth: '95vw',
+      panelClass: 'responsive-dialog'
     });
   }
 

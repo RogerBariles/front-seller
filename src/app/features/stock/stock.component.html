@@ -1,27 +1,56 @@
-<div class="stock-container">
-  <h2>
-    Gestión de Stock
-    <button mat-icon-button class="copy-btn"
-            (click)="copyTableToClipboard()"
-            title="Copiar tabla como imagen">
-      <mat-icon>{{ copySuccess() ? 'check' : 'content_copy' }}</mat-icon>
-    </button>
-    @if (copySuccess()) {
-      <span class="copy-msg">✓ Copiado</span>
-    }
-  </h2>
+<div class="page stock-container">
+  <div class="page-header">
+    <div>
+      <h1>Stock</h1>
+      <p class="page-subtitle">Controlá existencias, registrá compras y ajustes.</p>
+    </div>
+    <div class="page-actions">
+      <button mat-stroked-button (click)="copyTableToClipboard()" [disabled]="loading() || !!error()">
+        <mat-icon>{{ copySuccess() ? 'check' : 'content_copy' }}</mat-icon>
+        {{ copySuccess() ? 'Copiado' : 'Copiar como imagen' }}
+      </button>
+    </div>
+  </div>
 
   @if (loading()) {
-    <div class="loading">Cargando productos...</div>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   }
 
   @if (error(); as err) {
-    <div class="error">{{ err }}</div>
+    <div class="alert danger"><mat-icon>error_outline</mat-icon><span class="alert-body">{{ err }}</span></div>
   }
 
   @if (!loading() && !error()) {
-    <section class="section">
+    <div class="stat-grid stock-stats">
+      <div class="stat">
+        <span class="stat-label"><mat-icon>inventory_2</mat-icon> Productos</span>
+        <span class="stat-value">{{ products().length }}</span>
+      </div>
+      <div class="stat is-warning">
+        <span class="stat-label"><mat-icon>warning_amber</mat-icon> Stock bajo (≤ 5)</span>
+        <span class="stat-value">{{ lowStockCount() }}</span>
+      </div>
+      <div class="stat is-danger">
+        <span class="stat-label"><mat-icon>remove_shopping_cart</mat-icon> Sin stock</span>
+        <span class="stat-value">{{ outOfStockCount() }}</span>
+      </div>
+    </div>
+
+    <section class="surface">
       <div class="filter-row">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-icon matPrefix class="prefix-icon">search</mat-icon>
+          <mat-label>Buscar producto</mat-label>
+          <input matInput [value]="searchName()"
+                 (input)="searchName.set($any($event.target).value)"
+                 placeholder="Nombre del producto...">
+          @if (searchName()) {
+            <button matSuffix mat-icon-button aria-label="Limpiar" (click)="searchName.set('')">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
           <mat-label>Categoría</mat-label>
           <mat-select [value]="selectedCategories()"
@@ -43,57 +72,56 @@
             }
           </mat-select>
         </mat-form-field>
-
-        <mat-form-field appearance="outline" subscriptSizing="dynamic">
-          <mat-label>Buscar producto</mat-label>
-          <input matInput [value]="searchName()"
-                 (input)="searchName.set($any($event.target).value)"
-                 placeholder="Nombre del producto...">
-          @if (searchName()) {
-            <button matSuffix mat-icon-button (click)="searchName.set('')">
-              <mat-icon>close</mat-icon>
-            </button>
-          }
-        </mat-form-field>
       </div>
 
-      <table mat-table [dataSource]="filteredProducts()" class="mat-elevation-z1">
+      <div class="table-scroll compact">
+        <table mat-table [dataSource]="filteredProducts()">
 
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>Producto</th>
-          <td mat-cell *matCellDef="let product">
-            {{ product.name }}
-            <span class="product-category">({{ product.category }})</span>
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Producto</th>
+            <td mat-cell *matCellDef="let product" class="cell-strong">
+              {{ product.name }}
+              <span class="product-category">{{ categoryLabel(product.category) }}</span>
+            </td>
+          </ng-container>
 
-        <ng-container matColumnDef="currentStock">
-          <th mat-header-cell *matHeaderCellDef>Stock Actual</th>
-          <td mat-cell *matCellDef="let product">
-            <span [class.stock-bajo]="(product.currentStock ?? 0) <= 5"
-                  [class.stock-cero]="(product.currentStock ?? 0) === 0">
-              {{ product.currentStock ?? 0 }}
-            </span>
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="currentStock">
+            <th mat-header-cell *matHeaderCellDef>Stock</th>
+            <td mat-cell *matCellDef="let product">
+              <span class="stock-pill"
+                    [class.stock-bajo]="(product.currentStock ?? 0) <= 5"
+                    [class.stock-cero]="(product.currentStock ?? 0) === 0">
+                {{ product.currentStock ?? 0 }}
+              </span>
+            </td>
+          </ng-container>
 
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>Acciones</th>
-          <td mat-cell *matCellDef="let product">
-            <mat-icon class="edit-icon" (click)="openStockDialog(product)">edit</mat-icon>
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="cell-actions"></th>
+            <td mat-cell *matCellDef="let product" class="cell-actions">
+              <button mat-stroked-button color="primary" class="edit-btn" (click)="openStockDialog(product)">
+                <mat-icon>edit</mat-icon> Gestionar
+              </button>
+            </td>
+          </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
 
-      @if (filteredProducts().length === 0 && products().length > 0) {
-        <p class="no-data">No hay productos que coincidan con el filtro.</p>
-      }
-      @if (products().length === 0) {
-        <p class="no-data">No hay productos cargados.</p>
-      }
+        @if (filteredProducts().length === 0 && products().length > 0) {
+          <div class="empty-state">
+            <mat-icon>search_off</mat-icon>
+            <span>No hay productos que coincidan con el filtro.</span>
+          </div>
+        }
+        @if (products().length === 0) {
+          <div class="empty-state">
+            <mat-icon>inventory_2</mat-icon>
+            <span>No hay productos cargados.</span>
+          </div>
+        }
+      </div>
     </section>
   }
 </div>

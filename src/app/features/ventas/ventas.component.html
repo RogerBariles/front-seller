@@ -1,43 +1,44 @@
-<div class="container">
-  <h1>Ventas</h1>
+<div class="page pos-page">
+  <div class="page-header">
+    <div>
+      <h1>Ventas</h1>
+      <p class="page-subtitle">Buscá productos, armá el carrito y cobrá.</p>
+    </div>
+    @if (canSell()) {
+      <span class="badge success dot">Caja y turno abiertos</span>
+    }
+  </div>
 
   @if (!canSell()) {
-    <div class="alert-card">
-      {{ salesBlockMessage() }}
-      <button mat-button color="primary" (click)="goToCaja()">Ir a Caja y Turnos</button>
+    <div class="alert warning">
+      <mat-icon>info</mat-icon>
+      <span class="alert-body">{{ salesBlockMessage() }}</span>
+      <button mat-flat-button color="primary" (click)="goToCaja()">Ir a Caja y Turnos</button>
     </div>
   }
-  <!--
-  <mat-tab-group class="tabs-mobile">
-    <mat-tab label="Buscar">
-      <app-ventas-search
-        [searchForm]="searchForm"
-        [products]="products()"
-        [disabled]="!canSell()"
-        (addProduct)="addToCart($event)" />
-    </mat-tab>
-    <mat-tab label="Carrito">
-      <app-ventas-cart
-        [cart]="cart()"
-        [checkoutForm]="checkoutForm"
-        [subtotal]="subtotal()"
-        [loading]="loading"
-        [disabled]="!canSell()"
-        (removeItem)="removeFromCart($event)"
-        (quantityChange)="updateQuantity($event.productId, $event.quantity)"
-        (discountChange)="updateItemDiscount($event.productId, $event.discountType, $event.discountValue)"
-        (clear)="clearCart()"
-        (confirmSale)="submitSale()" />
-    </mat-tab>
-  </mat-tab-group>-->
 
-  <div class="pos-layout pos-desktop">
-    <app-ventas-search
+  <div class="mobile-tabs show-mobile" role="tablist">
+    <button type="button" role="tab" [class.active]="mobileView() === 'search'"
+      [attr.aria-selected]="mobileView() === 'search'" (click)="mobileView.set('search')">
+      <mat-icon>search</mat-icon> Productos
+    </button>
+    <button type="button" role="tab" [class.active]="mobileView() === 'cart'"
+      [attr.aria-selected]="mobileView() === 'cart'" (click)="mobileView.set('cart')">
+      <mat-icon>shopping_cart</mat-icon> Carrito
+      @if (cartCount() > 0) {
+        <span class="count">{{ cartCount() }}</span>
+      }
+    </button>
+  </div>
+
+  <div class="pos-layout" [attr.data-view]="mobileView()">
+    <app-ventas-search class="pane pane-search"
       [searchForm]="searchForm"
       [products]="products()"
+      [inCart]="cartQuantities()"
       [disabled]="!canSell()"
       (addProduct)="addToCart($event)" />
-    <app-ventas-cart
+    <app-ventas-cart class="pane pane-cart"
       [cart]="cart()"
       [checkoutForm]="checkoutForm"
       [subtotal]="subtotal()"
@@ -49,4 +50,13 @@
       (clear)="clearCart()"
       (confirmSale)="submitSale()" />
   </div>
+
+  @if (mobileView() === 'search' && cartCount() > 0) {
+    <button type="button" class="cart-bar show-mobile" (click)="mobileView.set('cart')">
+      <span class="cart-bar-count">{{ cartCount() }}</span>
+      <span class="cart-bar-label">Ver carrito</span>
+      <strong class="cart-bar-total">{{ subtotal() | currency:'ARS':'symbol-narrow':'1.2-2' }}</strong>
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  }
 </div>

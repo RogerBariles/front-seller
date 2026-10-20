@@ -4,6 +4,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { ApiService } from '../../core/services/api.service';
@@ -20,6 +21,7 @@ import html2canvas from 'html2canvas';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatProgressBarModule,
     MatSelectModule,
     MatTableModule,
   ],
@@ -61,7 +63,19 @@ export class StockComponent implements OnInit {
     return avail.length > 0 && avail.length === selected.length;
   });
 
+  lowStockCount = computed(() =>
+    this.products().filter(p => (p.currentStock ?? 0) > 0 && (p.currentStock ?? 0) <= 5).length
+  );
+
+  outOfStockCount = computed(() =>
+    this.products().filter(p => (p.currentStock ?? 0) === 0).length
+  );
+
   protected readonly CATEGORY_LABELS = CATEGORY_LABELS;
+
+  categoryLabel(category: ProductCategory): string {
+    return CATEGORY_LABELS[category] ?? category;
+  }
 
   displayedColumns: string[] = ['name', 'currentStock', 'actions'];
 
@@ -112,8 +126,9 @@ export class StockComponent implements OnInit {
   openStockDialog(product: Product): void {
     const ref = this.dialog.open(StockEditDialogComponent, {
       data: product,
-      minWidth: '550px',
-      maxWidth: '700px'
+      width: '560px',
+      maxWidth: '95vw',
+      panelClass: 'responsive-dialog'
     });
 
     ref.afterClosed().subscribe((result: StockDialogResult | undefined) => {

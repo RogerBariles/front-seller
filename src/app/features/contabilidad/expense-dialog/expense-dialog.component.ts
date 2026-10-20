@@ -45,7 +45,7 @@ import { ApiService } from '../../../core/services/api.service';
   `,
   styles: [`
     .full-width { width: 100%; }
-    mat-dialog-content { min-width: 350px; }
+    mat-dialog-content { min-width: min(350px, 80vw); }
   `]
 })
 export class ExpenseDialogComponent {

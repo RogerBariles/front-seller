@@ -1,44 +1,61 @@
 .report-section {
-  margin-top: 24px;
+  margin-top: 16px;
+}
 
-  h3 {
-    margin: 20px;
-    font-size: 16px;
-    font-weight: 500;
+.report-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  .section-title {
+    margin: 0;
   }
 }
 
 .filter-form {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 10px;
+
+  button {
+    height: 56px;
+  }
 }
 
 h3 {
-  margin: 20px 0 8px;
-  font-size: 16px;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 24px 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--muted);
+  }
 }
 
 .empty {
-  color: #666;
-  font-size: 14px;
+  padding: 16px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
 }
 
-.full-width {
-  width: 100%;
-}
+@media (max-width: 599px) {
+  .filter-form {
+    width: 100%;
 
-.actions-cell {
-  white-space: nowrap;
-}
+    mat-form-field {
+      flex: 1;
+    }
 
-.open {
-  color: #2e7d32;
-  font-weight: 500;
-}
-
-.closed {
-  color: #757575;
+    button {
+      height: 48px;
+    }
+  }
 }

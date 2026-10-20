@@ -1,121 +1,127 @@
-<div class="container">
-  <div class="header">
-    <h1>Contabilidad</h1>
-    <button mat-flat-button color="primary" (click)="openExpenseDialog()">
-      <mat-icon>add</mat-icon> Nuevo egreso
-    </button>
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Contabilidad</h1>
+      <p class="page-subtitle">Ventas, egresos y movimientos de efectivo del período.</p>
+    </div>
+    <div class="page-actions">
+      <button mat-flat-button color="primary" (click)="openExpenseDialog()">
+        <mat-icon>add</mat-icon> Nuevo egreso
+      </button>
+    </div>
   </div>
 
-  <mat-card class="filter-card">
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="search()" class="filters">
-        <mat-form-field appearance="outline">
-          <mat-label>Desde</mat-label>
-          <input matInput type="date" formControlName="fromDate" />
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Hasta</mat-label>
-          <input matInput type="date" formControlName="toDate" />
-        </mat-form-field>
-        <button mat-flat-button color="primary" [disabled]="loading || form.invalid">Buscar</button>
-      </form>
-    </mat-card-content>
-  </mat-card>
+  <section class="surface filter-card">
+    <form [formGroup]="form" (ngSubmit)="search()" class="filters">
+      <mat-form-field appearance="outline">
+        <mat-label>Desde</mat-label>
+        <input matInput type="date" formControlName="fromDate" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Hasta</mat-label>
+        <input matInput type="date" formControlName="toDate" />
+      </mat-form-field>
+      <button mat-flat-button color="primary" [disabled]="loading || form.invalid">
+        <mat-icon>search</mat-icon> Buscar
+      </button>
+    </form>
+  </section>
 
   @if (summary) {
-    <div class="card-grid">
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Total ventas</h3>
-          <p class="big">{{ summary.totalSales | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Ingresos de efectivo</h3>
-          <p class="big profit">{{ summary.totalCashIncome | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Retiros de efectivo</h3>
-          <p class="big expense">{{ summary.totalCashWithdrawal | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Total egresos</h3>
-          <p class="big expense">{{ summary.totalExpenses | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Monto final</h3>
-          <p class="big" [class.profit]="summary.netAmount >= 0" [class.expense]="summary.netAmount < 0">{{ summary.netAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
+    <div class="stat-grid">
+      <div class="stat">
+        <span class="stat-label"><mat-icon>point_of_sale</mat-icon> Total ventas</span>
+        <span class="stat-value">{{ summary.totalSales | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+      </div>
+      <div class="stat is-success">
+        <span class="stat-label"><mat-icon>north_east</mat-icon> Ingresos de efectivo</span>
+        <span class="stat-value">{{ summary.totalCashIncome | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+      </div>
+      <div class="stat is-danger">
+        <span class="stat-label"><mat-icon>south_west</mat-icon> Retiros de efectivo</span>
+        <span class="stat-value">{{ summary.totalCashWithdrawal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+      </div>
+      <div class="stat is-danger">
+        <span class="stat-label"><mat-icon>receipt</mat-icon> Total egresos</span>
+        <span class="stat-value">{{ summary.totalExpenses | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+      </div>
+      <div class="stat is-primary">
+        <span class="stat-label"><mat-icon>account_balance</mat-icon> Monto final</span>
+        <span class="stat-value">{{ summary.netAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+        <span class="stat-hint">{{ summary.netAmount >= 0 ? 'Resultado positivo' : 'Resultado negativo' }}</span>
+      </div>
     </div>
 
-    <mat-card class="table-card">
-      <mat-card-content>
-        <h2>Egresos</h2>
-        <table mat-table [dataSource]="summary.expenses" class="full-width">
-          <ng-container matColumnDef="date">
-            <th mat-header-cell *matHeaderCellDef>Fecha</th>
-            <td mat-cell *matCellDef="let e">{{ e.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-          </ng-container>
-          <ng-container matColumnDef="detail">
-            <th mat-header-cell *matHeaderCellDef>Detalle</th>
-            <td mat-cell *matCellDef="let e">{{ e.detail }}</td>
-          </ng-container>
-          <ng-container matColumnDef="amount">
-            <th mat-header-cell *matHeaderCellDef>Monto</th>
-            <td mat-cell *matCellDef="let e" class="expense">{{ e.amount | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
-          </ng-container>
-          <ng-container matColumnDef="createdBy">
-            <th mat-header-cell *matHeaderCellDef>Registrado por</th>
-            <td mat-cell *matCellDef="let e">{{ e.createdByName }}</td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="displayedExpenseColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedExpenseColumns"></tr>
-        </table>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="table-card">
-      <mat-card-content>
-        <h2>Movimientos de efectivo</h2>
-        @if (summary.cashMovements.length === 0) {
-          <p class="empty">No hay ingresos ni retiros de efectivo en el período.</p>
+    <div class="grid-2">
+      <section class="surface">
+        <h2 class="section-title"><mat-icon>receipt</mat-icon> Egresos
+          <span class="section-count">{{ summary.expenses.length }}</span>
+        </h2>
+        @if (summary.expenses.length === 0) {
+          <div class="empty-state"><mat-icon>receipt</mat-icon><span>No hay egresos en el período.</span></div>
         } @else {
-          <table mat-table [dataSource]="summary.cashMovements" class="full-width">
-            <ng-container matColumnDef="date">
-              <th mat-header-cell *matHeaderCellDef>Fecha</th>
-              <td mat-cell *matCellDef="let m">{{ m.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-            </ng-container>
-            <ng-container matColumnDef="type">
-              <th mat-header-cell *matHeaderCellDef>Tipo</th>
-              <td mat-cell *matCellDef="let m">{{ movementLabel(m.type) }}</td>
-            </ng-container>
-            <ng-container matColumnDef="detail">
-              <th mat-header-cell *matHeaderCellDef>Detalle</th>
-              <td mat-cell *matCellDef="let m">{{ m.detail }}</td>
-            </ng-container>
-            <ng-container matColumnDef="amount">
-              <th mat-header-cell *matHeaderCellDef>Monto</th>
-              <td mat-cell *matCellDef="let m" [class.profit]="m.type === 'INCOME'" [class.expense]="m.type === 'WITHDRAWAL'">
-                {{ m.amount | currency:'ARS':'symbol-narrow':'1.2-2' }}
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="createdBy">
-              <th mat-header-cell *matHeaderCellDef>Registrado por</th>
-              <td mat-cell *matCellDef="let m">{{ m.createdByName }}</td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="displayedMovementColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedMovementColumns"></tr>
-          </table>
+          <div class="table-scroll compact">
+            <table mat-table [dataSource]="summary.expenses" class="full-width">
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                <td mat-cell *matCellDef="let e">{{ e.createdAt | date:'dd/MM/yy HH:mm' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="detail">
+                <th mat-header-cell *matHeaderCellDef>Detalle</th>
+                <td mat-cell *matCellDef="let e" class="cell-strong">
+                  {{ e.detail }}
+                  <span class="cell-sub">{{ e.createdByName }}</span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="amount">
+                <th mat-header-cell *matHeaderCellDef>Monto</th>
+                <td mat-cell *matCellDef="let e" class="expense">{{ e.amount | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedExpenseColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedExpenseColumns"></tr>
+            </table>
+          </div>
         }
-      </mat-card-content>
-    </mat-card>
+      </section>
+
+      <section class="surface">
+        <h2 class="section-title"><mat-icon>swap_vert</mat-icon> Movimientos de efectivo
+          <span class="section-count">{{ summary.cashMovements.length }}</span>
+        </h2>
+        @if (summary.cashMovements.length === 0) {
+          <div class="empty-state"><mat-icon>swap_vert</mat-icon><span>No hay ingresos ni retiros de efectivo en el período.</span></div>
+        } @else {
+          <div class="table-scroll compact">
+            <table mat-table [dataSource]="summary.cashMovements" class="full-width">
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                <td mat-cell *matCellDef="let m">{{ m.createdAt | date:'dd/MM/yy HH:mm' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="type">
+                <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                <td mat-cell *matCellDef="let m">
+                  <span class="badge" [class.success]="m.type === 'INCOME'" [class.danger]="m.type === 'WITHDRAWAL'">{{ movementLabel(m.type) }}</span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="detail">
+                <th mat-header-cell *matHeaderCellDef>Detalle</th>
+                <td mat-cell *matCellDef="let m">
+                  {{ m.detail }}
+                  <span class="cell-sub">{{ m.createdByName }}</span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="amount">
+                <th mat-header-cell *matHeaderCellDef>Monto</th>
+                <td mat-cell *matCellDef="let m" [class.profit]="m.type === 'INCOME'" [class.expense]="m.type === 'WITHDRAWAL'">
+                  {{ m.amount | currency:'ARS':'symbol-narrow':'1.2-2' }}
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedMovementColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedMovementColumns"></tr>
+            </table>
+          </div>
+        }
+      </section>
+    </div>
   }
 </div>

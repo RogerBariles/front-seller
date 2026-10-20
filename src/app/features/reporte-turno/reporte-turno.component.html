@@ -1,86 +1,76 @@
-<div class="container">
-  <h1>Reporte de turno</h1>
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Reporte de turno</h1>
+      <p class="page-subtitle">Horas trabajadas y monto a pagar por vendedora.</p>
+    </div>
+  </div>
 
-  <mat-card class="filter-card">
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="search()" class="filters">
-        <mat-form-field appearance="outline">
-          <mat-label>Desde</mat-label>
-          <input matInput type="date" formControlName="fromDate" />
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Hasta</mat-label>
-          <input matInput type="date" formControlName="toDate" />
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Vendedora</mat-label>
-          <mat-select formControlName="sellerId">
-            @for (seller of sellers; track seller.id) {
-              <mat-option [value]="seller.id">{{ seller.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Precio hora semana</mat-label>
-          <input matInput type="number" min="0" step="0.01" formControlName="weekdayRate" />
-          <span matTextPrefix>$&nbsp;</span>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Precio hora fin de semana</mat-label>
-          <input matInput type="number" min="0" step="0.01" formControlName="weekendRate" />
-          <span matTextPrefix>$&nbsp;</span>
-        </mat-form-field>
-        <button mat-flat-button color="primary" [disabled]="loading || form.invalid">Buscar</button>
-      </form>
-    </mat-card-content>
-  </mat-card>
+  <section class="surface filter-card">
+    <form [formGroup]="form" (ngSubmit)="search()" class="filters">
+      <mat-form-field appearance="outline">
+        <mat-label>Desde</mat-label>
+        <input matInput type="date" formControlName="fromDate" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Hasta</mat-label>
+        <input matInput type="date" formControlName="toDate" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Vendedora</mat-label>
+        <mat-select formControlName="sellerId">
+          @for (seller of sellers; track seller.id) {
+            <mat-option [value]="seller.id">{{ seller.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Hora semana</mat-label>
+        <span matTextPrefix>$&nbsp;</span>
+        <input matInput type="number" inputmode="decimal" min="0" step="0.01" formControlName="weekdayRate" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Hora fin de semana</mat-label>
+        <span matTextPrefix>$&nbsp;</span>
+        <input matInput type="number" inputmode="decimal" min="0" step="0.01" formControlName="weekendRate" />
+      </mat-form-field>
+      <button mat-flat-button color="primary" [disabled]="loading || form.invalid">
+        <mat-icon>search</mat-icon> Buscar
+      </button>
+    </form>
+  </section>
 
   @if (report && summary) {
-    <div class="card-grid summary">
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Total horas</h3>
-          <p class="big">{{ formatDuration(summary.totalMinutes) }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Monto total</h3>
-          <p class="big">{{ summary.totalAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Horas semana</h3>
-          <p class="big">{{ formatDuration(summary.weekdayMinutes) }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Monto semana</h3>
-          <p class="big">{{ summary.weekdayAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Horas fin de semana</h3>
-          <p class="big">{{ formatDuration(summary.weekendMinutes) }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Monto fin de semana</h3>
-          <p class="big">{{ summary.weekendAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
+    <div class="stat-grid">
+      <div class="stat is-primary">
+        <span class="stat-label"><mat-icon>payments</mat-icon> Monto total</span>
+        <span class="stat-value">{{ summary.totalAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+        <span class="stat-hint">{{ formatDuration(summary.totalMinutes) }} trabajadas</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label"><mat-icon>work_history</mat-icon> Horas semana</span>
+        <span class="stat-value">{{ formatDuration(summary.weekdayMinutes) }}</span>
+        <span class="stat-hint">{{ summary.weekdayAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label"><mat-icon>weekend</mat-icon> Horas fin de semana</span>
+        <span class="stat-value">{{ formatDuration(summary.weekendMinutes) }}</span>
+        <span class="stat-hint">{{ summary.weekendAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label"><mat-icon>timer</mat-icon> Total horas</span>
+        <span class="stat-value">{{ formatDuration(summary.totalMinutes) }}</span>
+      </div>
     </div>
 
-    <mat-card class="table-card">
-      <mat-card-content>
-        <h2>Turnos de {{ report.sellerName }}</h2>
-        @if (report.shifts.length === 0) {
-          <p class="empty">No hay turnos en el rango seleccionado.</p>
-        } @else {
+    <section class="surface">
+      <h2 class="section-title"><mat-icon>schedule</mat-icon> Turnos de {{ report.sellerName }}
+        <span class="section-count">{{ report.shifts.length }} turnos</span>
+      </h2>
+      @if (report.shifts.length === 0) {
+        <div class="empty-state"><mat-icon>event_busy</mat-icon><span>No hay turnos en el rango seleccionado.</span></div>
+      } @else {
+        <div class="table-scroll">
           <table mat-table [dataSource]="report.shifts" class="full-width">
             <ng-container matColumnDef="startedAt">
               <th mat-header-cell *matHeaderCellDef>Inicio</th>
@@ -92,16 +82,14 @@
                 @if (s.endedAt) {
                   {{ s.endedAt | date:'dd/MM/yyyy HH:mm' }}
                 } @else {
-                  En curso
+                  <span class="muted">En curso</span>
                 }
               </td>
             </ng-container>
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef>Estado</th>
               <td mat-cell *matCellDef="let s">
-                <span [class.open]="s.status === 'OPEN'" [class.closed]="s.status === 'CLOSED'">
-                  {{ statusLabel(s.status) }}
-                </span>
+                <span class="badge dot" [class.success]="s.status === 'OPEN'">{{ statusLabel(s.status) }}</span>
               </td>
             </ng-container>
             <ng-container matColumnDef="duration">
@@ -117,13 +105,13 @@
             </ng-container>
             <ng-container matColumnDef="amount">
               <th mat-header-cell *matHeaderCellDef>Total</th>
-              <td mat-cell *matCellDef="let s">{{ shiftAmount(s) | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
+              <td mat-cell *matCellDef="let s" class="cell-strong">{{ shiftAmount(s) | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
           </table>
-        }
-      </mat-card-content>
-    </mat-card>
+        </div>
+      }
+    </section>
   }
 </div>

@@ -1,75 +1,21 @@
-.container {
-  h1 {
-    margin: 0;
-  }
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
 .filter-card {
   margin-bottom: 16px;
+  padding-bottom: 0;
 }
 
 .filters {
-  display: flex;
-  gap: 12px;
-  align-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 220px));
+}
 
-  mat-form-field {
-    width: 200px;
+.cell-sub {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+@media (max-width: 599px) {
+  .filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-}
-
-.card-grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  margin-bottom: 16px;
-}
-
-.card-content {
-  h3 {
-    font-size: 16px;
-    margin: 0 0 8px;
-    color: rgba(0, 0, 0, 0.6);
-  }
-}
-
-.big {
-  font-size: 26px;
-  font-weight: 500;
-  margin: 0;
-}
-
-.profit {
-  color: #2e7d32;
-}
-
-.expense {
-  color: #c62828;
-}
-
-.table-card {
-  margin-top: 16px;
-
-  h2 {
-    margin: 0 0 16px;
-    font-size: 18px;
-    font-weight: 500;
-  }
-}
-
-.empty {
-  color: #666;
-  font-size: 14px;
-  margin: 0;
-}
-
-.full-width {
-  width: 100%;
 }

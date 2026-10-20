@@ -1,74 +1,147 @@
-<mat-sidenav-container class="shell">
-  <mat-sidenav #drawer mode="over" class="sidenav">
-    <mat-toolbar color="primary">Lo'Postigli</mat-toolbar>
-    <mat-nav-list>
-      @for (item of navItems(); track item.path) {
-        <a class="nav-item" mat-list-item [routerLink]="item.path" routerLinkActive="active" (click)="drawer.close()">
-          <mat-icon>{{ item.icon }}</mat-icon> {{ item.label }}
-        </a>
-      }
+<mat-sidenav-container class="shell" [class.is-handset]="isHandset()">
+  <mat-sidenav #drawer class="sidenav"
+    [mode]="isHandset() ? 'over' : 'side'"
+    [opened]="!isHandset()"
+    [fixedInViewport]="isHandset()">
+    <div class="sidenav-inner">
+      <div class="brand">
+        <div class="brand-logo">LP</div>
+        <div class="brand-text">
+          <span class="brand-name">Lo'Postigli</span>
+          @if (user()?.companyName) {
+            <span class="brand-company">{{ user()?.companyName }}</span>
+          }
+        </div>
+        @if (isHandset()) {
+          <button mat-icon-button class="close-btn" (click)="drawer.close()" aria-label="Cerrar menú">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
 
-      @if (productosGroup(); as group) {
-        <div class="nav-group">
-          <button mat-list-item class="nav-group-header" (click)="toggleProductos()">
+      <nav class="nav">
+        <span class="nav-section">General</span>
+        @for (item of navItems(); track item.path) {
+          <a class="nav-item" [routerLink]="item.path" routerLinkActive="active"
+            (click)="isHandset() && drawer.close()">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span>{{ item.label }}</span>
+          </a>
+        }
+
+        @if (productosGroup(); as group) {
+          <button type="button" class="nav-item nav-group-header" (click)="toggleProductos()"
+            [attr.aria-expanded]="productosExpanded()">
             <mat-icon>{{ group.icon }}</mat-icon>
             <span>{{ group.label }}</span>
-            <mat-icon class="expand-icon">{{ productosExpanded() ? 'expand_less' : 'expand_more' }}</mat-icon>
+            <mat-icon class="expand-icon" [class.open]="productosExpanded()">expand_more</mat-icon>
           </button>
           @if (productosExpanded()) {
             <div class="children">
               @for (child of group.children; track child.path) {
-                <a class="nav-item child-item" mat-list-item [routerLink]="child.path" routerLinkActive="active" (click)="drawer.close()">
-                  <mat-icon>{{ child.icon }}</mat-icon> {{ child.label }}
+                <a class="nav-item child-item" [routerLink]="child.path" routerLinkActive="active"
+                  (click)="isHandset() && drawer.close()">
+                  <mat-icon>{{ child.icon }}</mat-icon>
+                  <span>{{ child.label }}</span>
                 </a>
               }
             </div>
           }
-        </div>
-      }
+        }
 
-      @if (adminGroup(); as group) {
-        <div class="nav-group">
-          <button mat-list-item class="nav-group-header" (click)="toggleAdmin()">
+        @if (adminGroup(); as group) {
+          <span class="nav-section">Gestión</span>
+          <button type="button" class="nav-item nav-group-header" (click)="toggleAdmin()"
+            [attr.aria-expanded]="adminExpanded()">
             <mat-icon>{{ group.icon }}</mat-icon>
             <span>{{ group.label }}</span>
-            <mat-icon class="expand-icon">{{ adminExpanded() ? 'expand_less' : 'expand_more' }}</mat-icon>
+            <mat-icon class="expand-icon" [class.open]="adminExpanded()">expand_more</mat-icon>
           </button>
           @if (adminExpanded()) {
             <div class="children">
               @for (child of group.children; track child.path) {
-                <a class="nav-item child-item" mat-list-item [routerLink]="child.path" routerLinkActive="active" (click)="drawer.close()">
-                  <mat-icon>{{ child.icon }}</mat-icon> {{ child.label }}
+                <a class="nav-item child-item" [routerLink]="child.path" routerLinkActive="active"
+                  (click)="isHandset() && drawer.close()">
+                  <mat-icon>{{ child.icon }}</mat-icon>
+                  <span>{{ child.label }}</span>
                 </a>
               }
             </div>
           }
+        }
+      </nav>
+
+      @if (user(); as u) {
+        <div class="user-card">
+          <div class="avatar">{{ initials() }}</div>
+          <div class="user-meta">
+            <span class="user-name">{{ u.name }}</span>
+            <span class="user-role">{{ roleLabel(u.role) }}</span>
+          </div>
+          <button mat-icon-button (click)="logout()" matTooltip="Cerrar sesión" aria-label="Cerrar sesión">
+            <mat-icon>logout</mat-icon>
+          </button>
         </div>
       }
-    </mat-nav-list>
+    </div>
   </mat-sidenav>
 
   <mat-sidenav-content class="sidenav-content">
-    <mat-toolbar color="primary" class="topbar">
-      <button mat-icon-button (click)="drawer.toggle()" aria-label="Menú">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span class="title">@if (user(); as u) {
-        @if (u.companyName) {
-          <span class="company-info hide-mobile">{{ u.companyName }}</span>
+    <header class="topbar">
+      @if (isHandset()) {
+        <button mat-icon-button (click)="drawer.toggle()" aria-label="Menú">
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+      <div class="topbar-title">
+        @if (isHandset()) {
+          <span class="title">{{ pageTitle() }}</span>
+        } @else {
+          <span class="crumb">
+            <mat-icon>storefront</mat-icon>
+            {{ user()?.companyName || "Lo'Postigli" }}
+            <mat-icon class="sep">chevron_right</mat-icon>
+            <strong>{{ pageTitle() }}</strong>
+          </span>
         }
-      }</span>
+      </div>
       <span class="spacer"></span>
       @if (user(); as u) {
-        @if (u.companyName) {
-          <span class="company-info hide-mobile">{{ u.companyName }}</span>
-        }
-        <span class="user-info hide-mobile">{{ u.name }} <mat-icon>person</mat-icon></span>
-        <button mat-button (click)="logout()">Salir <mat-icon>logout</mat-icon></button>
+        <button class="user-chip" [matMenuTriggerFor]="userMenu" aria-label="Menú de usuario">
+          <span class="avatar sm">{{ initials() }}</span>
+          <span class="user-chip-name hide-mobile">{{ u.name }}</span>
+          <mat-icon class="hide-mobile">expand_more</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu" xPosition="before">
+          <div class="menu-user">
+            <strong>{{ u.name }}</strong>
+            <span>{{ roleLabel(u.role) }}@if (u.companyName) { · {{ u.companyName }} }</span>
+          </div>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Cerrar sesión</span>
+          </button>
+        </mat-menu>
       }
-    </mat-toolbar>
+    </header>
+
     <main class="content">
       <router-outlet />
     </main>
+
+    @if (isHandset() && bottomNavItems().length) {
+      <nav class="bottom-nav" aria-label="Navegación principal">
+        @for (item of bottomNavItems(); track item.path) {
+          <a class="bottom-item" [routerLink]="item.path" routerLinkActive="active">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span>{{ item.label }}</span>
+          </a>
+        }
+        <button type="button" class="bottom-item" (click)="drawer.open()">
+          <mat-icon>menu</mat-icon>
+          <span>Más</span>
+        </button>
+      </nav>
+    }
   </mat-sidenav-content>
 </mat-sidenav-container>
