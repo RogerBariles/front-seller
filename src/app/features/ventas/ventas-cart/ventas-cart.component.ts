@@ -2,7 +2,6 @@ import { CurrencyPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -19,7 +18,6 @@ const PAYMENTS_WITHOUT_PARTIAL_CASH: PaymentMethod[] = ['EFECTIVO', 'PEDIDOSYA']
   imports: [
     ReactiveFormsModule,
     CurrencyPipe,
-    MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -45,8 +43,48 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
 
   readonly paymentMethods = Object.keys(PAYMENT_LABELS) as PaymentMethod[];
   readonly paymentLabels: any = PAYMENT_LABELS;
+  readonly paymentIcons: Record<PaymentMethod, string> = {
+    EFECTIVO: 'payments',
+    TARJETA: 'credit_card',
+    TRANSFERENCIA: 'account_balance',
+    PEDIDOSYA: 'delivery_dining',
+    DEBITO: 'credit_score',
+    QR: 'qr_code_2'
+  };
   Math = Math;
   private formSub?: Subscription;
+  /** Ítems con el panel de descuento desplegado. */
+  private openDiscounts = new Set<string>();
+
+  get itemCount(): number {
+    return this.cart.reduce((sum, item) => sum + item.quantity, 0);
+  }
+
+  lineDiscount(item: CartItem): number {
+    return this.applyDiscount(item.product.price * item.quantity, item.discountType, item.discountValue);
+  }
+
+  lineTotal(item: CartItem): number {
+    return Math.round((item.product.price * item.quantity - this.lineDiscount(item)) * 100) / 100;
+  }
+
+  isDiscountOpen(productId: string): boolean {
+    return this.openDiscounts.has(productId);
+  }
+
+  toggleDiscount(productId: string): void {
+    if (this.openDiscounts.has(productId)) {
+      this.openDiscounts.delete(productId);
+    } else {
+      this.openDiscounts.add(productId);
+    }
+  }
+
+  selectPaymentMethod(method: PaymentMethod): void {
+    if (this.disabled || this.checkoutForm.value.paymentMethod === method) return;
+    this.checkoutForm.patchValue({ paymentMethod: method });
+    this.onPaymentMethodChange();
+  }
 
   ngOnInit(): void {
     if (this.isCash) {

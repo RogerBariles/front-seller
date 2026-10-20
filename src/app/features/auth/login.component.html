@@ -1,26 +1,53 @@
-<div class="login-container">
+<div class="login">
+  <section class="login-hero" aria-hidden="true">
+    <div class="hero-content">
+      <div class="hero-logo">LP</div>
+      <h2>Lo'Postigli</h2>
+      <p>Ventas, caja, stock y reportes de tu negocio en un solo lugar.</p>
+      <ul class="hero-features">
+        <li><mat-icon>point_of_sale</mat-icon> Punto de venta rápido</li>
+        <li><mat-icon>payments</mat-icon> Control de caja y turnos</li>
+        <li><mat-icon>insights</mat-icon> Reportes y tendencias</li>
+      </ul>
+    </div>
+    <div class="hero-blob one"></div>
+    <div class="hero-blob two"></div>
+  </section>
 
-  <div class="login-container_left">
-    <div class="login-container_left_content">
-      <h1>Lo'Postigli</h1>
-      
+  <section class="login-panel">
+    <div class="login-card">
+      <div class="mobile-brand">
+        <div class="hero-logo sm">LP</div>
+        <span>Lo'Postigli</span>
+      </div>
+
+      <h1>Bienvenido/a</h1>
+      <p class="lead">Ingresá con tu usuario para continuar.</p>
+
       <form [formGroup]="form" (ngSubmit)="submit()">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Usuario</mat-label>
-          <input matInput formControlName="username" autocomplete="username" />
+          <mat-icon matPrefix>person_outline</mat-icon>
+          <input matInput formControlName="username" autocomplete="username" autocapitalize="none" />
         </mat-form-field>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Contraseña</mat-label>
-          <input matInput type="password" formControlName="password" />
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" autocomplete="current-password" />
+          <button mat-icon-button matSuffix type="button" (click)="showPassword = !showPassword"
+            [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+            <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
         </mat-form-field>
-        <button mat-flat-button color="primary" class="full-width" [disabled]="loading || form.invalid">
-          {{ loading ? 'Ingresando...' : 'Ingresar' }}
+        <button mat-flat-button color="primary" class="btn-lg full-width" [disabled]="loading || form.invalid">
+          @if (loading) {
+            <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
+            Ingresando...
+          } @else {
+            Ingresar
+          }
         </button>
       </form>
     </div>
-  </div>
-
-  <div class="login-container_right">
-
-  </div>
+  </section>
 </div>

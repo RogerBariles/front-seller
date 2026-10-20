@@ -1,7 +1,9 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CurrencyPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -29,7 +31,9 @@ import { VentasSearchComponent } from './ventas-search/ventas-search.component';
   imports: [
     ReactiveFormsModule,
     MatCardModule,
+    CurrencyPipe,
     MatButtonModule,
+    MatIconModule,
     MatTabsModule,
     MatSnackBarModule,
     MatDialogModule,
@@ -50,6 +54,8 @@ export class VentasComponent implements OnInit {
   cart = signal<CartItem[]>([]);
   cashRegister = signal<CashRegister | null>(null);
   activeShift = signal<Shift | null>(null);
+  /** Pestaña visible en mobile: buscador o carrito. */
+  mobileView = signal<'search' | 'cart'>('search');
   loading = false;
 
   searchForm = this.fb.nonNullable.group({
@@ -91,12 +97,21 @@ export class VentasComponent implements OnInit {
     this.cart().reduce((sum, item) => sum + item.product.price * item.quantity, 0)
   );
 
+  cartCount = computed(() =>
+    this.cart().reduce((sum, item) => sum + item.quantity, 0)
+  );
+
+  cartQuantities = computed(() =>
+    Object.fromEntries(this.cart().map(item => [item.product.id, item.quantity])) as Record<string, number>
+  );
+
   ngOnInit(): void {
     this.checkSalesReadiness();
     this.searchForm.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe((event) => {
-      if (event.q) {
-        event.q.length >= 2 && this.loadProducts();
-        event.q.length < 2 && this.products.set([]);
+      if (event.q && event.q.length >= 2) {
+        this.loadProducts();
+      } else {
+        this.products.set([]);
       }
     });
   }
@@ -261,6 +276,7 @@ export class VentasComponent implements OnInit {
       next: (sale) => {
         this.loading = false;
         this.clearCart();
+        this.mobileView.set('search');
         this.openPrintDialog(sale);
       },
       error: (err) => {

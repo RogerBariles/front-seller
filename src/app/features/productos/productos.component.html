@@ -1,94 +1,107 @@
-<div class="container">
-  <h1>Productos</h1>
-
-  <div class="layout">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>{{ editingId ? 'Editar producto' : 'Nuevo producto' }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <form [formGroup]="form" (ngSubmit)="save()" class="form-grid">
-          <div class="form-grid-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Nombre</mat-label>
-              <input matInput formControlName="name" />
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Categoría</mat-label>
-              <mat-select formControlName="category">
-                @for (cat of categories; track cat) {
-                  <mat-option [value]="cat">{{ categoryLabels[cat] }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-          </div>
-          <div class="form-grid-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Precio de venta</mat-label>
-              <input matInput type="number" formControlName="price" />
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Precio de compra</mat-label>
-              <input matInput type="number" formControlName="purchasePrice" />
-            </mat-form-field>
-          </div>
-          <mat-form-field appearance="outline">
-            <mat-label>Empresa</mat-label>
-            <input matInput [value]="auth.currentUser()?.companyName || '—'" readonly />
-          </mat-form-field>
-          <mat-slide-toggle formControlName="active">Activo</mat-slide-toggle>
-          <div class="actions">
-            @if (editingId) {
-              <button mat-button type="button" (click)="resetForm()">Cancelar</button>
-            }
-            <button mat-flat-button color="primary" [disabled]="loading || form.invalid">Guardar</button>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>Aumento masivo</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <form [formGroup]="bulkForm" (ngSubmit)="bulkIncrease()" class="bulk-form">
-          <mat-form-field appearance="outline">
-            <mat-label>Categoría</mat-label>
-            <mat-select formControlName="category">
-              <mat-option value="">Todas</mat-option>
-              @for (cat of categories; track cat) {
-                <mat-option [value]="cat">{{ categoryLabels[cat] }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Aplicar a</mat-label>
-            <mat-select formControlName="target">
-              @for (target of bulkTargets; track target) {
-                <mat-option [value]="target">{{ bulkTargetLabel(target) }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Porcentaje (%)</mat-label>
-            <input matInput type="number" formControlName="percentage" />
-          </mat-form-field>
-          <button mat-stroked-button color="accent" [disabled]="loading || bulkForm.invalid">Aplicar</button>
-        </form>
-      </mat-card-content>
-    </mat-card>
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Productos y precios</h1>
+      <p class="page-subtitle">Creá productos, ajustá precios y aplicá aumentos masivos.</p>
+    </div>
   </div>
 
-  <mat-card class="table-card">
-    <mat-card-content>
+  <div class="layout">
+    <section class="surface" #formCard>
+      <h2 class="section-title">
+        <mat-icon>{{ editingId ? 'edit' : 'add_circle_outline' }}</mat-icon>
+        {{ editingId ? 'Editar producto' : 'Nuevo producto' }}
+        @if (editingId) {
+          <span class="badge warning edit-badge">Editando</span>
+        }
+      </h2>
+      <form [formGroup]="form" (ngSubmit)="save()" class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="category">
+            @for (cat of categories; track cat) {
+              <mat-option [value]="cat">{{ categoryLabels[cat] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Precio de venta</mat-label>
+          <span matTextPrefix>$&nbsp;</span>
+          <input matInput type="number" inputmode="decimal" formControlName="price" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Precio de compra</mat-label>
+          <span matTextPrefix>$&nbsp;</span>
+          <input matInput type="number" inputmode="decimal" formControlName="purchasePrice" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Empresa</mat-label>
+          <input matInput [value]="auth.currentUser()?.companyName || '—'" readonly />
+        </mat-form-field>
+        <div class="toggle-cell">
+          <mat-slide-toggle formControlName="active">Producto activo</mat-slide-toggle>
+        </div>
+        <div class="form-actions span-2">
+          @if (editingId) {
+            <button mat-button type="button" (click)="resetForm()">Cancelar</button>
+          }
+          <button mat-flat-button color="primary" [disabled]="loading || form.invalid">
+            <mat-icon>save</mat-icon> Guardar
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="surface">
+      <h2 class="section-title"><mat-icon>trending_up</mat-icon> Aumento masivo</h2>
+      <p class="muted help">Aplicá un porcentaje de aumento a todos los productos o a una categoría.</p>
+      <form [formGroup]="bulkForm" (ngSubmit)="bulkIncrease()" class="bulk-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="category">
+            <mat-option value="">Todas</mat-option>
+            @for (cat of categories; track cat) {
+              <mat-option [value]="cat">{{ categoryLabels[cat] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Aplicar a</mat-label>
+          <mat-select formControlName="target">
+            @for (target of bulkTargets; track target) {
+              <mat-option [value]="target">{{ bulkTargetLabel(target) }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Porcentaje</mat-label>
+          <input matInput type="number" inputmode="decimal" formControlName="percentage" />
+          <span matTextSuffix>%</span>
+        </mat-form-field>
+        <button mat-flat-button color="accent" [disabled]="loading || bulkForm.invalid">
+          <mat-icon>bolt</mat-icon> Aplicar aumento
+        </button>
+      </form>
+    </section>
+  </div>
+
+  <section class="surface table-card">
+    <div class="table-toolbar">
+      <h2 class="section-title"><mat-icon>list_alt</mat-icon> Listado
+        <span class="section-count">{{ dataSource.filteredData.length }} productos</span>
+      </h2>
       <div class="filter-row">
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
-          <mat-label>Filtrar por nombre</mat-label>
+          <mat-icon matPrefix class="prefix-icon">search</mat-icon>
+          <mat-label>Buscar por nombre</mat-label>
           <input matInput [value]="filterName" (input)="filterName = $any($event).target.value; applyFilter()" />
         </mat-form-field>
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
-          <mat-label>Filtrar por categoría</mat-label>
+          <mat-label>Categoría</mat-label>
           <mat-select [value]="filterCategory" (selectionChange)="filterCategory = $event.value; applyFilter()">
             <mat-option value="">Todas</mat-option>
             @for (cat of categories; track cat) {
@@ -97,77 +110,96 @@
           </mat-select>
         </mat-form-field>
       </div>
+    </div>
 
+    <div class="table-scroll">
       <table mat-table [dataSource]="dataSource" class="full-width">
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>Nombre (Activo)</th>
-          <td mat-cell *matCellDef="let p">{{ p.name }} </td>
+          <th mat-header-cell *matHeaderCellDef>Producto</th>
+          <td mat-cell *matCellDef="let p" class="cell-strong">
+            {{ p.name }}
+            <span class="cell-sub show-mobile">{{ categoryLabel(p.category) }}</span>
+          </td>
         </ng-container>
         <ng-container matColumnDef="category">
-          <th mat-header-cell *matHeaderCellDef>Categoría</th>
-          <td mat-cell *matCellDef="let p">{{ categoryLabel(p.category) }}</td>
+          <th mat-header-cell *matHeaderCellDef class="hide-mobile">Categoría</th>
+          <td mat-cell *matCellDef="let p" class="hide-mobile"><span class="badge">{{ categoryLabel(p.category) }}</span></td>
         </ng-container>
         <ng-container matColumnDef="price">
           <th mat-header-cell *matHeaderCellDef>Venta</th>
-          <td mat-cell *matCellDef="let p">{{ p.price | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
+          <td mat-cell *matCellDef="let p" class="cell-strong">{{ p.price | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
         </ng-container>
         <ng-container matColumnDef="purchasePrice">
           <th mat-header-cell *matHeaderCellDef>Compra</th>
           <td mat-cell *matCellDef="let p">{{ p.purchasePrice | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
         </ng-container>
         <ng-container matColumnDef="company">
-          <th mat-header-cell *matHeaderCellDef>Empresa</th>
-          <td mat-cell *matCellDef="let p">{{ p.companyName || '—' }}</td>
+          <th mat-header-cell *matHeaderCellDef class="hide-mobile">Empresa</th>
+          <td mat-cell *matCellDef="let p" class="hide-mobile">{{ p.companyName || '—' }}</td>
         </ng-container>
         <ng-container matColumnDef="margin">
           <th mat-header-cell *matHeaderCellDef>Ganancia</th>
           <td mat-cell *matCellDef="let p">
-            {{ margin(p) | currency:'ARS':'symbol-narrow':'1.2-2' }}
+            <span class="text-success">{{ margin(p) | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
             @if (marginPercent(p) !== null) {
-              <span class="margin-pct">({{ marginPercent(p) }}%)</span>
+              <span class="margin-pct">{{ marginPercent(p) }}%</span>
             }
           </td>
         </ng-container>
         <ng-container matColumnDef="active">
-          <th mat-header-cell *matHeaderCellDef>Activo</th>
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
           <td mat-cell *matCellDef="let p">
-            <mat-icon *ngIf="p.active">check_circle_outline</mat-icon>
-            <mat-icon *ngIf="!p.active">close</mat-icon>
+            <span class="badge dot" [class.success]="p.active">{{ p.active ? 'Activo' : 'Inactivo' }}</span>
           </td>
         </ng-container>
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let p">
-            <button mat-button (click)="edit(p)">
+          <th mat-header-cell *matHeaderCellDef class="cell-actions"></th>
+          <td mat-cell *matCellDef="let p" class="cell-actions">
+            <button mat-icon-button aria-label="Editar" (click)="edit(p); formCard.scrollIntoView({ behavior: 'smooth', block: 'start' })">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-button color="warn" (click)="deleteProduct(p)">
-              <mat-icon>delete</mat-icon>
+            <button mat-icon-button color="warn" aria-label="Eliminar" (click)="deleteProduct(p)">
+              <mat-icon>delete_outline</mat-icon>
             </button>
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" [class.row-editing]="row.id === editingId"></tr>
       </table>
+      @if (!dataSource.filteredData.length) {
+        <div class="empty-state">
+          <mat-icon>inventory_2</mat-icon>
+          <strong>Sin productos</strong>
+          <span>No hay productos que coincidan con el filtro.</span>
+        </div>
+      }
+    </div>
 
-      <mat-paginator [pageSize]="20" [pageSizeOptions]="[20]" showFirstLastButtons></mat-paginator>
-    </mat-card-content>
-  </mat-card>
+    <mat-paginator [pageSize]="20" [pageSizeOptions]="[20]" showFirstLastButtons></mat-paginator>
+  </section>
 
   @if (audits.length) {
-    <mat-card class="table-card">
-      <mat-card-header><mat-card-title>Historial de precios</mat-card-title></mat-card-header>
-      <mat-card-content>
+    <section class="surface table-card">
+      <h2 class="section-title"><mat-icon>history</mat-icon> Historial de precios</h2>
+      <ul class="audit-list">
         @for (audit of audits; track audit.id) {
-          <p>
-            {{ audit.changedAt | date:'dd/MM/yyyy HH:mm' }} —
-            {{ audit.changedByName }} ({{ priceFieldLabel(audit.priceField) }}):
-            {{ audit.oldPrice | currency:'ARS':'symbol-narrow':'1.2-2' }}
-            → {{ audit.newPrice | currency:'ARS':'symbol-narrow':'1.2-2' }}
-            ({{ audit.changeType === 'BULK_PERCENTAGE' ? 'Masivo' : 'Individual' }})
-          </p>
+          <li>
+            <span class="audit-icon"><mat-icon>{{ audit.changeType === 'BULK_PERCENTAGE' ? 'bolt' : 'edit' }}</mat-icon></span>
+            <span class="audit-body">
+              <span>
+                <strong>{{ audit.oldPrice | currency:'ARS':'symbol-narrow':'1.2-2' }}</strong>
+                <mat-icon class="arrow">arrow_forward</mat-icon>
+                <strong>{{ audit.newPrice | currency:'ARS':'symbol-narrow':'1.2-2' }}</strong>
+                <span class="badge">{{ priceFieldLabel(audit.priceField) }}</span>
+              </span>
+              <span class="muted">
+                {{ audit.changedAt | date:'dd/MM/yyyy HH:mm' }} · {{ audit.changedByName }} ·
+                {{ audit.changeType === 'BULK_PERCENTAGE' ? 'Masivo' : 'Individual' }}
+              </span>
+            </span>
+          </li>
         }
-      </mat-card-content>
-    </mat-card>
+      </ul>
+    </section>
   }
 </div>

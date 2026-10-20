@@ -56,7 +56,7 @@ export class CajaComponent implements OnInit {
   });
 
   movementForm = this.fb.nonNullable.group({
-    type: ['INCOME' as const, Validators.required],
+    type: ['INCOME' as 'INCOME' | 'WITHDRAWAL', Validators.required],
     amount: [0, [Validators.required, Validators.min(0.01)]],
     detail: ['', [Validators.required, Validators.maxLength(500)]]
   });
@@ -122,6 +122,10 @@ export class CajaComponent implements OnInit {
         this.snack.open(err.error?.message || 'No se pudo iniciar el turno', 'Cerrar', { duration: 4000 });
       }
     });
+  }
+
+  setMovementType(type: 'INCOME' | 'WITHDRAWAL'): void {
+    this.movementForm.patchValue({ type });
   }
 
   addCashMovement(): void {

@@ -1,182 +1,152 @@
-<div class="container">
-  <h1>Reportes de ventas</h1>
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Reporte de ventas</h1>
+      <p class="page-subtitle">Ventas, costos y ganancias del período seleccionado.</p>
+    </div>
+  </div>
 
-  <mat-card>
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="search()" class="filters">
-        <mat-form-field appearance="outline">
-          <mat-label>Desde</mat-label>
-          <input matInput type="date" formControlName="fromDate" />
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Hasta</mat-label>
-          <input matInput type="date" formControlName="toDate" />
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Forma de pago</mat-label>
-          <mat-select formControlName="paymentMethod" multiple>
-            <mat-select-trigger>{{ paymentMethodTriggerLabel() }}</mat-select-trigger>
-            <mat-option (click)="$event.stopPropagation()" (onSelectionChange)="toggleAllPaymentMethods($event)">
-              {{ allPaymentMethodsSelected() ? 'Deseleccionar todo' : 'Seleccionar todo' }}
-            </mat-option>
-            @for (pm of paymentMethods; track pm) {
-              <mat-option [value]="pm">{{ paymentLabels[pm] }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Vendedora</mat-label>
-          <mat-select formControlName="sellerId">
-            <mat-option value="">Todas</mat-option>
-            @for (seller of sellers; track seller.id) {
-              <mat-option [value]="seller.id">{{ seller.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Categoría</mat-label>
-          <mat-select formControlName="category" multiple>
-            <mat-select-trigger>{{ categoryTriggerLabel() }}</mat-select-trigger>
-            <mat-option (click)="$event.stopPropagation()" (onSelectionChange)="toggleAllCategories($event)">
-              {{ allCategoriesSelected() ? 'Deseleccionar todo' : 'Seleccionar todo' }}
-            </mat-option>
-            @for (cat of categories; track cat) {
-              <mat-option [value]="cat">{{ categoryLabels[cat] }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        <button mat-flat-button color="primary" [disabled]="loading || form.invalid">Buscar</button>
-      </form>
-    </mat-card-content>
-  </mat-card>
+  <section class="surface filter-card">
+    <form [formGroup]="form" (ngSubmit)="search()" class="filters">
+      <mat-form-field appearance="outline">
+        <mat-label>Desde</mat-label>
+        <input matInput type="date" formControlName="fromDate" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Hasta</mat-label>
+        <input matInput type="date" formControlName="toDate" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Forma de pago</mat-label>
+        <mat-select formControlName="paymentMethod" multiple>
+          <mat-select-trigger>{{ paymentMethodTriggerLabel() }}</mat-select-trigger>
+          <mat-option (click)="$event.stopPropagation()" (onSelectionChange)="toggleAllPaymentMethods($event)">
+            {{ allPaymentMethodsSelected() ? 'Deseleccionar todo' : 'Seleccionar todo' }}
+          </mat-option>
+          @for (pm of paymentMethods; track pm) {
+            <mat-option [value]="pm">{{ paymentLabels[pm] }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Vendedora</mat-label>
+        <mat-select formControlName="sellerId">
+          <mat-option value="">Todas</mat-option>
+          @for (seller of sellers; track seller.id) {
+            <mat-option [value]="seller.id">{{ seller.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="category" multiple>
+          <mat-select-trigger>{{ categoryTriggerLabel() }}</mat-select-trigger>
+          <mat-option (click)="$event.stopPropagation()" (onSelectionChange)="toggleAllCategories($event)">
+            {{ allCategoriesSelected() ? 'Deseleccionar todo' : 'Seleccionar todo' }}
+          </mat-option>
+          @for (cat of categories; track cat) {
+            <mat-option [value]="cat">{{ categoryLabels[cat] }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button mat-flat-button color="primary" [disabled]="loading || form.invalid">
+        <mat-icon>search</mat-icon> Buscar
+      </button>
+    </form>
+  </section>
 
   @if (report && topStats) {
-    <div class="card-grid summary">
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Ventas</h3>
-          <p class="big">{{ report.totalSalesCount }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Total vendido</h3>
-          <p class="big">{{ report.totalAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Costo total</h3>
-          <p class="big">{{ report.totalCost | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Ganancia</h3>
-          <p class="big profit">{{ report.totalProfit | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content class="card-content">
-          <h3>Por acreditar</h3>
-          <p class="big pending">{{ pendingAccreditation | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-        </mat-card-content>
-      </mat-card>
+    <div class="stat-grid">
+      <div class="stat is-primary">
+        <span class="stat-label"><mat-icon>payments</mat-icon> Total vendido</span>
+        <span class="stat-value">{{ report.totalAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label"><mat-icon>receipt_long</mat-icon> Ventas</span>
+        <span class="stat-value">{{ report.totalSalesCount }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label"><mat-icon>shopping_bag</mat-icon> Costo total</span>
+        <span class="stat-value">{{ report.totalCost | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+      </div>
+      <div class="stat is-success">
+        <span class="stat-label"><mat-icon>trending_up</mat-icon> Ganancia</span>
+        <span class="stat-value">{{ report.totalProfit | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+      </div>
+      <div class="stat is-warning">
+        <span class="stat-label"><mat-icon>hourglass_top</mat-icon> Por acreditar</span>
+        <span class="stat-value">{{ pendingAccreditation | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+      </div>
     </div>
 
-    <mat-accordion>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>Desglose por forma de pago</mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="card-grid">
-          @for (pm of paymentMethods; track pm) {
-            <mat-card>
-              <mat-card-content class="card-content">
-                <h3>{{ paymentLabels[pm] }}</h3>
-                <p class="big">{{ paymentAmount(pm) | currency:'ARS':'symbol-narrow':'1.2-2' }}</p>
-              </mat-card-content>
-            </mat-card>
+    <section class="surface">
+      <h2 class="section-title"><mat-icon>account_balance_wallet</mat-icon> Por forma de pago</h2>
+      <div class="pay-breakdown">
+        @for (pm of paymentMethods; track pm) {
+          <div class="pay-item">
+            <span>{{ paymentLabels[pm] }}</span>
+            <strong>{{ paymentAmount(pm) | currency:'ARS':'symbol-narrow':'1.2-2' }}</strong>
+          </div>
+        }
+      </div>
+    </section>
+
+    <div class="grid-3 mt-16">
+      <section class="surface">
+        <h2 class="section-title"><mat-icon>cake</mat-icon> Productos más vendidos</h2>
+        <ol class="rank-list">
+          @for (p of topStats.topProducts; track $index) {
+            <li>
+              <span class="rank-pos">{{ $index + 1 }}</span>
+              <span class="rank-name">{{ p.productName }}</span>
+              <span class="rank-value">{{ p.totalQuantity }} u.</span>
+            </li>
+          } @empty {
+            <li class="muted">Sin datos</li>
           }
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
+        </ol>
+      </section>
 
-    <div class="top-grid">
-      <mat-card class="table-card">
-        <mat-card-content>
-          <h2>Productos más vendidos</h2>
-          <table mat-table [dataSource]="topStats.topProducts" class="full-width">
-            <ng-container matColumnDef="position">
-              <th mat-header-cell *matHeaderCellDef>#</th>
-              <td mat-cell *matCellDef="let p; let i = index">{{ i + 1 }}</td>
-            </ng-container>
-            <ng-container matColumnDef="product">
-              <th mat-header-cell *matHeaderCellDef>Producto</th>
-              <td mat-cell *matCellDef="let p">{{ p.productName }}</td>
-            </ng-container>
-            <ng-container matColumnDef="quantity">
-              <th mat-header-cell *matHeaderCellDef>Cantidad vendida</th>
-              <td mat-cell *matCellDef="let p">{{ p.totalQuantity }}</td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="displayedTopColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedTopColumns"></tr>
-          </table>
-        </mat-card-content>
-      </mat-card>
+      <section class="surface">
+        <h2 class="section-title"><mat-icon>event</mat-icon> Días más vendidos</h2>
+        <ol class="rank-list">
+          @for (d of topStats.topDays; track $index) {
+            <li>
+              <span class="rank-pos">{{ $index + 1 }}</span>
+              <span class="rank-name">{{ d.date | date:'dd/MM/yyyy' }}</span>
+              <span class="rank-value">{{ d.totalQuantity }} u.</span>
+            </li>
+          } @empty {
+            <li class="muted">Sin datos</li>
+          }
+        </ol>
+      </section>
 
-      <mat-card class="table-card">
-        <mat-card-content>
-          <h2>Días más vendidos</h2>
-          <table mat-table [dataSource]="topStats.topDays" class="full-width">
-            <ng-container matColumnDef="position">
-              <th mat-header-cell *matHeaderCellDef>#</th>
-              <td mat-cell *matCellDef="let d; let i = index">{{ i + 1 }}</td>
-            </ng-container>
-            <ng-container matColumnDef="date">
-              <th mat-header-cell *matHeaderCellDef>Día</th>
-              <td mat-cell *matCellDef="let d">{{ d.date | date:'dd/MM/yyyy' }}</td>
-            </ng-container>
-            <ng-container matColumnDef="quantity">
-              <th mat-header-cell *matHeaderCellDef>Cantidad</th>
-              <td mat-cell *matCellDef="let d">{{ d.totalQuantity }}</td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="topDaysDisplayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: topDaysDisplayedColumns"></tr>
-          </table>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="table-card">
-        <mat-card-content>
-          <h2>Ranking de vendedoras</h2>
-          <table mat-table [dataSource]="topStats.topSellers" class="full-width">
-            <ng-container matColumnDef="position">
-              <th mat-header-cell *matHeaderCellDef>#</th>
-              <td mat-cell *matCellDef="let s; let i = index">{{ i + 1 }}</td>
-            </ng-container>
-            <ng-container matColumnDef="seller">
-              <th mat-header-cell *matHeaderCellDef>Vendedora</th>
-              <td mat-cell *matCellDef="let s">{{ s.sellerName }}</td>
-            </ng-container>
-            <ng-container matColumnDef="sales">
-              <th mat-header-cell *matHeaderCellDef>Ventas</th>
-              <td mat-cell *matCellDef="let s">{{ s.totalSales }}</td>
-            </ng-container>
-            <ng-container matColumnDef="amount">
-              <th mat-header-cell *matHeaderCellDef>Total</th>
-              <td mat-cell *matCellDef="let s">{{ s.totalAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="topSellersDisplayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: topSellersDisplayedColumns"></tr>
-          </table>
-        </mat-card-content>
-      </mat-card>
+      <section class="surface">
+        <h2 class="section-title"><mat-icon>emoji_events</mat-icon> Ranking de vendedoras</h2>
+        <ol class="rank-list">
+          @for (s of topStats.topSellers; track $index) {
+            <li>
+              <span class="rank-pos">{{ $index + 1 }}</span>
+              <span class="rank-name">
+                {{ s.sellerName }}
+                <span class="rank-sub">{{ s.totalSales }} ventas</span>
+              </span>
+              <span class="rank-value">{{ s.totalAmount | currency:'ARS':'symbol-narrow':'1.0-0' }}</span>
+            </li>
+          } @empty {
+            <li class="muted">Sin datos</li>
+          }
+        </ol>
+      </section>
     </div>
 
-    <mat-card class="table-card">
-      <mat-card-content>
-        <table mat-table [dataSource]="report.sales" class="full-width">
+    <section class="surface mt-16">
+      <h2 class="section-title"><mat-icon>list_alt</mat-icon> Detalle de ventas
+        <span class="section-count">{{ report.sales.length }} ventas</span>
+      </h2>
+      <div class="table-scroll">
+        <table mat-table [dataSource]="report.sales" class="full-width wide">
           <ng-container matColumnDef="date">
             <th mat-header-cell *matHeaderCellDef>Fecha</th>
             <td mat-cell *matCellDef="let s">{{ s.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
@@ -188,10 +158,10 @@
           <ng-container matColumnDef="payment">
             <th mat-header-cell *matHeaderCellDef>Pago</th>
             <td mat-cell *matCellDef="let s">
-              {{ paymentLabel(s.paymentMethod) }}
+              <span class="badge">{{ paymentLabel(s.paymentMethod) }}
               @if (s.paymentMethod === 'TARJETA' && s.installments) {
-                ({{ s.installments }} cuotas)
-              }
+                · {{ s.installments }} cuotas
+              }</span>
             </td>
           </ng-container>
           <ng-container matColumnDef="accreditedAt">
@@ -208,7 +178,7 @@
           </ng-container>
           <ng-container matColumnDef="total">
             <th mat-header-cell *matHeaderCellDef>Total</th>
-            <td mat-cell *matCellDef="let s">{{ s.total | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
+            <td mat-cell *matCellDef="let s" class="cell-strong">{{ s.total | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
           </ng-container>
           <ng-container matColumnDef="cost">
             <th mat-header-cell *matHeaderCellDef>Costo</th>
@@ -219,17 +189,26 @@
             <td mat-cell *matCellDef="let s" class="profit">{{ s.profit | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
           </ng-container>
           <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let s">
+            <th mat-header-cell *matHeaderCellDef class="cell-actions"></th>
+            <td mat-cell *matCellDef="let s" class="cell-actions">
               <button mat-icon-button color="primary" aria-label="Ver detalle" (click)="openSaleDetail(s)">
                 <mat-icon>visibility</mat-icon>
               </button>
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns" class="clickable" (dblclick)="openSaleDetail(row)"></tr>
         </table>
-      </mat-card-content>
-    </mat-card>
+        @if (!report.sales.length) {
+          <div class="empty-state"><mat-icon>receipt_long</mat-icon><span>No hay ventas en el período.</span></div>
+        }
+      </div>
+    </section>
+  } @else if (!loading) {
+    <div class="surface empty-state">
+      <mat-icon>query_stats</mat-icon>
+      <strong>Elegí un rango de fechas</strong>
+      <span>Completá los filtros y tocá “Buscar” para ver el reporte.</span>
+    </div>
   }
 </div>

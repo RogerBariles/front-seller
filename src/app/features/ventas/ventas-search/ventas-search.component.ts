@@ -1,12 +1,10 @@
-import { CommonModule, CurrencyPipe, NgIf } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
 import { CATEGORY_LABELS, Product, ProductCategory } from '../../../models';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -16,12 +14,10 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     ReactiveFormsModule,
     CurrencyPipe,
-    MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatTableModule,
     MatIconModule,
     CommonModule
   ],
@@ -31,12 +27,21 @@ import { MatIconModule } from '@angular/material/icon';
 export class VentasSearchComponent {
   @Input({ required: true }) searchForm!: FormGroup;
   @Input({ required: true }) products: Product[] = [];
+  /** Cantidad de cada producto que ya está en el carrito (por id). */
+  @Input() inCart: Record<string, number> = {};
   @Input() disabled = false;
   @Output() addProduct = new EventEmitter<Product>();
 
   readonly categories = Object.keys(CATEGORY_LABELS) as ProductCategory[];
   readonly categoryLabels = CATEGORY_LABELS;
-  readonly displayedColumns = ['name', 'price', 'action'];
+
+  get query(): string {
+    return (this.searchForm.get('q')?.value ?? '').trim();
+  }
+
+  clearSearch(): void {
+    this.searchForm.patchValue({ q: '' });
+  }
 
   getCategoryLabel(category: ProductCategory): string {
     return this.categoryLabels[category];
