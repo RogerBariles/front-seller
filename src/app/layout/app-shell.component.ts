@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { filter, map } from 'rxjs/operators';
@@ -75,6 +75,41 @@ export class AppShellComponent {
     }
     if (this.adminGroup()?.children.some(c => url.startsWith(c.path))) {
       this.adminExpanded.set(true);
+    }
+  }
+
+  /** En desktop el menú lateral se puede ocultar; se recuerda la preferencia. */
+  private static readonly MENU_KEY = 'pos_menu_open';
+  readonly desktopMenuOpen = signal(AppShellComponent.readMenuPref());
+
+  private static readMenuPref(): boolean {
+    try {
+      return localStorage.getItem(AppShellComponent.MENU_KEY) !== 'false';
+    } catch {
+      return true;
+    }
+  }
+
+  toggleMenu(drawer: MatSidenav): void {
+    if (this.isHandset()) {
+      drawer.toggle();
+      return;
+    }
+    this.setDesktopMenu(!this.desktopMenuOpen());
+  }
+
+  onMenuOpenedChange(opened: boolean): void {
+    if (!this.isHandset()) {
+      this.setDesktopMenu(opened);
+    }
+  }
+
+  private setDesktopMenu(open: boolean): void {
+    this.desktopMenuOpen.set(open);
+    try {
+      localStorage.setItem(AppShellComponent.MENU_KEY, String(open));
+    } catch {
+      // Sin almacenamiento disponible: la preferencia dura solo esta sesión.
     }
   }
 

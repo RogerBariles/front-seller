@@ -1,7 +1,8 @@
 <mat-sidenav-container class="shell" [class.is-handset]="isHandset()">
   <mat-sidenav #drawer class="sidenav"
     [mode]="isHandset() ? 'over' : 'side'"
-    [opened]="!isHandset()"
+    [opened]="!isHandset() && desktopMenuOpen()"
+    (openedChange)="onMenuOpenedChange($event)"
     [fixedInViewport]="isHandset()">
     <div class="sidenav-inner">
       <div class="brand">
@@ -88,11 +89,12 @@
 
   <mat-sidenav-content class="sidenav-content">
     <header class="topbar">
-      @if (isHandset()) {
-        <button mat-icon-button (click)="drawer.toggle()" aria-label="Menú">
-          <mat-icon>menu</mat-icon>
-        </button>
-      }
+      <button mat-icon-button (click)="toggleMenu(drawer)"
+        [attr.aria-label]="drawer.opened ? 'Ocultar menú' : 'Mostrar menú'"
+        [attr.aria-expanded]="drawer.opened"
+        [matTooltip]="isHandset() ? '' : (drawer.opened ? 'Ocultar menú' : 'Mostrar menú')">
+        <mat-icon>{{ !isHandset() && drawer.opened ? 'menu_open' : 'menu' }}</mat-icon>
+      </button>
       <div class="topbar-title">
         @if (isHandset()) {
           <span class="title">{{ pageTitle() }}</span>
