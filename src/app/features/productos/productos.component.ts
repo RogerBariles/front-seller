@@ -64,6 +64,7 @@ export class ProductosComponent implements OnInit, AfterViewInit {
   readonly categoryLabels = CATEGORY_LABELS;
   readonly priceFieldLabels = PRICE_FIELD_LABELS;
   readonly bulkTargets: PriceField[] = ['SALE', 'PURCHASE', 'BOTH'];
+  readonly canBulkIncrease = this.auth.hasRole('SUPER_ADMIN');
   displayedColumns = ['name', 'category', 'price', 'purchasePrice', 'margin', 'company', 'active', 'actions'];
 
   form = this.fb.nonNullable.group({
@@ -190,7 +191,7 @@ export class ProductosComponent implements OnInit, AfterViewInit {
   }
 
   bulkIncrease(): void {
-    if (this.bulkForm.invalid) return;
+    if (!this.canBulkIncrease || this.bulkForm.invalid) return;
     const { percentage, target, category } = this.bulkForm.getRawValue();
     const categoryLabel = category ? this.categoryLabels[category] : 'todas las categorías';
     if (!confirm(`¿Aumentar ${this.bulkTargetLabel(target).toLowerCase()} de productos activos de ${categoryLabel} un ${percentage}%?`)) {

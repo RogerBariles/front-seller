@@ -6,7 +6,7 @@
     </div>
   </div>
 
-  <div class="layout">
+  <div class="layout" [class.single]="!canBulkIncrease">
     <section class="surface" #formCard>
       <h2 class="section-title">
         <mat-icon>{{ editingId ? 'edit' : 'add_circle_outline' }}</mat-icon>
@@ -56,6 +56,7 @@
       </form>
     </section>
 
+    @if (canBulkIncrease) {
     <section class="surface">
       <h2 class="section-title"><mat-icon>trending_up</mat-icon> Aumento masivo</h2>
       <p class="muted help">Aplicá un porcentaje de aumento a todos los productos o a una categoría.</p>
@@ -87,6 +88,7 @@
         </button>
       </form>
     </section>
+    }
   </div>
 
   <section class="surface table-card">
