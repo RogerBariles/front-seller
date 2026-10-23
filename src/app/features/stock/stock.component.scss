@@ -72,3 +72,56 @@ table {
 .stock-stats {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
+
+/* Tabla que se copia como imagen: se renderiza fuera de la pantalla para que html2canvas la pueda dibujar sin verse */
+.copy-capture {
+  position: fixed;
+  top: 0;
+  left: -10000px;
+  width: 420px;
+  padding: 16px;
+  background: #fff;
+  color: #111827;
+  font-family: var(--font);
+  pointer-events: none;
+
+  .copy-title {
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #6b7280;
+    background: #f3f4f6;
+  }
+
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .copy-cat {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    color: #6b7280;
+  }
+
+  .copy-qty,
+  th:last-child {
+    width: 70px;
+    text-align: center;
+  }
+}

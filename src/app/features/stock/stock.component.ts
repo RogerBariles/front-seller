@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, computed, OnInit, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -16,6 +17,7 @@ import html2canvas from 'html2canvas';
   selector: 'app-stock',
   standalone: true,
   imports: [
+    DatePipe,
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -63,13 +65,21 @@ export class StockComponent implements OnInit {
     return avail.length > 0 && avail.length === selected.length;
   });
 
+  // Los totalizadores siguen el filtro aplicado
   lowStockCount = computed(() =>
-    this.products().filter(p => (p.currentStock ?? 0) > 0 && (p.currentStock ?? 0) <= 5).length
+    this.filteredProducts().filter(p => (p.currentStock ?? 0) > 0 && (p.currentStock ?? 0) <= 5).length
   );
 
   outOfStockCount = computed(() =>
-    this.products().filter(p => (p.currentStock ?? 0) === 0).length
+    this.filteredProducts().filter(p => (p.currentStock ?? 0) === 0).length
   );
+
+  /** Lo que se copia como imagen: los productos filtrados con stock mayor a 1. */
+  copyProducts = computed(() =>
+    this.filteredProducts().filter(p => (p.currentStock ?? 0) > 1)
+  );
+
+  readonly today = new Date();
 
   protected readonly CATEGORY_LABELS = CATEGORY_LABELS;
 
@@ -109,11 +119,11 @@ export class StockComponent implements OnInit {
   }
 
   async copyTableToClipboard(): Promise<void> {
-    const table = document.querySelector<HTMLTableElement>('.stock-container table');
-    if (!table) return;
+    const area = document.querySelector<HTMLElement>('.stock-container .copy-capture');
+    if (!area || this.copyProducts().length === 0) return;
 
     try {
-      const canvas = await html2canvas(table);
+      const canvas = await html2canvas(area, { backgroundColor: '#ffffff', scale: 2 });
       const blob = await new Promise<Blob>(resolve => canvas.toBlob(b => resolve(b!), 'image/png'));
       await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
       this.copySuccess.set(true);
