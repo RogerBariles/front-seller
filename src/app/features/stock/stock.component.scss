@@ -70,7 +70,7 @@ table {
 }
 
 .stock-stats {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 /* Tabla que se copia como imagen: se renderiza fuera de la pantalla para que html2canvas la pueda dibujar sin verse */

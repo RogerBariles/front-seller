@@ -66,12 +66,8 @@ export class StockComponent implements OnInit {
   });
 
   // Los totalizadores siguen el filtro aplicado
-  lowStockCount = computed(() =>
-    this.filteredProducts().filter(p => (p.currentStock ?? 0) > 0 && (p.currentStock ?? 0) <= 5).length
-  );
-
-  outOfStockCount = computed(() =>
-    this.filteredProducts().filter(p => (p.currentStock ?? 0) === 0).length
+  totalStock = computed(() =>
+    this.filteredProducts().reduce((sum, p) => sum + (p.currentStock ?? 0), 0)
   );
 
   /** Lo que se copia como imagen: los productos filtrados con stock mayor a 1. */

@@ -28,13 +28,9 @@
         <span class="stat-label"><mat-icon>inventory_2</mat-icon> Productos</span>
         <span class="stat-value">{{ filteredProducts().length }}</span>
       </div>
-      <div class="stat is-warning">
-        <span class="stat-label"><mat-icon>warning_amber</mat-icon> Stock bajo (≤ 5)</span>
-        <span class="stat-value">{{ lowStockCount() }}</span>
-      </div>
-      <div class="stat is-danger">
-        <span class="stat-label"><mat-icon>remove_shopping_cart</mat-icon> Sin stock</span>
-        <span class="stat-value">{{ outOfStockCount() }}</span>
+      <div class="stat">
+        <span class="stat-label"><mat-icon>stacked_bar_chart</mat-icon> Unidades en stock</span>
+        <span class="stat-value">{{ totalStock() }}</span>
       </div>
     </div>
 
