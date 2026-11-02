@@ -56,9 +56,9 @@ export class VentasComponent implements OnInit {
   cart = signal<CartItem[]>([]);
   cashRegister = signal<CashRegister | null>(null);
   activeShift = signal<Shift | null>(null);
-  /** ADMIN sin turno propio: vendedora del turno abierto donde se registran sus ventas. */
+  /** ADMIN o SUPER_ADMIN sin turno propio: vendedora del turno abierto donde se registran sus ventas. */
   borrowedShiftSeller = signal<string | null>(null);
-  readonly isAdmin = this.auth.hasRole('ADMIN');
+  readonly isAdmin = this.auth.hasRole('ADMIN', 'SUPER_ADMIN');
   /** Pestaña visible en mobile: buscador o carrito. */
   mobileView = signal<'search' | 'cart'>('search');
   loading = false;
@@ -138,7 +138,7 @@ export class VentasComponent implements OnInit {
     });
   }
 
-  /** El backend usa el turno abierto más antiguo de la empresa cuando el ADMIN no tiene turno propio. */
+  /** El backend usa el turno abierto más antiguo de la empresa cuando ADMIN o SUPER_ADMIN no tienen turno propio. */
   private loadBorrowedShift(): void {
     const cr = this.cashRegister();
     this.borrowedShiftSeller.set(null);
