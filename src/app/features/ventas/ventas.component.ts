@@ -10,6 +10,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/services/auth.service';
 import {
   CartItem,
   CashRegister,
@@ -49,11 +50,15 @@ export class VentasComponent implements OnInit {
   private snack = inject(MatSnackBar);
   private router = inject(Router);
   private dialog = inject(MatDialog);
+  private auth = inject(AuthService);
 
   products = signal<Product[]>([]);
   cart = signal<CartItem[]>([]);
   cashRegister = signal<CashRegister | null>(null);
   activeShift = signal<Shift | null>(null);
+  /** ADMIN sin turno propio: vendedora del turno abierto donde se registran sus ventas. */
+  borrowedShiftSeller = signal<string | null>(null);
+  readonly isAdmin = this.auth.hasRole('ADMIN');
   /** Pestaña visible en mobile: buscador o carrito. */
   mobileView = signal<'search' | 'cart'>('search');
   loading = false;
@@ -75,7 +80,7 @@ export class VentasComponent implements OnInit {
   });
 
   canSell = computed(() =>
-    this.cashRegister()?.status === 'OPEN' && !!this.activeShift()
+    this.cashRegister()?.status === 'OPEN' && (!!this.activeShift() || !!this.borrowedShiftSeller())
   );
 
   salesBlockMessage = computed(() => {
@@ -86,6 +91,9 @@ export class VentasComponent implements OnInit {
     }
     if (cr.status === 'CLOSED') {
       return 'No hay caja abierta. Puede abrir una nueva caja en Caja y Turnos.';
+    }
+    if (!shift && this.isAdmin) {
+      return 'La caja está abierta pero no hay ningún turno abierto. Iniciá un turno en Caja y Turnos para vender.';
     }
     if (!shift) {
       return 'La caja está abierta. Iniciá tu turno en Caja y Turnos para vender.';
@@ -118,12 +126,29 @@ export class VentasComponent implements OnInit {
 
   checkSalesReadiness(): void {
     this.api.getTodayCashRegister().subscribe({
-      next: (active) => this.cashRegister.set(active?.cashRegister ?? null),
+      next: (active) => {
+        this.cashRegister.set(active?.cashRegister ?? null);
+        this.loadBorrowedShift();
+      },
       error: () => this.cashRegister.set(null)
     });
     this.api.getActiveShift().subscribe({
       next: (active) => this.activeShift.set(active?.shift ?? null),
       error: () => this.activeShift.set(null)
+    });
+  }
+
+  /** El backend usa el turno abierto más antiguo de la empresa cuando el ADMIN no tiene turno propio. */
+  private loadBorrowedShift(): void {
+    const cr = this.cashRegister();
+    this.borrowedShiftSeller.set(null);
+    if (!this.isAdmin || cr?.status !== 'OPEN') return;
+    this.api.getShiftsByDate(cr.businessDate).subscribe({
+      next: (shifts) => {
+        const oldestOpen = shifts.filter(s => s.status === 'OPEN')
+          .sort((a, b) => a.startedAt.localeCompare(b.startedAt))[0];
+        this.borrowedShiftSeller.set(oldestOpen?.sellerName ?? null);
+      }
     });
   }
 

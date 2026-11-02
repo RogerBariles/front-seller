@@ -5,7 +5,11 @@
       <p class="page-subtitle">Buscá productos, armá el carrito y cobrá.</p>
     </div>
     @if (canSell()) {
-      <span class="badge success dot">Caja y turno abiertos</span>
+      @if (!activeShift() && borrowedShiftSeller(); as seller) {
+        <span class="badge success dot">Vendiendo en el turno de {{ seller }}</span>
+      } @else {
+        <span class="badge success dot">Caja y turno abiertos</span>
+      }
     }
   </div>
 
