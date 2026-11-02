@@ -96,6 +96,13 @@ export class ApiService {
       .pipe(map((res) => (res.status === 204 || res.body == null ? null : res.body)));
   }
 
+  /** Turno donde se registraría una venta del usuario actual (ADMIN/SUPER_ADMIN pueden usar el de otra persona). */
+  getSaleShift(): Observable<ShiftSummary | null> {
+    return this.http
+      .get<ShiftSummary>(`${this.baseUrl}/shifts/sale-shift`, { observe: 'response' })
+      .pipe(map((res) => (res.status === 204 || res.body == null ? null : res.body)));
+  }
+
   addShiftCashMovement(
     shiftId: string,
     body: { type: CashMovementType; amount: number; detail: string }

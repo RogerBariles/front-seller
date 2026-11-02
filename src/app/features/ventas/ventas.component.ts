@@ -59,6 +59,8 @@ export class VentasComponent implements OnInit {
   /** ADMIN o SUPER_ADMIN sin turno propio: vendedora del turno abierto donde se registran sus ventas. */
   borrowedShiftSeller = signal<string | null>(null);
   readonly isAdmin = this.auth.hasRole('ADMIN', 'SUPER_ADMIN');
+  /** SUPER_ADMIN vende sobre el turno abierto aunque no haya caja abierta hoy. */
+  readonly isSuperAdmin = this.auth.hasRole('SUPER_ADMIN');
   /** Pestaña visible en mobile: buscador o carrito. */
   mobileView = signal<'search' | 'cart'>('search');
   loading = false;
@@ -80,12 +82,16 @@ export class VentasComponent implements OnInit {
   });
 
   canSell = computed(() =>
-    this.cashRegister()?.status === 'OPEN' && (!!this.activeShift() || !!this.borrowedShiftSeller())
+    (!!this.activeShift() || !!this.borrowedShiftSeller()) &&
+    (this.isSuperAdmin || this.cashRegister()?.status === 'OPEN')
   );
 
   salesBlockMessage = computed(() => {
     const cr = this.cashRegister();
-    const shift = this.activeShift();
+    const shift = this.activeShift() ?? this.borrowedShiftSeller();
+    if (this.isSuperAdmin && !shift) {
+      return 'No hay ningún turno abierto. Iniciá un turno en Caja y Turnos para vender.';
+    }
     if (!cr) {
       return 'No hay caja para hoy. Abrila en Caja y Turnos con el efectivo inicial.';
     }
@@ -128,7 +134,6 @@ export class VentasComponent implements OnInit {
     this.api.getTodayCashRegister().subscribe({
       next: (active) => {
         this.cashRegister.set(active?.cashRegister ?? null);
-        this.loadBorrowedShift();
       },
       error: () => this.cashRegister.set(null)
     });
@@ -136,19 +141,15 @@ export class VentasComponent implements OnInit {
       next: (active) => this.activeShift.set(active?.shift ?? null),
       error: () => this.activeShift.set(null)
     });
+    this.loadBorrowedShift();
   }
 
   /** El backend usa el turno abierto más antiguo de la empresa cuando ADMIN o SUPER_ADMIN no tienen turno propio. */
   private loadBorrowedShift(): void {
-    const cr = this.cashRegister();
     this.borrowedShiftSeller.set(null);
-    if (!this.isAdmin || cr?.status !== 'OPEN') return;
-    this.api.getShiftsByDate(cr.businessDate).subscribe({
-      next: (shifts) => {
-        const oldestOpen = shifts.filter(s => s.status === 'OPEN')
-          .sort((a, b) => a.startedAt.localeCompare(b.startedAt))[0];
-        this.borrowedShiftSeller.set(oldestOpen?.sellerName ?? null);
-      }
+    if (!this.isAdmin) return;
+    this.api.getSaleShift().subscribe({
+      next: (shift) => this.borrowedShiftSeller.set(shift?.sellerName ?? null)
     });
   }
 
