@@ -32,6 +32,16 @@
         <span class="stat-label"><mat-icon>stacked_bar_chart</mat-icon> Unidades en stock</span>
         <span class="stat-value">{{ totalStock() }}</span>
       </div>
+      @if (canSeeAmounts) {
+        <div class="stat">
+          <span class="stat-label"><mat-icon>payments</mat-icon> Monto total de costo</span>
+          <span class="stat-value">{{ totalCost() | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label"><mat-icon>sell</mat-icon> Monto total de venta</span>
+          <span class="stat-value">{{ totalSale() | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+        </div>
+      }
     </div>
 
     <section class="surface">

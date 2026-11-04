@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, computed, OnInit, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -9,6 +9,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/services/auth.service';
 import { CATEGORY_LABELS, Product, ProductCategory } from '../../models';
 import { StockDialogResult, StockEditDialogComponent } from './stock-edit-dialog/stock-edit-dialog.component';
 import html2canvas from 'html2canvas';
@@ -17,6 +18,7 @@ import html2canvas from 'html2canvas';
   selector: 'app-stock',
   standalone: true,
   imports: [
+    CurrencyPipe,
     DatePipe,
     MatButtonModule,
     MatDialogModule,
@@ -33,6 +35,7 @@ import html2canvas from 'html2canvas';
 export class StockComponent implements OnInit {
   private api = inject(ApiService);
   private dialog = inject(MatDialog);
+  private auth = inject(AuthService);
 
   products = signal<Product[]>([]);
   loading = signal(false);
@@ -40,6 +43,8 @@ export class StockComponent implements OnInit {
   copySuccess = signal(false);
   selectedCategories = signal<ProductCategory[]>([]);
   searchName = signal('');
+  /** Los montos de costo y venta son solo para ADMIN y SUPER_ADMIN. */
+  readonly canSeeAmounts = this.auth.hasRole('ADMIN', 'SUPER_ADMIN');
 
   availableCategories = computed(() => {
     const all = this.products();
@@ -68,6 +73,14 @@ export class StockComponent implements OnInit {
   // Los totalizadores siguen el filtro aplicado
   totalStock = computed(() =>
     this.filteredProducts().reduce((sum, p) => sum + (p.currentStock ?? 0), 0)
+  );
+
+  totalCost = computed(() =>
+    this.filteredProducts().reduce((sum, p) => sum + (p.currentStock ?? 0) * p.purchasePrice, 0)
+  );
+
+  totalSale = computed(() =>
+    this.filteredProducts().reduce((sum, p) => sum + (p.currentStock ?? 0) * p.price, 0)
   );
 
   /** Lo que se copia como imagen: los productos filtrados con stock mayor a 1. */

@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testi
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { StockComponent } from './stock.component';
+import { AuthService } from '../../core/services/auth.service';
+import { User, UserRole } from '../../models';
 import { environment } from '../../../environments/environment';
 
 describe('StockComponent', () => {
@@ -48,6 +50,47 @@ describe('StockComponent', () => {
     expect(component.products().length).toBe(0);
     expect(component.loading()).toBeFalse();
   }));
+
+  describe('montos de costo y venta', () => {
+    const mockProducts = [
+      { id: '1', name: 'Torta Chocolate', category: 'TORTAS', price: 100, purchasePrice: 60, active: true, currentStock: 3 },
+      { id: '2', name: 'Alfajor Simple', category: 'ALFAJORES', price: 50, purchasePrice: 20, active: true, currentStock: 2 },
+      { id: '3', name: 'Torta Vainilla', category: 'TORTAS', price: 80, purchasePrice: 40, active: true }
+    ];
+
+    const renderAs = (role: UserRole): HTMLElement => {
+      TestBed.inject(AuthService).currentUser.set({ role } as User);
+      fixture = TestBed.createComponent(StockComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+      httpMock.expectOne(`${environment.apiUrl}/products`).flush(mockProducts);
+      flush();
+      fixture.detectChanges();
+      return fixture.nativeElement;
+    };
+
+    it('should show both amounts for ADMIN and SUPER_ADMIN', fakeAsync(() => {
+      for (const role of ['ADMIN', 'SUPER_ADMIN'] as UserRole[]) {
+        const text = renderAs(role).textContent;
+        expect(text).toContain('Monto total de costo');
+        expect(text).toContain('Monto total de venta');
+      }
+    }));
+
+    it('should hide the amounts for SELLER', fakeAsync(() => {
+      expect(renderAs('SELLER').textContent).not.toContain('Monto total');
+    }));
+
+    it('should multiply price by stock and follow the filter', fakeAsync(() => {
+      renderAs('ADMIN');
+      expect(component.totalCost()).toBe(220);
+      expect(component.totalSale()).toBe(400);
+
+      component.selectedCategories.set(['TORTAS']);
+      expect(component.totalCost()).toBe(180);
+      expect(component.totalSale()).toBe(300);
+    }));
+  });
 
   it('should render products in the table', fakeAsync(() => {
     const mockProducts = [
