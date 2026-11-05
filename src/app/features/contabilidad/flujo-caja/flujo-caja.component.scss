@@ -1,0 +1,58 @@
+.flujo-caja {
+  margin-top: 24px;
+}
+
+.flujo-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.flujo-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.flujo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.day-options {
+  display: flex;
+  gap: 4px;
+
+  button.active {
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+}
+
+.cell-sub {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+@media (max-width: 599px) {
+  .flujo-actions,
+  .flujo-actions > button {
+    width: 100%;
+  }
+
+  .day-options {
+    width: 100%;
+
+    button {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}

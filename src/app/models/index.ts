@@ -373,6 +373,51 @@ export interface ExpenseResponse {
   createdAt: string;
 }
 
+export type PayableStatus = 'PENDING' | 'PAID' | 'CANCELLED';
+
+export interface Receivable {
+  date: string;
+  paymentMethod: PaymentMethod;
+  amount: number;
+}
+
+export interface Payable {
+  id: string;
+  detail: string;
+  amount: number;
+  dueDate: string;
+  status: PayableStatus;
+  overdue: boolean;
+  recurring: boolean;
+}
+
+export interface CashFlow {
+  fromDate: string;
+  toDate: string;
+  receivables: Receivable[];
+  totalReceivable: number;
+  payables: Payable[];
+  totalPayable: number;
+  totalOverdue: number;
+  balance: number;
+}
+
+export interface PayableRequest {
+  detail: string;
+  amount: number;
+  dueDate: string;
+}
+
+export interface RecurringPayable {
+  id: string;
+  detail: string;
+  amount: number;
+  dayOfMonth: number;
+  active: boolean;
+}
+
+export type RecurringPayableRequest = Omit<RecurringPayable, 'id'>;
+
 export const CATEGORY_LABELS: Record<ProductCategory, string> = {
   TORTAS: 'Tortas',
   TARTAS: 'Tartas',

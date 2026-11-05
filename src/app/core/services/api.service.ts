@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   AuthResponse,
+  CashFlow,
   CashRegister,
   CashRegisterActive,
   CashRegisterSummary,
@@ -13,11 +14,16 @@ import {
   ContabilidadSummary,
   CreateExpenseRequest,
   CreateSaleRequest,
+  ExpensePaymentSource,
   ExpenseResponse,
+  Payable,
+  PayableRequest,
   Product,
   PriceField,
   ProductCategory,
   ProductPriceAudit,
+  RecurringPayable,
+  RecurringPayableRequest,
   Sale,
   SalesReport,
   TopStats,
@@ -204,6 +210,35 @@ export class ApiService {
 
   createExpense(body: CreateExpenseRequest): Observable<ExpenseResponse> {
     return this.http.post<ExpenseResponse>(`${this.baseUrl}/contabilidad/expenses`, body);
+  }
+
+  getCashFlow(days: number): Observable<CashFlow> {
+    const params = new HttpParams().set('days', days);
+    return this.http.get<CashFlow>(`${this.baseUrl}/contabilidad/cash-flow`, { params });
+  }
+
+  createPayable(body: PayableRequest): Observable<Payable> {
+    return this.http.post<Payable>(`${this.baseUrl}/contabilidad/payables`, body);
+  }
+
+  payPayable(id: string, paymentSource: ExpensePaymentSource): Observable<Payable> {
+    return this.http.post<Payable>(`${this.baseUrl}/contabilidad/payables/${id}/pay`, { paymentSource });
+  }
+
+  cancelPayable(id: string): Observable<Payable> {
+    return this.http.post<Payable>(`${this.baseUrl}/contabilidad/payables/${id}/cancel`, {});
+  }
+
+  listRecurringPayables(): Observable<RecurringPayable[]> {
+    return this.http.get<RecurringPayable[]>(`${this.baseUrl}/contabilidad/recurring-payables`);
+  }
+
+  createRecurringPayable(body: RecurringPayableRequest): Observable<RecurringPayable> {
+    return this.http.post<RecurringPayable>(`${this.baseUrl}/contabilidad/recurring-payables`, body);
+  }
+
+  updateRecurringPayable(id: string, body: RecurringPayableRequest): Observable<RecurringPayable> {
+    return this.http.put<RecurringPayable>(`${this.baseUrl}/contabilidad/recurring-payables/${id}`, body);
   }
 
   getStock(productId: string): Observable<StockResponse> {
