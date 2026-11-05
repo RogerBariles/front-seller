@@ -25,6 +25,7 @@ import {
   ShiftActive,
   ShiftHoursReport,
   ShiftSummary,
+  CashMovementCategory,
   CashMovementType,
   ShiftCashMovement,
   StockAdjustRequest,
@@ -105,7 +106,7 @@ export class ApiService {
 
   addShiftCashMovement(
     shiftId: string,
-    body: { type: CashMovementType; amount: number; detail: string }
+    body: { type: CashMovementType; category: CashMovementCategory; amount: number; detail: string }
   ): Observable<ShiftCashMovement> {
     return this.http.post<ShiftCashMovement>(`${this.baseUrl}/shifts/${shiftId}/cash-movements`, body);
   }
