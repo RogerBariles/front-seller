@@ -12,6 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../core/services/api.service';
 import { ContabilidadSummary, EXPENSE_PAYMENT_SOURCE_LABELS, ExpensePaymentSource, cashMovementLabel } from '../../models';
 import { ExpenseDialogComponent } from './expense-dialog/expense-dialog.component';
+import { FlujoCajaComponent } from './flujo-caja/flujo-caja.component';
 
 @Component({
   selector: 'app-contabilidad',
@@ -27,7 +28,8 @@ import { ExpenseDialogComponent } from './expense-dialog/expense-dialog.componen
     MatTableModule,
     MatDialogModule,
     MatIconModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    FlujoCajaComponent
   ],
   templateUrl: './contabilidad.component.html',
   styleUrl: './contabilidad.component.scss'

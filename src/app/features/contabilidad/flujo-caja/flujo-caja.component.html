@@ -1,0 +1,124 @@
+<section class="flujo-caja">
+  <div class="flujo-header">
+    <div>
+      <h2 class="section-title"><mat-icon>event_note</mat-icon> Flujo de caja</h2>
+      <p class="flujo-subtitle">Lo que va a entrar y salir en los próximos días.</p>
+    </div>
+    <div class="flujo-actions">
+      <div class="day-options" role="group" aria-label="Período">
+        @for (option of dayOptions; track option) {
+          <button type="button" mat-stroked-button [class.active]="days() === option" (click)="setDays(option)">
+            {{ option }} días
+          </button>
+        }
+      </div>
+      <button mat-stroked-button (click)="openRecurringDialog()">
+        <mat-icon>event_repeat</mat-icon> Gastos fijos
+      </button>
+      <button mat-flat-button color="primary" (click)="openPayableDialog()">
+        <mat-icon>add</mat-icon> Nueva cuenta a pagar
+      </button>
+    </div>
+  </div>
+
+  @if (cashFlow(); as flow) {
+    <div class="stat-grid">
+      <div class="stat is-success">
+        <span class="stat-label"><mat-icon>north_east</mat-icon> A cobrar</span>
+        <span class="stat-value">{{ flow.totalReceivable | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+        <span class="stat-hint">Sin descontar comisiones</span>
+      </div>
+      <div class="stat is-danger">
+        <span class="stat-label"><mat-icon>south_west</mat-icon> A pagar</span>
+        <span class="stat-value">{{ flow.totalPayable | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+      </div>
+      <div class="stat is-warning">
+        <span class="stat-label"><mat-icon>warning_amber</mat-icon> Vencido</span>
+        <span class="stat-value">{{ flow.totalOverdue | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+        <span class="stat-hint">Incluido en A pagar</span>
+      </div>
+      <div class="stat is-primary">
+        <span class="stat-label"><mat-icon>balance</mat-icon> Diferencia</span>
+        <span class="stat-value">{{ flow.balance | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
+        <span class="stat-hint">A cobrar menos A pagar</span>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <section class="surface">
+        <h2 class="section-title"><mat-icon>north_east</mat-icon> A cobrar
+          <span class="section-count">{{ flow.receivables.length }}</span>
+        </h2>
+        @if (flow.receivables.length === 0) {
+          <div class="empty-state"><mat-icon>event_available</mat-icon><span>No hay acreditaciones pendientes.</span></div>
+        } @else {
+          <div class="table-scroll compact">
+            <table mat-table [dataSource]="flow.receivables" class="full-width">
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef>Fecha estimada</th>
+                <td mat-cell *matCellDef="let r">{{ r.date | date:'dd/MM/yy' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="method">
+                <th mat-header-cell *matHeaderCellDef>Medio</th>
+                <td mat-cell *matCellDef="let r">{{ paymentLabel(r.paymentMethod) }}</td>
+              </ng-container>
+              <ng-container matColumnDef="amount">
+                <th mat-header-cell *matHeaderCellDef>Monto</th>
+                <td mat-cell *matCellDef="let r" class="profit">{{ r.amount | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="receivableColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: receivableColumns"></tr>
+            </table>
+          </div>
+        }
+      </section>
+
+      <section class="surface">
+        <h2 class="section-title"><mat-icon>south_west</mat-icon> A pagar
+          <span class="section-count">{{ flow.payables.length }}</span>
+        </h2>
+        @if (flow.payables.length === 0) {
+          <div class="empty-state"><mat-icon>event_available</mat-icon><span>No hay cuentas por pagar.</span></div>
+        } @else {
+          <div class="table-scroll compact">
+            <table mat-table [dataSource]="flow.payables" class="full-width">
+              <ng-container matColumnDef="dueDate">
+                <th mat-header-cell *matHeaderCellDef>Vence</th>
+                <td mat-cell *matCellDef="let p">
+                  {{ p.dueDate | date:'dd/MM/yy' }}
+                  @if (p.overdue) {
+                    <span class="badge danger">Vencida</span>
+                  }
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="detail">
+                <th mat-header-cell *matHeaderCellDef>Detalle</th>
+                <td mat-cell *matCellDef="let p" class="cell-strong">
+                  {{ p.detail }}
+                  @if (p.recurring) {
+                    <span class="cell-sub">Gasto fijo</span>
+                  }
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="amount">
+                <th mat-header-cell *matHeaderCellDef>Monto</th>
+                <td mat-cell *matCellDef="let p" class="expense">{{ p.amount | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef class="cell-actions"></th>
+                <td mat-cell *matCellDef="let p" class="cell-actions">
+                  <button mat-stroked-button color="primary" (click)="pay(p)">Pagar</button>
+                  <button mat-icon-button aria-label="Cancelar cuenta" title="Cancelar cuenta" (click)="cancel(p)">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="payableColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: payableColumns"></tr>
+            </table>
+          </div>
+        }
+      </section>
+    </div>
+  }
+</section>
