@@ -89,7 +89,7 @@
               <li [class.withdrawal]="m.type === 'WITHDRAWAL'">
                 <span class="movement-icon"><mat-icon>{{ m.type === 'WITHDRAWAL' ? 'south_west' : 'north_east' }}</mat-icon></span>
                 <span class="movement-text">
-                  <span class="movement-type">{{ movementLabels[m.type] }}</span>
+                  <span class="movement-type">{{ movementLabel(m) }}</span>
                   <span class="movement-detail">{{ m.detail }}</span>
                 </span>
                 <span class="movement-amount">{{ m.type === 'WITHDRAWAL' ? '−' : '+' }}{{ m.amount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
@@ -167,6 +167,17 @@
               </button>
             }
           </div>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Tipo de movimiento</mat-label>
+            <mat-select formControlName="category">
+              @for (c of movementCategories; track c) {
+                <mat-option [value]="c">{{ categoryLabels[c] }}</mat-option>
+              }
+            </mat-select>
+            @if (createsExpense) {
+              <mat-hint>También se registra como egreso en Contabilidad.</mat-hint>
+            }
+          </mat-form-field>
           <div class="movement-form__row">
             <mat-form-field appearance="outline" subscriptSizing="dynamic">
               <mat-label>Monto</mat-label>
@@ -189,7 +200,7 @@
               <li [class.withdrawal]="m.type === 'WITHDRAWAL'">
                 <span class="movement-icon"><mat-icon>{{ m.type === 'WITHDRAWAL' ? 'south_west' : 'north_east' }}</mat-icon></span>
                 <span class="movement-text">
-                  <span class="movement-type">{{ movementLabels[m.type] }}</span>
+                  <span class="movement-type">{{ movementLabel(m) }}</span>
                   <span class="movement-detail">{{ m.detail }}</span>
                 </span>
                 <span class="movement-amount">{{ m.type === 'WITHDRAWAL' ? '−' : '+' }}{{ m.amount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>

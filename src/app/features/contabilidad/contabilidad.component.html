@@ -70,7 +70,7 @@
                 <th mat-header-cell *matHeaderCellDef>Detalle</th>
                 <td mat-cell *matCellDef="let e" class="cell-strong">
                   {{ e.detail }}
-                  <span class="cell-sub">{{ e.createdByName }}</span>
+                  <span class="cell-sub">{{ e.createdByName }}@if (e.paymentSource) { · {{ paymentSourceLabel(e.paymentSource) }} }</span>
                 </td>
               </ng-container>
               <ng-container matColumnDef="amount">
@@ -100,7 +100,7 @@
               <ng-container matColumnDef="type">
                 <th mat-header-cell *matHeaderCellDef>Tipo</th>
                 <td mat-cell *matCellDef="let m">
-                  <span class="badge" [class.success]="m.type === 'INCOME'" [class.danger]="m.type === 'WITHDRAWAL'">{{ movementLabel(m.type) }}</span>
+                  <span class="badge" [class.success]="m.type === 'INCOME'" [class.danger]="m.type === 'WITHDRAWAL'">{{ movementLabel(m) }}</span>
                 </td>
               </ng-container>
               <ng-container matColumnDef="detail">

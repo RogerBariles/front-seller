@@ -10,7 +10,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../core/services/api.service';
-import { CASH_MOVEMENT_LABELS, CashMovementType, ContabilidadSummary } from '../../models';
+import { ContabilidadSummary, EXPENSE_PAYMENT_SOURCE_LABELS, ExpensePaymentSource, cashMovementLabel } from '../../models';
 import { ExpenseDialogComponent } from './expense-dialog/expense-dialog.component';
 
 @Component({
@@ -44,7 +44,7 @@ export class ContabilidadComponent implements OnInit {
   // "Registrado por" se muestra debajo del detalle para ahorrar ancho
   displayedExpenseColumns = ['date', 'detail', 'amount'];
   displayedMovementColumns = ['date', 'type', 'detail', 'amount'];
-  readonly movementLabels = CASH_MOVEMENT_LABELS;
+  readonly movementLabel = cashMovementLabel;
 
   form = this.fb.nonNullable.group({
     fromDate: [new Date().toISOString().slice(0, 10), Validators.required],
@@ -76,8 +76,8 @@ export class ContabilidadComponent implements OnInit {
     });
   }
 
-  movementLabel(type: CashMovementType): string {
-    return this.movementLabels[type];
+  paymentSourceLabel(source: ExpensePaymentSource): string {
+    return EXPENSE_PAYMENT_SOURCE_LABELS[source];
   }
 
   openExpenseDialog(): void {

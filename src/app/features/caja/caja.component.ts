@@ -9,7 +9,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../core/services/api.service';
-import { CashRegisterActive, CloseReport, ShiftActive, CASH_MOVEMENT_LABELS } from '../../models';
+import {
+  CASH_MOVEMENT_CATEGORIES,
+  CASH_MOVEMENT_CATEGORY_LABELS,
+  CASH_MOVEMENT_LABELS,
+  CashMovementCategory,
+  CashRegisterActive,
+  CloseReport,
+  ShiftActive,
+  cashMovementLabel
+} from '../../models';
 import { ClosePrintDialogComponent } from './close-print-dialog/close-print-dialog.component';
 import { CajaTurnoReporteComponent } from './caja-turno-reporte/caja-turno-reporte.component';
 import { AuthService } from '../../core/services/auth.service';
@@ -42,6 +51,8 @@ export class CajaComponent implements OnInit {
   private dialog = inject(MatDialog);
 
   readonly movementLabels = CASH_MOVEMENT_LABELS;
+  readonly categoryLabels = CASH_MOVEMENT_CATEGORY_LABELS;
+  readonly movementLabel = cashMovementLabel;
   readonly movementTypes = ['INCOME', 'WITHDRAWAL'] as const;
 
   registerActive: CashRegisterActive | null = null;
@@ -57,6 +68,7 @@ export class CajaComponent implements OnInit {
 
   movementForm = this.fb.nonNullable.group({
     type: ['INCOME' as 'INCOME' | 'WITHDRAWAL', Validators.required],
+    category: ['' as CashMovementCategory | '', Validators.required],
     amount: [0, [Validators.required, Validators.min(0.01)]],
     detail: ['', [Validators.required, Validators.maxLength(500)]]
   });
@@ -125,17 +137,28 @@ export class CajaComponent implements OnInit {
   }
 
   setMovementType(type: 'INCOME' | 'WITHDRAWAL'): void {
-    this.movementForm.patchValue({ type });
+    this.movementForm.patchValue({ type, category: '' });
+  }
+
+  get movementCategories(): CashMovementCategory[] {
+    return CASH_MOVEMENT_CATEGORIES[this.movementForm.getRawValue().type];
+  }
+
+  get createsExpense(): boolean {
+    const { category } = this.movementForm.getRawValue();
+    return category === 'SUPPLIER_PAYMENT' || category === 'EXPENSE';
   }
 
   addCashMovement(): void {
     if (!this.shiftActive || this.movementForm.invalid) return;
-    this.loading = true;
     const shiftId = this.shiftActive.shift.id;
-    this.api.addShiftCashMovement(shiftId, this.movementForm.getRawValue()).subscribe({
+    const { type, category, amount, detail } = this.movementForm.getRawValue();
+    if (!category) return;
+    this.loading = true;
+    this.api.addShiftCashMovement(shiftId, { type, category, amount, detail }).subscribe({
       next: () => {
         this.loading = false;
-        this.movementForm.patchValue({ amount: 0, detail: '' });
+        this.movementForm.patchValue({ category: '', amount: 0, detail: '' });
         this.snack.open('Movimiento registrado', 'Cerrar', { duration: 3000 });
         this.refresh();
       },

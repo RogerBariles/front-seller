@@ -4,8 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../../core/services/api.service';
+import { EXPENSE_PAYMENT_SOURCE_LABELS, ExpensePaymentSource } from '../../../models';
 
 @Component({
   selector: 'app-expense-dialog',
@@ -16,6 +18,7 @@ import { ApiService } from '../../../core/services/api.service';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
     MatSnackBarModule
   ],
   template: `
@@ -33,6 +36,15 @@ import { ApiService } from '../../../core/services/api.service';
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Fecha</mat-label>
           <input matInput type="date" formControlName="date" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Pagado desde</mat-label>
+          <mat-select formControlName="paymentSource">
+            @for (source of paymentSources; track source) {
+              <mat-option [value]="source">{{ paymentSourceLabels[source] }}</mat-option>
+            }
+          </mat-select>
+          <mat-hint>Si salió de la caja del turno, registralo como retiro en Caja y Turnos.</mat-hint>
         </mat-form-field>
       </form>
     </mat-dialog-content>
@@ -55,18 +67,21 @@ export class ExpenseDialogComponent {
   private dialogRef = inject(MatDialogRef<ExpenseDialogComponent>);
 
   saving = false;
+  readonly paymentSources: ExpensePaymentSource[] = ['BANK', 'CASH'];
+  readonly paymentSourceLabels = EXPENSE_PAYMENT_SOURCE_LABELS;
 
   form = this.fb.nonNullable.group({
     detail: ['', Validators.required],
     amount: [0, [Validators.required, Validators.min(0.01)]],
-    date: [new Date().toISOString().slice(0, 10), Validators.required]
+    date: [new Date().toISOString().slice(0, 10), Validators.required],
+    paymentSource: ['' as ExpensePaymentSource | '', Validators.required]
   });
 
   save(): void {
-    if (this.form.invalid) return;
-    this.saving = true;
     const v = this.form.getRawValue();
-    this.api.createExpense({ detail: v.detail, amount: v.amount, date: v.date }).subscribe({
+    if (this.form.invalid || !v.paymentSource) return;
+    this.saving = true;
+    this.api.createExpense({ detail: v.detail, amount: v.amount, date: v.date, paymentSource: v.paymentSource }).subscribe({
       next: () => {
         this.snack.open('Egreso registrado', 'Cerrar', { duration: 3000 });
         this.dialogRef.close(true);

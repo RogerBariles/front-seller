@@ -125,9 +125,20 @@ export interface StockPurchaseRequest {
 
 export type CashMovementType = 'INCOME' | 'WITHDRAWAL';
 
+export type CashMovementCategory =
+  | 'SUPPLIER_PAYMENT'
+  | 'EXPENSE'
+  | 'BANK_DEPOSIT'
+  | 'OWNER_WITHDRAWAL'
+  | 'CHANGE_FUND'
+  | 'OTHER';
+
+export type ExpensePaymentSource = 'CASH' | 'BANK';
+
 export interface ShiftCashMovement {
   id: string;
   type: CashMovementType;
+  category: CashMovementCategory;
   amount: number;
   detail: string;
   createdByName: string;
@@ -350,12 +361,14 @@ export interface CreateExpenseRequest {
   detail: string;
   amount: number;
   date?: string;
+  paymentSource: ExpensePaymentSource;
 }
 
 export interface ExpenseResponse {
   id: string;
   detail: string;
   amount: number;
+  paymentSource?: ExpensePaymentSource;
   createdByName: string;
   createdAt: string;
 }
@@ -379,6 +392,32 @@ export const CASH_MOVEMENT_LABELS: Record<CashMovementType, string> = {
   INCOME: 'Ingreso',
   WITHDRAWAL: 'Retiro'
 };
+
+export const CASH_MOVEMENT_CATEGORY_LABELS: Record<CashMovementCategory, string> = {
+  SUPPLIER_PAYMENT: 'Pago a proveedor',
+  EXPENSE: 'Gasto',
+  BANK_DEPOSIT: 'Depósito al banco',
+  OWNER_WITHDRAWAL: 'Retiro del dueño',
+  CHANGE_FUND: 'Cambio para la caja',
+  OTHER: 'Otro'
+};
+
+export const CASH_MOVEMENT_CATEGORIES: Record<CashMovementType, CashMovementCategory[]> = {
+  INCOME: ['CHANGE_FUND', 'OTHER'],
+  WITHDRAWAL: ['SUPPLIER_PAYMENT', 'EXPENSE', 'BANK_DEPOSIT', 'OWNER_WITHDRAWAL', 'OTHER']
+};
+
+export const EXPENSE_PAYMENT_SOURCE_LABELS: Record<ExpensePaymentSource, string> = {
+  CASH: 'Efectivo',
+  BANK: 'Banco / billetera'
+};
+
+/** Los movimientos sin clasificar se muestran como Ingreso o Retiro. */
+export function cashMovementLabel(movement: ShiftCashMovement): string {
+  return movement.category === 'OTHER'
+    ? CASH_MOVEMENT_LABELS[movement.type]
+    : CASH_MOVEMENT_CATEGORY_LABELS[movement.category];
+}
 
 export const PAYMENT_LABELS: Record<PaymentMethod, string> = {
   EFECTIVO: 'Efectivo',
