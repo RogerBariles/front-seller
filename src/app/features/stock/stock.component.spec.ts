@@ -115,6 +115,22 @@ describe('StockComponent', () => {
     expect(component.filteredProducts().length).toBe(4);
   }));
 
+  it('should download the image when the clipboard rejects it', async () => {
+    fixture.detectChanges();
+    httpMock.expectOne(`${environment.apiUrl}/products`).flush([
+      { id: '1', name: 'Torta', category: 'TORTAS', price: 100, active: true, currentStock: 5 }
+    ]);
+    fixture.detectChanges();
+
+    spyOn(navigator.clipboard, 'write').and.rejectWith(new DOMException('denied', 'NotAllowedError'));
+    const download = spyOn(HTMLAnchorElement.prototype, 'click');
+
+    await component.copyTableToClipboard();
+
+    expect(download).toHaveBeenCalledTimes(1);
+    expect(component.copySuccess()).toBeFalse();
+  });
+
   it('should render products in the table', fakeAsync(() => {
     const mockProducts = [
       { id: '1', name: 'Torta Chocolate', category: 'TORTAS', price: 100, active: true, currentStock: 15 },

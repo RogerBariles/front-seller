@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -29,6 +30,7 @@ import html2canvas from 'html2canvas';
     MatInputModule,
     MatProgressBarModule,
     MatSelectModule,
+    MatSnackBarModule,
     MatTableModule,
   ],
   templateUrl: './stock.component.html',
@@ -38,6 +40,7 @@ export class StockComponent implements OnInit {
   private api = inject(ApiService);
   private dialog = inject(MatDialog);
   private auth = inject(AuthService);
+  private snack = inject(MatSnackBar);
 
   products = signal<Product[]>([]);
   loading = signal(false);
@@ -136,14 +139,37 @@ export class StockComponent implements OnInit {
     const area = document.querySelector<HTMLElement>('.stock-container .copy-capture');
     if (!area || this.copyProducts().length === 0) return;
 
+    // Safari exige escribir en el portapapeles durante el clic: la imagen se le pasa como promesa
+    const image = this.captureImage(area);
     try {
-      const canvas = await html2canvas(area, { backgroundColor: '#ffffff', scale: 2 });
-      const blob = await new Promise<Blob>(resolve => canvas.toBlob(b => resolve(b!), 'image/png'));
-      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': image })]);
       this.copySuccess.set(true);
       setTimeout(() => this.copySuccess.set(false), 2000);
     } catch {
       this.copySuccess.set(false);
+      await this.downloadImage(image);
+    }
+  }
+
+  private async captureImage(area: HTMLElement): Promise<Blob> {
+    const canvas = await html2canvas(area, { backgroundColor: '#ffffff', scale: 2 });
+    return new Promise<Blob>((resolve, reject) =>
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Imagen demasiado grande')), 'image/png')
+    );
+  }
+
+  /** Si el navegador no deja copiar, la imagen se descarga para no perderla. */
+  private async downloadImage(image: Promise<Blob>): Promise<void> {
+    try {
+      const url = URL.createObjectURL(await image);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'stock.png';
+      link.click();
+      URL.revokeObjectURL(url);
+      this.snack.open('El navegador no permitió copiar. La imagen se descargó.', 'Cerrar', { duration: 4000 });
+    } catch {
+      this.snack.open('No se pudo generar la imagen', 'Cerrar', { duration: 4000 });
     }
   }
 
