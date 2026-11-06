@@ -92,6 +92,29 @@ describe('StockComponent', () => {
     }));
   });
 
+  it('should show products without stock only when the check is on', fakeAsync(() => {
+    const mockProducts = [
+      { id: '1', name: 'Con stock', category: 'TORTAS', price: 100, active: true, currentStock: 3 },
+      { id: '2', name: 'En cero', category: 'TORTAS', price: 100, active: true, currentStock: 0 },
+      { id: '3', name: 'Sin dato', category: 'TORTAS', price: 100, active: true },
+      { id: '4', name: 'Negativo', category: 'TORTAS', price: 100, active: true, currentStock: -2 }
+    ];
+
+    fixture.detectChanges();
+    httpMock.expectOne(`${environment.apiUrl}/products`).flush(mockProducts);
+    flush();
+    fixture.detectChanges();
+
+    expect(component.showOutOfStock()).toBeFalse();
+    expect(component.filteredProducts().map(p => p.id)).toEqual(['1']);
+
+    fixture.nativeElement.querySelector('mat-checkbox input').click();
+    fixture.detectChanges();
+
+    expect(component.showOutOfStock()).toBeTrue();
+    expect(component.filteredProducts().length).toBe(4);
+  }));
+
   it('should render products in the table', fakeAsync(() => {
     const mockProducts = [
       { id: '1', name: 'Torta Chocolate', category: 'TORTAS', price: 100, active: true, currentStock: 15 },
@@ -104,7 +127,7 @@ describe('StockComponent', () => {
     fixture.detectChanges();
 
     const rows = fixture.nativeElement.querySelectorAll('tr.mat-mdc-row');
-    expect(rows.length).toBe(2);
+    expect(rows.length).toBe(1);
 
     const firstRow = rows[0].textContent;
     expect(firstRow).toContain('Torta Chocolate');

@@ -1,6 +1,7 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, computed, OnInit, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,6 +22,7 @@ import html2canvas from 'html2canvas';
     CurrencyPipe,
     DatePipe,
     MatButtonModule,
+    MatCheckboxModule,
     MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
@@ -43,6 +45,7 @@ export class StockComponent implements OnInit {
   copySuccess = signal(false);
   selectedCategories = signal<ProductCategory[]>([]);
   searchName = signal('');
+  showOutOfStock = signal(false);
   /** Los montos de costo y venta son solo para ADMIN y SUPER_ADMIN. */
   readonly canSeeAmounts = this.auth.hasRole('ADMIN', 'SUPER_ADMIN');
 
@@ -54,9 +57,11 @@ export class StockComponent implements OnInit {
   filteredProducts = computed(() => {
     const cats = this.selectedCategories();
     const nameFilter = this.searchName().toLowerCase().trim();
+    const showOutOfStock = this.showOutOfStock();
 
     return this.products()
       .filter(p => {
+        if (!showOutOfStock && (p.currentStock ?? 0) <= 0) return false;
         if (cats.length > 0 && !cats.includes(p.category)) return false;
         if (nameFilter && !p.name.toLowerCase().includes(nameFilter)) return false;
         return true;
