@@ -80,6 +80,10 @@
             }
           </mat-select>
         </mat-form-field>
+
+        <mat-checkbox [checked]="showOutOfStock()" (change)="showOutOfStock.set($event.checked)">
+          Mostrar productos sin stock
+        </mat-checkbox>
       </div>
 
       <div class="table-scroll compact">
