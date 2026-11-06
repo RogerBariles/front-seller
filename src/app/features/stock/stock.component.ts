@@ -91,11 +91,6 @@ export class StockComponent implements OnInit {
     this.filteredProducts().reduce((sum, p) => sum + (p.currentStock ?? 0) * p.price, 0)
   );
 
-  /** Lo que se copia como imagen: los productos filtrados con stock mayor a 1. */
-  copyProducts = computed(() =>
-    this.filteredProducts().filter(p => (p.currentStock ?? 0) > 1)
-  );
-
   readonly today = new Date();
 
   protected readonly CATEGORY_LABELS = CATEGORY_LABELS;
@@ -137,7 +132,7 @@ export class StockComponent implements OnInit {
 
   async copyTableToClipboard(): Promise<void> {
     const area = document.querySelector<HTMLElement>('.stock-container .copy-capture');
-    if (!area || this.copyProducts().length === 0) return;
+    if (!area || this.filteredProducts().length === 0) return;
 
     // Safari exige escribir en el portapapeles durante el clic: la imagen se le pasa como promesa
     const image = this.captureImage(area);

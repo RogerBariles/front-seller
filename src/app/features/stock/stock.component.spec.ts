@@ -115,6 +115,25 @@ describe('StockComponent', () => {
     expect(component.filteredProducts().length).toBe(4);
   }));
 
+  it('should copy the same products the table shows', fakeAsync(() => {
+    fixture.detectChanges();
+    httpMock.expectOne(`${environment.apiUrl}/products`).flush([
+      { id: '1', name: 'Dos unidades', category: 'TORTAS', price: 100, active: true, currentStock: 2 },
+      { id: '2', name: 'Una unidad', category: 'TORTAS', price: 100, active: true, currentStock: 1 },
+      { id: '3', name: 'Sin stock', category: 'TORTAS', price: 100, active: true, currentStock: 0 }
+    ]);
+    flush();
+    fixture.detectChanges();
+
+    const copiedRows = () => fixture.nativeElement.querySelectorAll('.copy-capture tbody tr');
+    expect(copiedRows().length).toBe(2);
+    expect(copiedRows()[1].textContent).toContain('Una unidad');
+
+    component.showOutOfStock.set(true);
+    fixture.detectChanges();
+    expect(copiedRows().length).toBe(3);
+  }));
+
   it('should download the image when the clipboard rejects it', async () => {
     fixture.detectChanges();
     httpMock.expectOne(`${environment.apiUrl}/products`).flush([
