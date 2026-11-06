@@ -6,8 +6,8 @@
     </div>
     <div class="page-actions">
       <button mat-stroked-button (click)="copyTableToClipboard()"
-        [disabled]="loading() || !!error() || copyProducts().length === 0"
-        title="Copia los productos del filtro con stock mayor a 1">
+        [disabled]="loading() || !!error() || filteredProducts().length === 0"
+        title="Copia los productos que muestra la tabla">
         <mat-icon>{{ copySuccess() ? 'check' : 'content_copy' }}</mat-icon>
         {{ copySuccess() ? 'Copiado' : 'Copiar como imagen' }}
       </button>
@@ -136,17 +136,17 @@
       </div>
     </section>
 
-    <!-- Contenido de "Copiar como imagen": filtrados con stock > 1 (queda detrás de la página) -->
-    @if (copyProducts().length) {
+    <!-- Contenido de "Copiar como imagen": lo mismo que la tabla (queda detrás de la página) -->
+    @if (filteredProducts().length) {
       <div class="copy-capture" aria-hidden="true">
         <div class="copy-title">Stock al {{ today | date:'dd/MM/yyyy' }}</div>
         <table>
           <thead><tr><th>Producto</th><th>Stock</th></tr></thead>
           <tbody>
-            @for (product of copyProducts(); track product.id) {
+            @for (product of filteredProducts(); track product.id) {
               <tr>
                 <td>{{ product.name }} <span class="copy-cat">{{ categoryLabel(product.category) }}</span></td>
-                <td class="copy-qty">{{ product.currentStock }}</td>
+                <td class="copy-qty">{{ product.currentStock ?? 0 }}</td>
               </tr>
             }
           </tbody>
