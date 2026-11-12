@@ -65,7 +65,7 @@ export class ProductosComponent implements OnInit, AfterViewInit {
   readonly priceFieldLabels = PRICE_FIELD_LABELS;
   readonly bulkTargets: PriceField[] = ['SALE', 'PURCHASE', 'BOTH'];
   readonly canBulkIncrease = this.auth.hasRole('SUPER_ADMIN');
-  displayedColumns = ['name', 'category', 'price', 'purchasePrice', 'margin', 'company', 'active', 'actions'];
+  displayedColumns = ['name', 'category', 'price', 'pyaPrice', 'purchasePrice', 'margin', 'active', 'actions'];
 
   form = this.fb.nonNullable.group({
     name: ['', Validators.required],
@@ -171,6 +171,11 @@ export class ProductosComponent implements OnInit, AfterViewInit {
 
   categoryLabel(category: ProductCategory): string {
     return this.categoryLabels[category];
+  }
+
+  /** Precio sugerido para PedidosYa: precio de venta + 30%. */
+  pyaPrice(product: Product): number {
+    return Math.round((product.price ?? 0) * 1.3 * 100) / 100;
   }
 
   margin(product: Product): number {
