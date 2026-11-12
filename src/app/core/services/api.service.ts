@@ -184,6 +184,14 @@ export class ApiService {
     return this.http.post<Sale>(`${this.baseUrl}/sales`, body);
   }
 
+  getSale(id: string): Observable<Sale> {
+    return this.http.get<Sale>(`${this.baseUrl}/sales/${id}`);
+  }
+
+  cancelSale(id: string, detail: string): Observable<Sale> {
+    return this.http.post<Sale>(`${this.baseUrl}/sales/${id}/cancel`, { detail });
+  }
+
   getSalesReport(params: Record<string, string | string[]>): Observable<SalesReport> {
     return this.http.get<SalesReport>(`${this.baseUrl}/reports/sales`, { params: this.toHttpParams(params) });
   }

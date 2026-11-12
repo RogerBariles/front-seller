@@ -131,6 +131,7 @@ export type CashMovementCategory =
   | 'BANK_DEPOSIT'
   | 'OWNER_WITHDRAWAL'
   | 'CHANGE_FUND'
+  | 'SALE_CANCELLATION'
   | 'OTHER';
 
 export type ExpensePaymentSource = 'CASH' | 'BANK';
@@ -256,7 +257,25 @@ export interface Sale {
   profit: number;
   createdAt: string;
   accreditedAt: string;
+  /** SOLD por defecto; CANCELLED cuando se anula desde el Reporte de ventas. */
+  status: SaleStatus;
+  /** Motivo de la anulación (vacío si está vendida). */
+  detail: string;
+  cancelledAt?: string;
+  cancelledByName?: string;
   items: SaleItem[];
+}
+
+export type SaleStatus = 'SOLD' | 'CANCELLED';
+
+export const SALE_STATUS_LABELS: Record<SaleStatus, string> = {
+  SOLD: 'Vendida',
+  CANCELLED: 'Anulada'
+};
+
+/** Las anuladas se muestran pero no cuentan en totales. */
+export function isCancelledSale(sale: Pick<Sale, 'status'>): boolean {
+  return sale.status === 'CANCELLED';
 }
 
 export function formatIsoDate(isoDate: string | undefined): string {
@@ -279,6 +298,7 @@ export function argentinaToday(now = new Date()): string {
 export function pendingAccreditationAmount(sales: Sale[] | undefined, today = argentinaToday()): number {
   if (!sales?.length) return 0;
   return sales.reduce((sum, sale) => {
+    if (isCancelledSale(sale)) return sum;
     const accreditedAt = sale.accreditedAt?.slice(0, 10);
     if (!accreditedAt || accreditedAt <= today) return sum;
     const cashAlreadyReceived = sale.cashAmount ?? 0;
@@ -444,6 +464,7 @@ export const CASH_MOVEMENT_CATEGORY_LABELS: Record<CashMovementCategory, string>
   BANK_DEPOSIT: 'Depósito al banco',
   OWNER_WITHDRAWAL: 'Retiro del dueño',
   CHANGE_FUND: 'Cambio para la caja',
+  SALE_CANCELLATION: 'Anulación de venta',
   OTHER: 'Otro'
 };
 

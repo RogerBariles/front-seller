@@ -6,3 +6,19 @@
 .table-scroll .wide {
   min-width: 960px;
 }
+
+/* Venta anulada: se ve en el listado pero tachada y apagada */
+.row-cancelled td.mat-mdc-cell:not(.cell-actions) {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.row-cancelled td.mat-mdc-cell .badge {
+  text-decoration: none;
+}
+
+.badge-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+}

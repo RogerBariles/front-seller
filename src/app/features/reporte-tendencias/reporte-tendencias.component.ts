@@ -14,7 +14,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
-import { CATEGORY_LABELS, PAYMENT_LABELS, PaymentMethod, ProductCategory, User } from '../../models';
+import { CATEGORY_LABELS, isCancelledSale, PAYMENT_LABELS, PaymentMethod, ProductCategory, User } from '../../models';
 import {
   SalesTrendAnalysis,
   TrendMetric,
@@ -198,7 +198,7 @@ export class ReporteTendenciasComponent implements OnInit {
 
     this.api.getSalesReport(params).subscribe({
       next: (report) => {
-        this.analysis = analyzeSales(report.sales ?? [], v.fromDate, v.toDate);
+        this.analysis = analyzeSales((report.sales ?? []).filter(sale => !isCancelledSale(sale)), v.fromDate, v.toDate);
         this.loading = false;
       },
       error: (err) => {

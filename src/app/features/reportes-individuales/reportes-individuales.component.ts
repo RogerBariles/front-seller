@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Observable, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
-import { CATEGORY_LABELS, formatIsoDate, PAYMENT_LABELS, PaymentMethod, pendingAccreditationAmount, ProductCategory, Sale, SaleItem, SalesReport, TopStats, User } from '../../models';
+import { CATEGORY_LABELS, formatIsoDate, isCancelledSale, PAYMENT_LABELS, PaymentMethod, pendingAccreditationAmount, ProductCategory, Sale, SaleItem, SalesReport, TopStats, User } from '../../models';
 
 export interface SaleProductRow {
   createdAt: string;
@@ -165,7 +165,7 @@ export class ReportesIndividualesComponent implements OnInit {
   }
 
   private flattenSaleProducts(sales: Sale[]): SaleProductRow[] {
-    return sales.flatMap((sale) =>
+    return sales.filter(sale => !isCancelledSale(sale)).flatMap((sale) =>
       (sale.items ?? []).map((item: SaleItem) => ({
         createdAt: sale.createdAt,
         accreditedAt: sale.accreditedAt,

@@ -1,6 +1,15 @@
 <h2 mat-dialog-title>Detalle de venta</h2>
 
 <mat-dialog-content>
+  @if (sale.status === 'CANCELLED') {
+    <div class="alert danger cancelled">
+      <span class="alert-body">
+        <strong>Venta anulada</strong> el {{ sale.cancelledAt | date:'dd/MM/yyyy HH:mm' }}
+        @if (sale.cancelledByName) { por {{ sale.cancelledByName }} }
+        <br>Motivo: {{ sale.detail }}
+      </span>
+    </div>
+  }
   <section class="meta">
     <p><strong>Fecha:</strong> {{ sale.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
     <p><strong>Acreditación:</strong> {{ formatIsoDate(sale.accreditedAt) }}</p>
