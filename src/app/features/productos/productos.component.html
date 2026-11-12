@@ -136,7 +136,7 @@
           <td mat-cell *matCellDef="let p">{{ p.purchasePrice | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
         </ng-container>
         <ng-container matColumnDef="pyaPrice">
-          <th mat-header-cell *matHeaderCellDef title="Precio de venta + 30%">Precio sugerido Pya</th>
+          <th mat-header-cell *matHeaderCellDef title="Precio de venta + 30%">Precio sug. Pya</th>
           <td mat-cell *matCellDef="let p">{{ pyaPrice(p) | currency:'ARS':'symbol-narrow':'1.2-2' }}</td>
         </ng-container>
         <ng-container matColumnDef="margin">
