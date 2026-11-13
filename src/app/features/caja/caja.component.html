@@ -64,6 +64,13 @@
             <mat-label>Efectivo inicial</mat-label>
             <span matTextPrefix>$&nbsp;</span>
             <input matInput type="number" inputmode="decimal" formControlName="initialCash" />
+            @if (openingCash?.fromPreviousClose) {
+              <mat-hint>
+                Efectivo con el que cerró la caja del {{ openingCash!.previousClosedAt | date:'dd/MM HH:mm' }}@if (openingCash!.previousClosedByName) { ({{ openingCash!.previousClosedByName }})}
+              </mat-hint>
+            } @else if (openingCash) {
+              <mat-hint>Primera caja: ingresá el efectivo con el que arrancás</mat-hint>
+            }
           </mat-form-field>
           <button mat-flat-button color="primary" [disabled]="loading || openForm.invalid">
             <mat-icon>lock_open</mat-icon> Abrir caja

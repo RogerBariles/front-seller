@@ -16,6 +16,7 @@ import {
   CashMovementCategory,
   CashRegisterActive,
   CloseReport,
+  OpeningCash,
   ShiftActive,
   cashMovementLabel
 } from '../../models';
@@ -61,6 +62,8 @@ export class CajaComponent implements OnInit {
   lastReport: CloseReport | null = null;
   loading = false;
   loadError = false;
+  /** Con qué efectivo se abriría la caja; si viene del cierre anterior, no se puede editar. */
+  openingCash: OpeningCash | null = null;
 
   openForm = this.fb.nonNullable.group({
     initialCash: [0, [Validators.required, Validators.min(0)]]
@@ -86,7 +89,10 @@ export class CajaComponent implements OnInit {
   refresh(): void {
     this.loadError = false;
     this.api.getTodayCashRegister().subscribe({
-      next: (active) => this.registerActive = active,
+      next: (active) => {
+        this.registerActive = active;
+        if (!active) this.loadOpeningCash();
+      },
       error: () => {
         this.registerActive = null;
         this.loadError = true;
@@ -103,10 +109,30 @@ export class CajaComponent implements OnInit {
     });
   }
 
+  private loadOpeningCash(): void {
+    this.api.getOpeningCash().subscribe({
+      next: (opening) => {
+        this.openingCash = opening;
+        const control = this.openForm.controls.initialCash;
+        if (opening.fromPreviousClose) {
+          control.setValue(opening.initialCash);
+          control.disable();
+        } else {
+          control.enable();
+        }
+      },
+      error: () => {
+        this.openingCash = null;
+        this.openForm.controls.initialCash.enable();
+      }
+    });
+  }
+
   openCashRegister(): void {
     if (this.openForm.invalid) return;
     this.loading = true;
-    this.api.openCashRegister(this.openForm.getRawValue().initialCash).subscribe({
+    const initialCash = this.openingCash?.fromPreviousClose ? null : this.openForm.getRawValue().initialCash;
+    this.api.openCashRegister(initialCash).subscribe({
       next: () => {
         this.loading = false;
         this.snack.open('Caja abierta correctamente', 'Cerrar', { duration: 3000 });

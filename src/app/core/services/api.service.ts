@@ -11,6 +11,7 @@ import {
   CashRegisterSummary,
   CloseReport,
   Company,
+  OpeningCash,
   ContabilidadSummary,
   CreateExpenseRequest,
   CreateSaleRequest,
@@ -117,7 +118,12 @@ export class ApiService {
     return this.http.post<ShiftCashMovement>(`${this.baseUrl}/shifts/${shiftId}/cash-movements`, body);
   }
 
-  openCashRegister(initialCash: number): Observable<CashRegister> {
+  getOpeningCash(): Observable<OpeningCash> {
+    return this.http.get<OpeningCash>(`${this.baseUrl}/cash-registers/opening-cash`);
+  }
+
+  /** initialCash solo se usa si no hay ninguna caja cerrada anterior; si no, el backend toma el cierre anterior. */
+  openCashRegister(initialCash: number | null): Observable<CashRegister> {
     return this.http.post<CashRegister>(`${this.baseUrl}/cash-registers/open`, { initialCash });
   }
 

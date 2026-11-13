@@ -42,6 +42,15 @@ export interface Product {
   currentStock?: number;
 }
 
+/** Efectivo con el que se abre la próxima caja (el final de la última caja cerrada). */
+export interface OpeningCash {
+  initialCash: number;
+  fromPreviousClose: boolean;
+  previousBusinessDate?: string | null;
+  previousClosedAt?: string | null;
+  previousClosedByName?: string | null;
+}
+
 export interface CashRegister {
   id: string;
   businessDate: string;
