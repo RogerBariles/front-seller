@@ -69,6 +69,18 @@ export class CajaComponent implements OnInit {
     initialCash: [0, [Validators.required, Validators.min(0)]]
   });
 
+  /** Efectivo contado al cerrar: sin valor por defecto para obligar a contarlo. */
+  closeForm = this.fb.group({
+    closingCash: [null as number | null, [Validators.required, Validators.min(0)]]
+  });
+
+  /** Contado − esperado (negativo = falta plata), o null si todavía no se cargó. */
+  get closingDifference(): number | null {
+    const counted = this.closeForm.controls.closingCash.value;
+    if (counted === null || counted === undefined || !this.registerActive) return null;
+    return Math.round((counted - this.registerActive.expectedFinalCash) * 100) / 100;
+  }
+
   movementForm = this.fb.nonNullable.group({
     type: ['INCOME' as 'INCOME' | 'WITHDRAWAL', Validators.required],
     category: ['' as CashMovementCategory | '', Validators.required],
@@ -213,11 +225,12 @@ export class CajaComponent implements OnInit {
   }
 
   closeCashRegister(): void {
-    if (!this.registerActive) return;
+    if (!this.registerActive || this.closeForm.invalid) return;
     this.loading = true;
-    this.api.closeCashRegister(this.registerActive.cashRegister.id).subscribe({
+    this.api.closeCashRegister(this.registerActive.cashRegister.id, this.closeForm.value.closingCash!).subscribe({
       next: (report) => {
         this.lastReport = report;
+        this.closeForm.reset();
         this.registerActive = {
           ...this.registerActive!,
           cashRegister: { ...this.registerActive!.cashRegister, status: 'CLOSED' }

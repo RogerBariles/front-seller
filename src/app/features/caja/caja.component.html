@@ -69,7 +69,7 @@
                 Efectivo con el que cerró la caja del {{ openingCash!.previousClosedAt | date:'dd/MM HH:mm' }}@if (openingCash!.previousClosedByName) { ({{ openingCash!.previousClosedByName }})}
               </mat-hint>
             } @else if (openingCash) {
-              <mat-hint>Primera caja: ingresá el efectivo con el que arrancás</mat-hint>
+              <mat-hint>Contá el efectivo que hay en la caja e ingresalo</mat-hint>
             }
           </mat-form-field>
           <button mat-flat-button color="primary" [disabled]="loading || openForm.invalid">
@@ -110,10 +110,24 @@
             @if (shiftActive) {
               <span class="hint"><mat-icon>info</mat-icon> Cerrá tu turno antes de cerrar la caja.</span>
             } @else {
-              <span class="hint muted">Al cerrar esta caja podrás abrir otra el mismo día.</span>
-              <button mat-stroked-button color="warn" (click)="closeCashRegister()" [disabled]="loading || !!shiftActive">
-                <mat-icon>lock</mat-icon> Cerrar caja
-              </button>
+              <form [formGroup]="closeForm" (ngSubmit)="closeCashRegister()" class="inline-form close-form">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <mat-label>Efectivo que queda en caja</mat-label>
+                  <span matTextPrefix>$&nbsp;</span>
+                  <input matInput type="number" inputmode="decimal" formControlName="closingCash" />
+                  <mat-hint>
+                    Contá lo que queda después de retirar. La próxima caja abre con este monto.
+                    @if (closingDifference !== null && closingDifference < 0) {
+                      <br>Se retira de la caja: <strong>{{ -closingDifference | currency:'ARS':'symbol-narrow':'1.2-2' }}</strong>
+                    } @else if (closingDifference !== null && closingDifference > 0) {
+                      <br><span class="text-danger">Hay <strong>{{ closingDifference | currency:'ARS':'symbol-narrow':'1.2-2' }}</strong> más que el esperado</span>
+                    }
+                  </mat-hint>
+                </mat-form-field>
+                <button mat-stroked-button color="warn" [disabled]="loading || !!shiftActive || closeForm.invalid">
+                  <mat-icon>lock</mat-icon> Cerrar caja
+                </button>
+              </form>
             }
           </div>
         }
@@ -239,6 +253,9 @@
         <div class="kv-list">
           <div class="kv"><span>Efectivo inicial</span><span>{{ lastReport.initialCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></div>
           <div class="kv"><span>Monto final (efectivo)</span><span>{{ lastReport.finalCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></div>
+          @if (lastReport.closingCash != null) {
+            <div class="kv"><span>Queda en caja</span><span>{{ lastReport.closingCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></div>
+          }
           @if (lastReport.cashIncome > 0 || lastReport.cashWithdrawal > 0) {
             <div class="kv"><span>Ingresos</span><span>{{ lastReport.cashIncome | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></div>
             <div class="kv"><span>Retiros</span><span>{{ lastReport.cashWithdrawal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></div>

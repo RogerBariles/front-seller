@@ -195,6 +195,8 @@ export interface CloseReport {
   cashMovements: ShiftCashMovement[];
   cashIncome: number;
   cashWithdrawal: number;
+  /** Solo en cierres de caja: efectivo contado que queda para la próxima caja. */
+  closingCash?: number | null;
 }
 
 export interface CashRegisterSummary {

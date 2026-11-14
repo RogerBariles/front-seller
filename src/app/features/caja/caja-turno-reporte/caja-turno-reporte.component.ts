@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { ClosePrintDialogComponent } from '../close-print-dialog/close-print-dialog.component';
+import { CloseCashDialogComponent } from '../close-cash-dialog/close-cash-dialog.component';
 import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { CashRegisterSummary, CloseReport, ShiftSummary } from '../../../models';
@@ -111,16 +112,34 @@ export class CajaTurnoReporteComponent implements OnInit {
   closeCashRegister(row: CashRegisterSummary): void {
     if (row.status !== 'OPEN') return;
     this.loading = true;
-    this.api.closeCashRegister(row.id).subscribe({
-      next: (report) => {
+    // El reporte de la caja abierta trae el efectivo esperado, que se muestra como referencia.
+    this.api.getCashRegisterReport(row.id).subscribe({
+      next: (current) => {
         this.loading = false;
-        this.openDetailDialog(report);
-        this.load();
-        this.stateChanged.emit();
+        this.dialog.open(CloseCashDialogComponent, {
+          data: { expectedCash: current.finalCash },
+          width: '420px',
+          maxWidth: '95vw'
+        }).afterClosed().subscribe((closingCash: number | undefined) => {
+          if (closingCash === undefined || closingCash === null) return;
+          this.loading = true;
+          this.api.closeCashRegister(row.id, closingCash).subscribe({
+            next: (report) => {
+              this.loading = false;
+              this.openDetailDialog(report);
+              this.load();
+              this.stateChanged.emit();
+            },
+            error: (err) => {
+              this.loading = false;
+              this.snack.open(err.error?.message || 'No se pudo cerrar la caja', 'Cerrar', { duration: 5000 });
+            }
+          });
+        });
       },
       error: (err) => {
         this.loading = false;
-        this.snack.open(err.error?.message || 'No se pudo cerrar la caja', 'Cerrar', { duration: 5000 });
+        this.snack.open(err.error?.message || 'No se pudo cargar la caja', 'Cerrar', { duration: 5000 });
       }
     });
   }

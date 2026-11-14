@@ -127,8 +127,9 @@ export class ApiService {
     return this.http.post<CashRegister>(`${this.baseUrl}/cash-registers/open`, { initialCash });
   }
 
-  closeCashRegister(id: string): Observable<CloseReport> {
-    return this.http.post<CloseReport>(`${this.baseUrl}/cash-registers/${id}/close`, {});
+  /** closingCash: efectivo contado que queda en la caja; la próxima caja se abre con ese monto. */
+  closeCashRegister(id: string, closingCash: number): Observable<CloseReport> {
+    return this.http.post<CloseReport>(`${this.baseUrl}/cash-registers/${id}/close`, { closingCash });
   }
 
   startShift(): Observable<Shift> {

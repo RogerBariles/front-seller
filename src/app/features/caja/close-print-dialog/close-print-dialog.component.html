@@ -60,6 +60,9 @@
           <span>EFECTIV.</span>
           <span>{{ report.finalCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</span>
         </p>
+        @if (report.closingCash != null) {
+          <p><span>QUEDA EN CAJA</span><span>{{ report.closingCash | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+        }
         <div class="receipt-divider"></div>
       }
       <p><span>VENTAS</span><span>{{ report.salesCount }}</span></p>
