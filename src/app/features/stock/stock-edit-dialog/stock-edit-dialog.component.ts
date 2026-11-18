@@ -43,13 +43,13 @@ export interface StockDialogResult {
             <input matInput type="number" inputmode="numeric" [(ngModel)]="purchaseQty" min="1" placeholder="Ej: 50">
           </mat-form-field>
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
-            <mat-label>Notas (opcional)</mat-label>
-            <input matInput [(ngModel)]="purchaseNotes" placeholder="Referencia de compra">
+            <mat-label>Notas</mat-label>
+            <input matInput required maxlength="500" [(ngModel)]="purchaseNotes" placeholder="Referencia de compra">
           </mat-form-field>
         </div>
         <button mat-flat-button color="primary"
                 (click)="recordPurchase()"
-                [disabled]="!purchaseQty || purchaseQty <= 0">
+                [disabled]="!purchaseQty || purchaseQty <= 0 || !purchaseNotes.trim()">
           Registrar compra
         </button>
       </section>
@@ -62,13 +62,13 @@ export interface StockDialogResult {
             <input matInput type="number" [(ngModel)]="adjustQty" placeholder="Ej: -5 o 10">
           </mat-form-field>
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
-            <mat-label>Motivo (opcional)</mat-label>
-            <input matInput [(ngModel)]="adjustNotes" placeholder="Ej: Producto dañado">
+            <mat-label>Motivo</mat-label>
+            <input matInput required maxlength="500" [(ngModel)]="adjustNotes" placeholder="Ej: Producto dañado">
           </mat-form-field>
         </div>
         <button mat-stroked-button color="primary"
                 (click)="adjustStock()"
-                [disabled]="!adjustQty || adjustQty === 0">
+                [disabled]="!adjustQty || adjustQty === 0 || !adjustNotes.trim()">
           Aplicar ajuste
         </button>
       </section>
@@ -114,12 +114,12 @@ export class StockEditDialogComponent {
   adjustNotes = '';
 
   recordPurchase(): void {
-    if (!this.purchaseQty || this.purchaseQty <= 0) return;
+    if (!this.purchaseQty || this.purchaseQty <= 0 || !this.purchaseNotes.trim()) return;
 
     const body: StockPurchaseRequest = {
       productId: this.product.id,
       quantity: this.purchaseQty,
-      notes: this.purchaseNotes || undefined
+      notes: this.purchaseNotes.trim()
     };
 
     this.api.recordPurchase(body).subscribe({
@@ -134,12 +134,12 @@ export class StockEditDialogComponent {
   }
 
   adjustStock(): void {
-    if (!this.adjustQty || this.adjustQty === 0) return;
+    if (!this.adjustQty || this.adjustQty === 0 || !this.adjustNotes.trim()) return;
 
     this.api.adjustStock({
       productId: this.product.id,
       quantityChange: this.adjustQty,
-      notes: this.adjustNotes || undefined
+      notes: this.adjustNotes.trim()
     }).subscribe({
       next: (res) => {
         this.stockActual.set(res.currentStock);
