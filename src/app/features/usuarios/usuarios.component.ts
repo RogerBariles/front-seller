@@ -45,7 +45,6 @@ export class UsuariosComponent implements OnInit {
   loading = false;
 
   readonly roleLabels = ROLE_LABELS;
-  readonly allRoles: UserRole[] = ['SELLER', 'ADMIN', 'SUPER_ADMIN', 'DEVELOPER'];
   displayedColumns = ['name', 'username', 'birthDate', 'role', 'company', 'active', 'actions'];
 
   form = this.fb.nonNullable.group({
@@ -64,10 +63,18 @@ export class UsuariosComponent implements OnInit {
     this.form.controls.role.valueChanges.subscribe(() => this.updateCompanyValidators());
   }
 
+  /** Rol del usuario que se está editando (null al crear). */
+  private editingRole: UserRole | null = null;
+
+  /**
+   * Nadie puede asignar el rol DEVELOPER: solo aparece al editar un usuario que ya lo tiene,
+   * para que pueda conservarlo.
+   */
   get availableRoles(): UserRole[] {
-    if (this.auth.hasRole('SUPER_ADMIN')) return this.allRoles;
-    if (this.auth.hasRole('DEVELOPER')) return ['SELLER', 'ADMIN', 'DEVELOPER'];
-    return ['SELLER', 'ADMIN'];
+    const roles: UserRole[] = this.auth.hasRole('SUPER_ADMIN')
+      ? ['SELLER', 'ADMIN', 'SUPER_ADMIN']
+      : ['SELLER', 'ADMIN'];
+    return this.editingRole === 'DEVELOPER' ? [...roles, 'DEVELOPER'] : roles;
   }
 
   get activeCompanies(): Company[] {
@@ -88,12 +95,14 @@ export class UsuariosComponent implements OnInit {
 
   resetForm(): void {
     this.editingId = null;
+    this.editingRole = null;
     this.form.reset({ name: '', username: '', password: '', role: 'SELLER', active: true, birthDate: '', companyId: '' });
     this.updateCompanyValidators();
   }
 
   edit(user: User): void {
     this.editingId = user.id;
+    this.editingRole = user.role;
     this.form.patchValue({
       name: user.name,
       username: user.username,
