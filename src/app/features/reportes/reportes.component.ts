@@ -60,6 +60,8 @@ export class ReportesComponent implements OnInit {
   displayedColumns = ['date', 'status', 'seller', 'payment', 'accreditedAt', 'subtotal', 'discount', 'total', 'cost', 'profit', 'actions'];
   readonly formatIsoDate = formatIsoDate;
   readonly isCancelledSale = isCancelledSale;
+  /** Solo SUPER_ADMIN puede anular (el backend lo exige con @PreAuthorize). */
+  readonly canCancelSales = this.auth.hasRole('SUPER_ADMIN');
 
   get cancelledCount(): number {
     return this.report?.sales.filter(isCancelledSale).length ?? 0;

@@ -212,7 +212,7 @@
               <button mat-icon-button color="primary" aria-label="Ver detalle" matTooltip="Ver detalle" (click)="openSaleDetail(s)">
                 <mat-icon>visibility</mat-icon>
               </button>
-              @if (!isCancelledSale(s)) {
+              @if (canCancelSales && !isCancelledSale(s)) {
                 <button mat-icon-button color="warn" aria-label="Anular venta" matTooltip="Anular venta" (click)="openCancelSale(s)">
                   <mat-icon>block</mat-icon>
                 </button>
