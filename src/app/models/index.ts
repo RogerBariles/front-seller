@@ -242,7 +242,26 @@ export interface SaleItemRequest {
   discountValue?: number;
 }
 
+/** Cliente que se puede asociar a una venta. */
+export interface Customer {
+  id: string;
+  fullName: string;
+  dni: string;
+  birthDate: string;
+  whatsapp?: string | null;
+  email?: string | null;
+}
+
+export interface CustomerRequest {
+  fullName: string;
+  dni: string;
+  birthDate: string;
+  whatsapp?: string;
+  email?: string;
+}
+
 export interface CreateSaleRequest {
+  customerId?: string;
   items: SaleItemRequest[];
   paymentMethod: PaymentMethod;
   installments?: number;
@@ -274,6 +293,7 @@ export interface Sale {
   detail: string;
   cancelledAt?: string;
   cancelledByName?: string;
+  customer?: Customer | null;
   items: SaleItem[];
 }
 

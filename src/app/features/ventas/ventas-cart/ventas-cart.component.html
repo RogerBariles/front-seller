@@ -89,6 +89,25 @@
     </div>
 
     <form [formGroup]="checkoutForm" class="checkout" (ngSubmit)="$event.preventDefault()">
+      <div class="block customer-block">
+        <span class="block-label">Cliente</span>
+        @if (customer) {
+          <div class="customer-chip">
+            <mat-icon>person</mat-icon>
+            <span class="customer-text">
+              <strong>{{ customer.fullName }}</strong>
+              <span class="muted">DNI {{ customer.dni }}</span>
+            </span>
+            <button mat-icon-button type="button" aria-label="Quitar cliente" (click)="removeCustomer.emit()" [disabled]="disabled">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        } @else {
+          <button mat-stroked-button type="button" class="associate-btn" (click)="associateCustomer.emit()" [disabled]="disabled">
+            <mat-icon>person_add</mat-icon> Asociar cliente
+          </button>
+        }
+      </div>
       <div class="block">
         <span class="block-label">Método de pago</span>
         <div class="pay-grid">

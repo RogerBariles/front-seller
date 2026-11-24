@@ -12,6 +12,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 import {
+  Customer,
   CartItem,
   CashRegister,
   CreateSaleRequest,
@@ -22,6 +23,7 @@ import {
   Sale,
   Shift
 } from '../../models';
+import { CustomerDialogComponent } from './customer-dialog/customer-dialog.component';
 import { SalePrintDialogComponent } from './sale-print-dialog/sale-print-dialog.component';
 import { VentasCartComponent } from './ventas-cart/ventas-cart.component';
 import { VentasSearchComponent } from './ventas-search/ventas-search.component';
@@ -54,6 +56,8 @@ export class VentasComponent implements OnInit {
 
   products = signal<Product[]>([]);
   cart = signal<CartItem[]>([]);
+  /** Cliente asociado a la venta en curso (opcional). */
+  customer = signal<Customer | null>(null);
   cashRegister = signal<CashRegister | null>(null);
   activeShift = signal<Shift | null>(null);
   /** ADMIN o SUPER_ADMIN sin turno propio: vendedora del turno abierto donde se registran sus ventas. */
@@ -205,8 +209,19 @@ export class VentasComponent implements OnInit {
     }));
   }
 
+  openCustomerDialog(): void {
+    this.dialog.open(CustomerDialogComponent, {
+      width: '560px',
+      maxWidth: '95vw',
+      panelClass: 'responsive-dialog'
+    }).afterClosed().subscribe((customer: Customer | undefined) => {
+      if (customer) this.customer.set(customer);
+    });
+  }
+
   clearCart(): void {
     this.cart.set([]);
+    this.customer.set(null);
     this.checkoutForm.reset({
       paymentMethod: 'EFECTIVO',
       installments: 1,
@@ -290,7 +305,8 @@ export class VentasComponent implements OnInit {
       paymentMethod: checkout.paymentMethod,
       ...(checkout.paymentMethod === 'TARJETA' ? { installments: checkout.installments } : {}),
       ...totalDiscount,
-      ...(useManualTotal ? { manualTotal: checkout.manualTotal } : {})
+      ...(useManualTotal ? { manualTotal: checkout.manualTotal } : {}),
+      ...(this.customer() ? { customerId: this.customer()!.id } : {})
     };
 
     if (allowsPartialCash) {

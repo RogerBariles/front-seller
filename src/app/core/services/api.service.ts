@@ -11,6 +11,8 @@ import {
   CashRegisterSummary,
   CloseReport,
   Company,
+  Customer,
+  CustomerRequest,
   OpeningCash,
   ContabilidadSummary,
   CreateExpenseRequest,
@@ -189,6 +191,17 @@ export class ApiService {
 
   createSale(body: CreateSaleRequest): Observable<Sale> {
     return this.http.post<Sale>(`${this.baseUrl}/sales`, body);
+  }
+
+  /** Cliente por DNI (mínimo 8 dígitos), o null si no existe. */
+  findCustomerByDni(dni: string): Observable<Customer | null> {
+    return this.http
+      .get<Customer>(`${this.baseUrl}/customers/by-dni`, { params: { dni }, observe: 'response' })
+      .pipe(map((res) => (res.status === 204 || res.body == null ? null : res.body)));
+  }
+
+  createCustomer(body: CustomerRequest): Observable<Customer> {
+    return this.http.post<Customer>(`${this.baseUrl}/customers`, body);
   }
 
   getSale(id: string): Observable<Sale> {

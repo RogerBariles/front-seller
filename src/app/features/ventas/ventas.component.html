@@ -52,6 +52,9 @@
       (quantityChange)="updateQuantity($event.productId, $event.quantity)"
       (discountChange)="updateItemDiscount($event.productId, $event.discountType, $event.discountValue)"
       (clear)="clearCart()"
+      [customer]="customer()"
+      (associateCustomer)="openCustomerDialog()"
+      (removeCustomer)="customer.set(null)"
       (confirmSale)="submitSale()" />
   </div>
 

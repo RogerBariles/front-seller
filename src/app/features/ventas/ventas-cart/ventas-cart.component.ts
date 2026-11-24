@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { CartItem, DiscountType, PAYMENT_LABELS, PaymentMethod } from '../../../models';
+import { CartItem, DiscountType, PAYMENT_LABELS, PaymentMethod, Customer } from '../../../models';
 import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
 
@@ -34,12 +34,16 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
   @Input() subtotal = 0;
   @Input() loading = false;
   @Input() disabled = false;
+  /** Cliente asociado a la venta (opcional). */
+  @Input() customer: Customer | null = null;
 
   @Output() removeItem = new EventEmitter<string>();
   @Output() quantityChange = new EventEmitter<{ productId: string; quantity: number }>();
   @Output() discountChange = new EventEmitter<{ productId: string; discountType?: DiscountType | ''; discountValue?: number }>();
   @Output() clear = new EventEmitter<void>();
   @Output() confirmSale = new EventEmitter<void>();
+  @Output() associateCustomer = new EventEmitter<void>();
+  @Output() removeCustomer = new EventEmitter<void>();
 
   readonly paymentMethods = Object.keys(PAYMENT_LABELS) as PaymentMethod[];
   readonly paymentLabels: any = PAYMENT_LABELS;
