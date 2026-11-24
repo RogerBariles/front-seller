@@ -277,13 +277,14 @@ export class VentasComponent implements OnInit {
       return;
     }
 
-    const totalBeforeWelcome = checkout.manualTotalEnabled && checkout.manualTotal > 0
-      ? checkout.manualTotal
-      : this.computeEstimatedTotal();
+    // El total manual ya es el TOTAL a cobrar (bienvenida incluida); si no, automático menos bienvenida.
+    const estimated = this.computeEstimatedTotal();
     const welcome = this.customer()?.firstPurchase
-      ? Math.round(totalBeforeWelcome * WELCOME_DISCOUNT_PERCENT) / 100
+      ? Math.round(estimated * WELCOME_DISCOUNT_PERCENT) / 100
       : 0;
-    const requiredTotal = Math.round((totalBeforeWelcome - welcome) * 100) / 100;
+    const requiredTotal = checkout.manualTotalEnabled && checkout.manualTotal > 0
+      ? checkout.manualTotal
+      : Math.round((estimated - welcome) * 100) / 100;
 
     if (checkout.paymentMethod === 'EFECTIVO') {
       if (!checkout.amountReceived || checkout.amountReceived < requiredTotal) {

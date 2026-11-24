@@ -183,7 +183,7 @@
         @if (welcomeDiscount > 0) {
           <div class="kv"><span>Bienvenida cliente nuevo ({{ welcomePercent }}%)</span><span class="text-danger">−{{ welcomeDiscount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></div>
         }
-        @if (!checkoutForm.value.manualTotalEnabled || welcomeDiscount > 0) {
+        @if (!checkoutForm.value.manualTotalEnabled) {
           <div class="kv total"><span>Total</span><span>{{ finalTotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></div>
         }
       </div>

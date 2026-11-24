@@ -155,23 +155,25 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
     return Math.round((this.partialCashAmount + this.discountBase - this.totalDiscountAmount) * 100) / 100;
   }
 
-  /** Total antes del descuento de bienvenida (con descuentos, recargo o total manual). */
-  get totalBeforeWelcome(): number {
+  get isManualTotal(): boolean {
     const checkout = this.checkoutForm.getRawValue();
-    if (checkout.manualTotalEnabled && checkout.manualTotal > 0) {
-      return checkout.manualTotal;
-    }
-    return this.estimatedTotal;
+    return checkout.manualTotalEnabled && checkout.manualTotal > 0;
   }
 
-  /** 5% sobre el total final si el cliente asociado hace su primera compra (igual que el backend). */
+  /** 5% sobre el total (con descuentos o recargo) si el cliente asociado hace su primera compra. */
   get welcomeDiscount(): number {
     if (!this.customer?.firstPurchase) return 0;
-    return Math.round(this.totalBeforeWelcome * WELCOME_DISCOUNT_PERCENT) / 100;
+    return Math.round(this.estimatedTotal * WELCOME_DISCOUNT_PERCENT) / 100;
   }
 
+  /** Total sugerido: el automático menos la bienvenida. */
+  get suggestedTotal(): number {
+    return Math.round((this.estimatedTotal - this.welcomeDiscount) * 100) / 100;
+  }
+
+  /** TOTAL a cobrar: el manual (ya es el total final, bienvenida incluida) o el sugerido. */
   get finalTotal(): number {
-    return Math.round((this.totalBeforeWelcome - this.welcomeDiscount) * 100) / 100;
+    return this.isManualTotal ? this.checkoutForm.getRawValue().manualTotal : this.suggestedTotal;
   }
 
   get isCash(): boolean {
@@ -197,14 +199,14 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get manualAdjustment(): number {
-    return Math.round((this.estimatedTotal - this.totalBeforeWelcome) * 100) / 100;
+    return Math.round((this.suggestedTotal - this.finalTotal) * 100) / 100;
   }
 
   onManualTotalToggle(enabled: boolean): void {
     if (enabled) {
       this.checkoutForm.patchValue({
         manualTotalEnabled: true,
-        manualTotal: this.estimatedTotal,
+        manualTotal: this.suggestedTotal,
         totalDiscountType: '',
         totalDiscountValue: 0,
         cashAmount: 0
