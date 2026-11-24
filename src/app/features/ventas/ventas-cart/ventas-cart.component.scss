@@ -292,3 +292,4 @@
 .customer-text { display: flex; flex-direction: column; flex: 1; min-width: 0; line-height: 1.25; }
 .customer-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .customer-text .muted { font-size: 12px; }
+.welcome-tag { color: var(--success, #15803d); font-weight: 600; }

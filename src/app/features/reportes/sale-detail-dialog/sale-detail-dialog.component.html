@@ -67,6 +67,9 @@
   <section class="totals">
     <p><span>Subtotal</span><span>{{ sale.subtotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
     <p><span>Descuentos</span><span>{{ sale.discountTotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+    @if (sale.customerDiscount && sale.customerDiscount > 0) {
+      <p class="muted"><span>incluye bienvenida cliente nuevo (5%)</span><span>{{ sale.customerDiscount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
+    }
     <p class="grand"><span>Total vendido</span><span>{{ sale.total | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
     <p><span>Costo total</span><span>{{ sale.costTotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>
     <p class="grand text-success"><span>Ganancia</span><span>{{ sale.profit | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></p>

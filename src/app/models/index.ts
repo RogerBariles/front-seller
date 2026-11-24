@@ -250,6 +250,8 @@ export interface Customer {
   birthDate: string;
   whatsapp?: string | null;
   email?: string | null;
+  /** Sin compras todavía: la venta lleva 5% de bienvenida. */
+  firstPurchase?: boolean;
 }
 
 export interface CustomerRequest {
@@ -294,6 +296,8 @@ export interface Sale {
   cancelledAt?: string;
   cancelledByName?: string;
   customer?: Customer | null;
+  /** 5% de bienvenida (ya incluido en discountTotal). */
+  customerDiscount?: number;
   items: SaleItem[];
 }
 

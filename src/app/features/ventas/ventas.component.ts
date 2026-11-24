@@ -25,7 +25,7 @@ import {
 } from '../../models';
 import { CustomerDialogComponent } from './customer-dialog/customer-dialog.component';
 import { SalePrintDialogComponent } from './sale-print-dialog/sale-print-dialog.component';
-import { VentasCartComponent } from './ventas-cart/ventas-cart.component';
+import { VentasCartComponent, WELCOME_DISCOUNT_PERCENT } from './ventas-cart/ventas-cart.component';
 import { VentasSearchComponent } from './ventas-search/ventas-search.component';
 
 @Component({
@@ -277,9 +277,13 @@ export class VentasComponent implements OnInit {
       return;
     }
 
-    const requiredTotal = checkout.manualTotalEnabled && checkout.manualTotal > 0
+    const totalBeforeWelcome = checkout.manualTotalEnabled && checkout.manualTotal > 0
       ? checkout.manualTotal
       : this.computeEstimatedTotal();
+    const welcome = this.customer()?.firstPurchase
+      ? Math.round(totalBeforeWelcome * WELCOME_DISCOUNT_PERCENT) / 100
+      : 0;
+    const requiredTotal = Math.round((totalBeforeWelcome - welcome) * 100) / 100;
 
     if (checkout.paymentMethod === 'EFECTIVO') {
       if (!checkout.amountReceived || checkout.amountReceived < requiredTotal) {

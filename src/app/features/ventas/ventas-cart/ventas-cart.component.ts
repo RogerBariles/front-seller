@@ -8,7 +8,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { CartItem, DiscountType, PAYMENT_LABELS, PaymentMethod, Customer } from '../../../models';
 import { MatIconModule } from '@angular/material/icon';
+
 import { Subscription } from 'rxjs';
+
+/** Descuento de bienvenida (%) en la primera compra de un cliente (mismo valor que el backend). */
+export const WELCOME_DISCOUNT_PERCENT = 5;
 
 const PAYMENTS_WITHOUT_PARTIAL_CASH: PaymentMethod[] = ['EFECTIVO', 'PEDIDOSYA'];
 
@@ -45,6 +49,7 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
   @Output() associateCustomer = new EventEmitter<void>();
   @Output() removeCustomer = new EventEmitter<void>();
 
+  readonly welcomePercent = WELCOME_DISCOUNT_PERCENT;
   readonly paymentMethods = Object.keys(PAYMENT_LABELS) as PaymentMethod[];
   readonly paymentLabels: any = PAYMENT_LABELS;
   readonly paymentIcons: Record<PaymentMethod, string> = {
@@ -97,6 +102,9 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['customer'] && !changes['customer'].firstChange && this.isCash) {
+      this.syncAmountReceived();
+    }
     if (changes['cart'] || changes['subtotal']) {
       if (this.isCash && !this.checkoutForm.getRawValue().manualTotalEnabled) {
         this.syncAmountReceived();
@@ -147,12 +155,23 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
     return Math.round((this.partialCashAmount + this.discountBase - this.totalDiscountAmount) * 100) / 100;
   }
 
-  get finalTotal(): number {
+  /** Total antes del descuento de bienvenida (con descuentos, recargo o total manual). */
+  get totalBeforeWelcome(): number {
     const checkout = this.checkoutForm.getRawValue();
     if (checkout.manualTotalEnabled && checkout.manualTotal > 0) {
       return checkout.manualTotal;
     }
     return this.estimatedTotal;
+  }
+
+  /** 5% sobre el total final si el cliente asociado hace su primera compra (igual que el backend). */
+  get welcomeDiscount(): number {
+    if (!this.customer?.firstPurchase) return 0;
+    return Math.round(this.totalBeforeWelcome * WELCOME_DISCOUNT_PERCENT) / 100;
+  }
+
+  get finalTotal(): number {
+    return Math.round((this.totalBeforeWelcome - this.welcomeDiscount) * 100) / 100;
   }
 
   get isCash(): boolean {
@@ -161,7 +180,8 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
 
   get otherPaymentAmount(): number {
     if (this.isCash) return 0;
-    return Math.round((this.finalTotal - this.partialCashAmount) * 100) / 100;
+    const cash = Math.min(this.partialCashAmount, this.finalTotal);
+    return Math.round((this.finalTotal - cash) * 100) / 100;
   }
 
   get changeAmount(): number {
@@ -177,7 +197,7 @@ export class VentasCartComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get manualAdjustment(): number {
-    return Math.round((this.estimatedTotal - this.finalTotal) * 100) / 100;
+    return Math.round((this.estimatedTotal - this.totalBeforeWelcome) * 100) / 100;
   }
 
   onManualTotalToggle(enabled: boolean): void {

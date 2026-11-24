@@ -96,7 +96,9 @@
             <mat-icon>person</mat-icon>
             <span class="customer-text">
               <strong>{{ customer.fullName }}</strong>
-              <span class="muted">DNI {{ customer.dni }}</span>
+              <span class="muted">DNI {{ customer.dni }}
+                @if (customer.firstPurchase) { · <span class="welcome-tag">{{ welcomePercent }}% bienvenida</span> }
+              </span>
             </span>
             <button mat-icon-button type="button" aria-label="Quitar cliente" (click)="removeCustomer.emit()" [disabled]="disabled">
               <mat-icon>close</mat-icon>
@@ -178,8 +180,11 @@
         } @else if (totalDiscountAmount < 0) {
           <div class="kv"><span>Recargo</span><span class="text-success">+{{ -totalDiscountAmount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></div>
         }
-        @if (!checkoutForm.value.manualTotalEnabled) {
-          <div class="kv total"><span>Total</span><span>{{ estimatedTotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></div>
+        @if (welcomeDiscount > 0) {
+          <div class="kv"><span>Bienvenida cliente nuevo ({{ welcomePercent }}%)</span><span class="text-danger">−{{ welcomeDiscount | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></div>
+        }
+        @if (!checkoutForm.value.manualTotalEnabled || welcomeDiscount > 0) {
+          <div class="kv total"><span>Total</span><span>{{ finalTotal | currency:'ARS':'symbol-narrow':'1.2-2' }}</span></div>
         }
       </div>
 
