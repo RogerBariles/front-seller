@@ -1,0 +1,142 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Clientes</h1>
+      <p class="page-subtitle">Clientes registrados en todas las sucursales.</p>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert danger"><mat-icon>error</mat-icon><span class="alert-body">{{ error() }}</span></div>
+  }
+
+  <mat-tab-group class="clientes-tabs" animationDuration="0ms" mat-stretch-tabs="false">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">groups</mat-icon> Clientes
+        <span class="section-count">{{ customers().length }}</span>
+      </ng-template>
+
+      <section class="surface">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-field">
+          <mat-icon matPrefix class="prefix-icon">search</mat-icon>
+          <mat-label>Buscar cliente</mat-label>
+          <input matInput [value]="search()" (input)="search.set($any($event.target).value)"
+                 placeholder="Nombre, DNI, WhatsApp, mail o sucursal...">
+          @if (search()) {
+            <button matSuffix mat-icon-button aria-label="Limpiar" (click)="search.set('')">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+
+        @if (loading()) {
+          <div class="empty-state"><mat-icon>hourglass_empty</mat-icon>Cargando clientes...</div>
+        } @else if (filtered().length === 0) {
+          <div class="empty-state">
+            <mat-icon>person_search</mat-icon>
+            <strong>{{ customers().length ? 'Sin resultados' : 'Todavía no hay clientes' }}</strong>
+            @if (!customers().length) { <span>Se agregan desde Ventas con "Asociar cliente".</span> }
+          </div>
+        } @else {
+          <div class="table-scroll compact">
+            <table mat-table [dataSource]="filtered()" class="full-width">
+              <ng-container matColumnDef="fullName">
+                <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                <td mat-cell *matCellDef="let c" class="cell-strong">{{ c.fullName }}</td>
+              </ng-container>
+              <ng-container matColumnDef="dni">
+                <th mat-header-cell *matHeaderCellDef>DNI</th>
+                <td mat-cell *matCellDef="let c">{{ c.dni }}</td>
+              </ng-container>
+              <ng-container matColumnDef="birthDate">
+                <th mat-header-cell *matHeaderCellDef>Nacimiento</th>
+                <td mat-cell *matCellDef="let c">
+                  {{ c.birthDate | date:'dd/MM/yyyy' }} <span class="muted">({{ age(c) }} años)</span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="contact">
+                <th mat-header-cell *matHeaderCellDef>Contacto</th>
+                <td mat-cell *matCellDef="let c">
+                  <div class="contact">
+                    @if (c.whatsapp) { <span><mat-icon>chat</mat-icon>{{ c.whatsapp }}</span> }
+                    @if (c.email) { <span><mat-icon>mail</mat-icon>{{ c.email }}</span> }
+                  </div>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="company">
+                <th mat-header-cell *matHeaderCellDef class="hide-mobile">Sucursal</th>
+                <td mat-cell *matCellDef="let c" class="hide-mobile">{{ c.companyName || '—' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="createdAt">
+                <th mat-header-cell *matHeaderCellDef class="hide-mobile">Alta</th>
+                <td mat-cell *matCellDef="let c" class="hide-mobile">
+                  {{ c.createdAt | date:'dd/MM/yyyy' }}
+                  @if (c.createdByName) { <span class="muted">· {{ c.createdByName }}</span> }
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          </div>
+        }
+      </section>
+    </mat-tab>
+
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">cake</mat-icon> Cumpleaños
+        @if (birthdaysToday().length) { <span class="section-count today-count">{{ birthdaysToday().length }}</span> }
+      </ng-template>
+
+      <section class="surface">
+        <h2 class="section-title"><mat-icon>celebration</mat-icon> Cumplen años hoy
+          <span class="section-count">{{ birthdaysToday().length }}</span>
+        </h2>
+        @if (birthdaysToday().length === 0) {
+          <div class="empty-state"><mat-icon>cake</mat-icon>Hoy no cumple años ningún cliente.</div>
+        } @else {
+          <div class="birthday-grid">
+            @for (b of birthdaysToday(); track b.customer.id) {
+              <div class="birthday-card is-today">
+                <div class="bd-head">
+                  <mat-icon>cake</mat-icon>
+                  <div>
+                    <strong>{{ b.customer.fullName }}</strong>
+                    <span class="muted">Cumple {{ b.turningAge }} años · DNI {{ b.customer.dni }}</span>
+                  </div>
+                </div>
+                <div class="contact">
+                  @if (b.customer.whatsapp) { <span><mat-icon>chat</mat-icon>{{ b.customer.whatsapp }}</span> }
+                  @if (b.customer.email) { <span><mat-icon>mail</mat-icon>{{ b.customer.email }}</span> }
+                  @if (b.customer.companyName) { <span><mat-icon>store</mat-icon>{{ b.customer.companyName }}</span> }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="surface">
+        <h2 class="section-title"><mat-icon>event</mat-icon> Próximos {{ upcomingDays }} días
+          <span class="section-count">{{ birthdaysUpcoming().length }}</span>
+        </h2>
+        @if (birthdaysUpcoming().length === 0) {
+          <div class="empty-state"><mat-icon>event_available</mat-icon>No hay cumpleaños en los próximos {{ upcomingDays }} días.</div>
+        } @else {
+          <ul class="upcoming-list">
+            @for (b of birthdaysUpcoming(); track b.customer.id) {
+              <li>
+                <span class="bd-date">{{ b.nextBirthday | date:'dd/MM' }}</span>
+                <span class="bd-name"><strong>{{ b.customer.fullName }}</strong>
+                  <span class="muted">cumple {{ b.turningAge }} · {{ b.customer.whatsapp || b.customer.email }}</span>
+                </span>
+                <span class="badge" [class.warning]="b.daysUntil <= 7">{{ daysLabel(b.daysUntil) }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </mat-tab>
+  </mat-tab-group>
+</div>

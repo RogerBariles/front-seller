@@ -27,6 +27,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/productos/productos.component').then(m => m.ProductosComponent)
       },
       {
+        path: 'clientes',
+        canActivate: [roleGuard('SELLER', 'ADMIN', 'SUPER_ADMIN', 'DEVELOPER')],
+        loadComponent: () => import('./features/clientes/clientes.component').then(m => m.ClientesComponent)
+      },
+      {
         path: 'usuarios',
         canActivate: [roleGuard('ADMIN', 'SUPER_ADMIN', 'DEVELOPER')],
         loadComponent: () => import('./features/usuarios/usuarios.component').then(m => m.UsuariosComponent)

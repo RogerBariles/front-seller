@@ -12,6 +12,7 @@ import {
   CloseReport,
   Company,
   Customer,
+  CustomerListItem,
   CustomerRequest,
   OpeningCash,
   ContabilidadSummary,
@@ -198,6 +199,10 @@ export class ApiService {
     return this.http
       .get<Customer>(`${this.baseUrl}/customers/by-dni`, { params: { dni }, observe: 'response' })
       .pipe(map((res) => (res.status === 204 || res.body == null ? null : res.body)));
+  }
+
+  getCustomers(): Observable<CustomerListItem[]> {
+    return this.http.get<CustomerListItem[]>(`${this.baseUrl}/customers`);
   }
 
   createCustomer(body: CustomerRequest): Observable<Customer> {

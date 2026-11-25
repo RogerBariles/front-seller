@@ -127,6 +127,7 @@ export class AppShellComponent {
       { label: 'Ventas', path: '/app/ventas', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN'], icon: 'point_of_sale'},
       { label: 'Caja y Turnos', path: '/app/caja', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN'], icon: 'payments'},
       { label: 'Reporte de ventas', path: '/app/reporte-ventas-individuales', roles: ['SELLER'], icon: 'assessment' },
+      { label: 'Clientes', path: '/app/clientes', roles: ['SELLER', 'ADMIN', 'SUPER_ADMIN', 'DEVELOPER'], icon: 'contacts' },
       { label: 'Usuarios', path: '/app/usuarios', roles: ['ADMIN', 'SUPER_ADMIN', 'DEVELOPER'], icon: 'group' },
       { label: 'Empresas', path: '/app/empresas', roles: ['DEVELOPER'], icon: 'business' }
     ];

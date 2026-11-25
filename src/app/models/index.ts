@@ -254,6 +254,18 @@ export interface Customer {
   firstPurchase?: boolean;
 }
 
+export interface CustomerListItem {
+  id: string;
+  fullName: string;
+  dni: string;
+  birthDate: string;
+  whatsapp?: string | null;
+  email?: string | null;
+  companyName?: string | null;
+  createdByName?: string | null;
+  createdAt: string;
+}
+
 export interface CustomerRequest {
   fullName: string;
   dni: string;
