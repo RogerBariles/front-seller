@@ -108,6 +108,11 @@
         }
       </div>
       <span class="spacer"></span>
+      <button mat-icon-button class="theme-toggle" (click)="theme.toggle()"
+        [matTooltip]="theme.mode() === 'dark' ? 'Modo claro' : 'Modo oscuro'"
+        [attr.aria-label]="theme.mode() === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+        <mat-icon>{{ theme.mode() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
       @if (user(); as u) {
         <button class="user-chip" [matMenuTriggerFor]="userMenu" aria-label="Menú de usuario">
           <span class="avatar sm">{{ initials() }}</span>

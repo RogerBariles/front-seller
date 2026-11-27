@@ -35,7 +35,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #eef0f4;
+  background: var(--sunken);
   color: var(--muted);
 
   mat-icon {
@@ -87,7 +87,7 @@
   background: var(--primary-soft);
   color: var(--primary);
 
-  &.accent { background: #ffedd5; color: #c2410c; }
+  &.accent { background: var(--orange-soft); color: var(--orange-text); }
   &.success { background: var(--success-soft); color: var(--success); }
 }
 
@@ -108,7 +108,7 @@
   gap: 12px;
   padding: 14px 16px;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--primary-soft), #f5f3ff);
+  background: linear-gradient(135deg, var(--primary-soft), var(--violet-soft));
   margin-bottom: 12px;
 
   span { color: var(--text-2); font-size: 14px; font-weight: 500; }

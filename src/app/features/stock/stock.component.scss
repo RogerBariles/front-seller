@@ -35,19 +35,19 @@ table {
   padding: 4px 10px;
   border-radius: 999px;
   background: var(--success-soft);
-  color: #15803d;
+  color: var(--success-text);
   font-weight: 700;
   text-align: center;
   font-variant-numeric: tabular-nums;
 
   &.stock-bajo {
     background: var(--warning-soft);
-    color: #b45309;
+    color: var(--warning-text);
   }
 
   &.stock-cero {
     background: var(--danger-soft);
-    color: #b91c1c;
+    color: var(--danger-text);
   }
 }
 

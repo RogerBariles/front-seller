@@ -54,7 +54,7 @@
   }
 
   .area {
-    fill: rgba(79, 70, 229, 0.12);
+    fill: var(--chart-area);
   }
 
   .line {
@@ -66,7 +66,7 @@
 
   circle {
     fill: var(--primary);
-    stroke: #fff;
+    stroke: var(--surface);
     stroke-width: 1.5;
   }
 

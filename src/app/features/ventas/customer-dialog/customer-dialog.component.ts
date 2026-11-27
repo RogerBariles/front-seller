@@ -116,7 +116,7 @@ function contactRequired(group: AbstractControl): ValidationErrors | null {
     .customer-card div { display: flex; flex-direction: column; gap: 2px; }
     .new-customer { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; margin-top: 12px; }
     .span-2 { grid-column: span 2; }
-    .contact-error { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--danger, #b91c1c); font-size: 13px; }
+    .contact-error { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--danger-text); font-size: 13px; }
     .contact-error mat-icon { font-size: 18px; width: 18px; height: 18px; }
     .alert { margin-bottom: 8px; }
     @media (max-width: 599px) {

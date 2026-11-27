@@ -34,7 +34,7 @@
   @media (hover: hover) {
     &:hover:not(:disabled) {
       border-color: var(--primary);
-      background: #fafaff;
+      background: var(--hover-tint);
     }
   }
 
@@ -49,7 +49,7 @@
 
   &.in-cart {
     border-color: var(--primary-soft-2);
-    background: #fafaff;
+    background: var(--hover-tint);
   }
 }
 
@@ -61,7 +61,7 @@
   flex-shrink: 0;
   border-radius: 10px;
   background: var(--warning-soft);
-  color: #b45309;
+  color: var(--warning-text);
   font-weight: 700;
   text-transform: uppercase;
 }

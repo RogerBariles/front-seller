@@ -127,7 +127,7 @@
     border-style: solid;
     border-color: var(--warning);
     background: var(--warning-soft);
-    color: #b45309;
+    color: var(--warning-text);
   }
 }
 
@@ -219,7 +219,7 @@
   padding: 10px 12px;
   border-radius: 10px;
   background: var(--info-soft);
-  color: #1e40af;
+  color: var(--info-text);
   font-size: 13px;
 
   mat-icon { font-size: 18px; width: 18px; height: 18px; }
@@ -292,4 +292,4 @@
 .customer-text { display: flex; flex-direction: column; flex: 1; min-width: 0; line-height: 1.25; }
 .customer-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .customer-text .muted { font-size: 12px; }
-.welcome-tag { color: var(--success, #15803d); font-weight: 600; }
+.welcome-tag { color: var(--success-text); font-weight: 600; }

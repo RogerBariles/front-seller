@@ -9,7 +9,7 @@
 
   .today-count {
     background: var(--warning-soft);
-    color: #b45309;
+    color: var(--warning-text);
   }
 
   section.surface {
@@ -55,12 +55,12 @@
   flex-direction: column;
   gap: 10px;
   padding: 14px 16px;
-  border: 1px solid var(--border, #e5e7eb);
+  border: 1px solid var(--border);
   border-radius: var(--radius, 12px);
 
   &.is-today {
     background: var(--warning-soft);
-    border-color: #fde68a;
+    border-color: var(--warning-border);
   }
 
   .bd-head {
@@ -69,7 +69,7 @@
     align-items: center;
 
     > .mat-icon {
-      color: #b45309;
+      color: var(--warning-text);
     }
 
     div {
@@ -89,7 +89,7 @@
     align-items: center;
     gap: 12px;
     padding: 10px 4px;
-    border-bottom: 1px solid var(--border, #e5e7eb);
+    border-bottom: 1px solid var(--border);
 
     &:last-child {
       border-bottom: 0;

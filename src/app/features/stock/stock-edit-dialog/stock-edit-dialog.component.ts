@@ -82,11 +82,11 @@ export interface StockDialogResult {
     .stock-actual {
       display: flex; align-items: center; justify-content: space-between;
       padding: 14px 16px; margin-bottom: 16px; border-radius: 12px;
-      background: var(--success-soft); color: #15803d; font-weight: 500;
+      background: var(--success-soft); color: var(--success-text); font-weight: 500;
     }
     .stock-actual strong { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; }
-    .stock-actual.stock-bajo { background: var(--warning-soft); color: #b45309; }
-    .stock-actual.stock-cero { background: var(--danger-soft); color: #b91c1c; }
+    .stock-actual.stock-bajo { background: var(--warning-soft); color: var(--warning-text); }
+    .stock-actual.stock-cero { background: var(--danger-soft); color: var(--danger-text); }
     .block { padding: 14px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 12px; }
     .block h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 14px; font-weight: 600; }
     .block h3 mat-icon { font-size: 18px; width: 18px; height: 18px; color: var(--primary); }

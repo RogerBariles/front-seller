@@ -11,6 +11,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { filter, map } from 'rxjs/operators';
 import { AuthService } from '../core/services/auth.service';
+import { ThemeService } from '../core/services/theme.service';
 import { ROLE_LABELS } from '../models';
 
 interface NavItem {
@@ -50,6 +51,7 @@ export class AppShellComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
   private breakpoints = inject(BreakpointObserver);
+  readonly theme = inject(ThemeService);
 
   readonly user = this.auth.currentUser;
   adminExpanded = signal(false);
