@@ -15,6 +15,12 @@
   box-sizing: border-box;
 }
 
+/* El ticket es siempre papel blanco: no hereda los colores del modo oscuro (ej. h1 global). */
+.receipt,
+.receipt * {
+  color: #000;
+}
+
 .store-name {
   margin: 0;
   font-size: 20px;
